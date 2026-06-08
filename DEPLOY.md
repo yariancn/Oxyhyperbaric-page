@@ -26,7 +26,7 @@ bash deploy.sh
 
 ## Staging first (recommended)
 
-1. Deploy to `oxyhyperbaric.pages.dev`
+1. Revisar en https://oxyhyperbaric-page.yarianc.workers.dev
 2. Review EN (`/`) and ES (`/es/`)
 3. Test booking: https://oxy-agenda.vercel.app/booking/us
 4. When approved → point DNS from Durable to Cloudflare
