@@ -3,7 +3,7 @@
 ## Cloudflare Pages
 
 1. https://dash.cloudflare.com → Workers & Pages → **Create project**
-2. Connect repo: **yariancn/oxyhyperbaric**, branch **main**
+2. Connect repo: **yariancn/oxyhyperbaric-page**, branch **main**
 3. Build command: *(empty)* | Output directory: **/**
 4. Custom domains: `oxyhyperbaric.com` and `www.oxyhyperbaric.com`
 
