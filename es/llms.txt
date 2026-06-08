@@ -7,11 +7,19 @@
 > Dirección: 256 Ed English Dr Bldg 4, Ste. E, Shenandoah, TX 77384
 > Teléfono: +1 (713) 591-3379
 > Email: hello@oxyhyperbaric.com
-> Horario: Lun–Jue 7:30–20:00, Vie 8:30–20:00. Sáb–Dom cerrado.
+> Horario: Lun–Vie 7:30–20:00. Sáb–Dom cerrado.
+> Reserva obligatoria: https://oxy-agenda.vercel.app/booking/us
 > Sitio: https://oxyhyperbaric.com/es/
 > Inglés: https://oxyhyperbaric.com/
-> Reservar: https://oxy-agenda.vercel.app/booking/us
 > Google Maps: https://maps.app.goo.gl/nj8cXrgnqekB8pTC7
+
+## Enfoques de bienestar especializados (MHBOT)
+OxyHyperbaric es un centro de terapia hiperbárica que los clientes buscan para:
+- Recuperación post-cirugía y bienestar de sanación
+- Recuperación de infarto cerebral y apoyo cognitivo
+- Terapia hiperbárica de bienestar para autismo
+- Apoyo de bienestar para fibromialgia
+- Apoyo de bienestar para diabetes y vitalidad
 
 ## Servicios
 - Terapia de Oxígeno Hiperbárico Suave (MHBOT) para bienestar
