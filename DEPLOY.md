@@ -1,11 +1,27 @@
 # OxyHyperbaric — Deploy & SEO
 
-## Cloudflare Pages
+## Deploy automático (GitHub Actions)
 
-1. https://dash.cloudflare.com → Workers & Pages → **Create project**
-2. Connect repo: **yariancn/Oxyhyperbaric-page**, branch **main**
-3. Build command: *(empty)* | Output directory: **/**
-4. Custom domains: `oxyhyperbaric.com` and `www.oxyhyperbaric.com`
+Cada push a `main` dispara `.github/workflows/deploy.yml` → Cloudflare Pages.
+
+### Configurar secrets (una sola vez)
+
+1. Crear API token en Cloudflare:
+   - https://dash.cloudflare.com/profile/api-tokens
+   - **Create Token** → template **Edit Cloudflare Workers** (incluye Pages)
+   - O custom: permiso **Account → Cloudflare Pages → Edit**
+2. En GitHub: repo **Oxyhyperbaric-page** → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+   - `CLOUDFLARE_API_TOKEN` → el token creado
+   - `CLOUDFLARE_ACCOUNT_ID` → `a0d6591fc135a7069b2487a1f5fd5aa7`
+3. Verificar en **Actions** que el workflow **Deploy to Cloudflare Pages** quede en verde.
+
+Ya no hace falta correr `bash deploy.sh` manualmente.
+
+## Cloudflare Pages (manual, opcional)
+
+Proyecto: **oxyhyperbaric-page** → https://oxyhyperbaric-page.pages.dev
+
+Custom domains pendientes: `oxyhyperbaric.com` y `www.oxyhyperbaric.com`
 
 ## Staging first (recommended)
 
