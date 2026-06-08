@@ -1,27 +1,24 @@
 # OxyHyperbaric — Deploy & SEO
 
-## Deploy automático (GitHub Actions)
+## Cloudflare Pages (igual que OXYGENGDL)
 
-Cada push a `main` dispara `.github/workflows/deploy.yml` → Cloudflare Pages.
+1. https://dash.cloudflare.com → Workers & Pages → proyecto **oxyhyperbaric-page**
+2. **Settings** → **Builds & deployments** → **Connect to Git**
+3. Repo: **yariancn/Oxyhyperbaric-page**, branch **main**
+4. Build command: *(vacío)* | Output directory: **/**
+5. Custom domains: `oxyhyperbaric.com` y `www.oxyhyperbaric.com`
 
-### Configurar secrets (una sola vez)
+Cada `git push` a `main` despliega automáticamente — sin secrets en GitHub, sin `deploy.sh`.
 
-1. Crear API token en Cloudflare:
-   - https://dash.cloudflare.com/profile/api-tokens
-   - **Create Token** → template **Edit Cloudflare Workers** (incluye Pages)
-   - O custom: permiso **Account → Cloudflare Pages → Edit**
-2. En GitHub: repo **Oxyhyperbaric-page** → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
-   - `CLOUDFLARE_API_TOKEN` → el token creado
-   - `CLOUDFLARE_ACCOUNT_ID` → `a0d6591fc135a7069b2487a1f5fd5aa7`
-3. Verificar en **Actions** que el workflow **Deploy to Cloudflare Pages** quede en verde.
+### Si el proyecto ya existía (creado con wrangler)
 
-Ya no hace falta correr `bash deploy.sh` manualmente.
+En el mismo proyecto **oxyhyperbaric-page**, usa **Connect to Git** en Settings. Cloudflare reemplaza el flujo de upload manual por el de GitHub.
 
-## Cloudflare Pages (manual, opcional)
+### Deploy manual (solo emergencia)
 
-Proyecto: **oxyhyperbaric-page** → https://oxyhyperbaric-page.pages.dev
-
-Custom domains pendientes: `oxyhyperbaric.com` y `www.oxyhyperbaric.com`
+```bash
+bash deploy.sh
+```
 
 ## Staging first (recommended)
 
