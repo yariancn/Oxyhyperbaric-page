@@ -1,18 +1,22 @@
 # OxyHyperbaric — Deploy & SEO
 
-## Cloudflare Pages (igual que OXYGENGDL)
+## Deploy automático (conectado a Git)
 
-1. https://dash.cloudflare.com → Workers & Pages → proyecto **oxyhyperbaric-page**
-2. **Settings** → **Builds & deployments** → **Connect to Git**
-3. Repo: **yariancn/Oxyhyperbaric-page**, branch **main**
-4. Build command: *(vacío)* | Output directory: **/**
-5. Custom domains: `oxyhyperbaric.com` y `www.oxyhyperbaric.com`
+Proyecto activo: **oxyhyperbaric-page** (Worker con Git)  
+URL: https://oxyhyperbaric-page.yarianc.workers.dev  
+Repo: **yariancn/Oxyhyperbaric-page** · branch **main**
 
-Cada `git push` a `main` despliega automáticamente — sin secrets en GitHub, sin `deploy.sh`.
+Cada `git push` a `main` despliega automáticamente — igual que OXYGENGDL.
 
-### Si el proyecto ya existía (creado con wrangler)
+### Dominio personalizado
 
-En el mismo proyecto **oxyhyperbaric-page**, usa **Connect to Git** en Settings. Cloudflare reemplaza el flujo de upload manual por el de GitHub.
+En Cloudflare → proyecto **oxyhyperbaric-page** (el conectado a Git, no el Pages duplicado):
+- Agregar custom domain: `oxyhyperbaric.com` y `www.oxyhyperbaric.com`
+
+### Proyecto Pages duplicado (ignorar)
+
+`oxyhyperbaric-page.pages.dev` fue creado con `deploy.sh` (upload manual) y **no tiene Git**.
+No usarlo. Opcional: borrarlo en Cloudflare para evitar confusión.
 
 ### Deploy manual (solo emergencia)
 
