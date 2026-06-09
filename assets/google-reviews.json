@@ -1,0 +1,27 @@
+{
+  "source": "google",
+  "businessName": "OXYHYPERBARIC",
+  "rating": 5.0,
+  "mapsUrl": "https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu",
+  "allReviewsUrl": "https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu",
+  "reviews": [
+    {
+      "author": "James Bittick",
+      "rating": 5,
+      "text": "Had my first session today and extremely impressed. Great operation and team. Most relaxing hour I have had in a while. Feel fantastic and energized, ready to take on the holidays.",
+      "relativeTime": "6 months ago"
+    },
+    {
+      "author": "Sara Campus",
+      "rating": 5,
+      "text": "Tomé mi primer sesión ayer, estuvo genial. Muy super atentos; muy limpio todo. Después de la sesión muy relajada, como flotando. Dormí muy bien.",
+      "relativeTime": "5 months ago"
+    },
+    {
+      "author": "Ken McCleary",
+      "rating": 5,
+      "text": "The service I received was excellent. My treatment made me feel so much better. I would recommend this service to everyone",
+      "relativeTime": "6 months ago"
+    }
+  ]
+}

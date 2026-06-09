@@ -109,9 +109,9 @@
           "sameAs": [
             "https://facebook.com/oxyhyperbaric",
             "https://instagram.com/oxyhyperbaric",
-            "https://maps.app.goo.gl/nj8cXrgnqekB8pTC7"
+            "https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu"
           ],
-          "hasMap": "https://maps.app.goo.gl/nj8cXrgnqekB8pTC7"
+          "hasMap": "https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu"
         },
         {
           "@type": "FAQPage",
@@ -276,11 +276,30 @@
         .price-val { font-size: 1.35rem; font-weight: 800; color: var(--navy); white-space: nowrap; }
         .tax-note { text-align: center; margin-top: 16px; font-size: 0.88rem; color: var(--muted); }
 
+        .google-reviews-box { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 36px 28px; box-shadow: var(--shadow); }
+        .google-reviews-head { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+        .google-reviews-head img { height: 22px; width: auto; }
+        .google-reviews-score { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; margin: 20px 0 28px; padding: 18px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); }
+        .google-rating-value { font-size: 2.5rem; font-weight: 800; color: var(--navy); line-height: 1; }
+        .google-rating-stars { color: #e6a800; font-size: 1.35rem; letter-spacing: 2px; }
+        .google-rating-meta { color: var(--muted); font-size: 0.92rem; }
         .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
-        .review-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 26px; box-shadow: var(--shadow); }
-        .review-stars { color: #e6a800; letter-spacing: 2px; margin-bottom: 10px; }
-        .review-text { font-style: italic; color: var(--muted); margin: 0 0 14px; font-size: 0.95rem; }
+        .reviews-grid .hidden-review { display: none; }
+        .reviews-grid.show-all .hidden-review { display: block; }
+        .review-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 22px; box-shadow: var(--shadow); }
+        .google-review-card .review-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .review-stars { color: #e6a800; letter-spacing: 2px; white-space: nowrap; }
+        .review-text { font-style: italic; color: var(--muted); margin: 0 0 10px; font-size: 0.95rem; }
         .review-author { font-weight: 700; color: var(--navy); font-size: 0.9rem; }
+        .review-source { margin: 0; font-size: 0.78rem; color: #7a8fa3; }
+        .google-reviews-empty { text-align: center; padding: 28px 16px; color: var(--muted); }
+        .google-reviews-empty p { margin: 0 0 16px; }
+        .google-reviews-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 26px; }
+        .btn-google-reviews { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; background: var(--white); color: var(--navy); border: 2px solid var(--cyan); border-radius: 8px; font-weight: 700; font-size: 0.92rem; text-decoration: none; }
+        .btn-google-reviews:hover { background: #f0f9ff; }
+        .btn-more-reviews { padding: 12px 22px; background: var(--navy); color: var(--white); border: none; border-radius: 8px; font-weight: 700; font-size: 0.92rem; cursor: pointer; }
+        .btn-more-reviews:hover { background: #1a4a6e; }
+        .google-maps-embed { width: 100%; height: 360px; border: 0; border-radius: 12px; margin: 0 0 24px; box-shadow: var(--shadow); }
 
         .faq-list { max-width: 800px; margin: 0 auto; }
         .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 14px; }
@@ -518,24 +537,49 @@
 
     <section id="reviews">
         <div class="container">
-            <p class="section-label">Testimonials</p>
-            <h2 class="section-title">What Our Clients Say</h2>
-            <div class="reviews-grid">
-                <article class="review-card">
-                    <div class="review-stars">★★★★★</div>
-                    <p class="review-text">"OxyHyperbaric in the Woodlands is a game-changer! After just a few sessions, I feel more energized and my recovery time has improved drastically. The staff is incredibly knowledgeable and supportive. Highly recommend to anyone seeking the benefits of hyperbaric oxygen therapy."</p>
-                    <p class="review-author">— Emily Carter</p>
-                </article>
-                <article class="review-card">
-                    <div class="review-stars">★★★★★</div>
-                    <p class="review-text">"OxyHyperbaric has transformed my wellness journey! Their therapy sessions in Shenandoah have significantly reduced my migraine frequency and improved my sleep quality. The facility is top-notch and the team is wonderfully attentive. I'm grateful for their expertise and care!"</p>
-                    <p class="review-author">— Michael Green</p>
-                </article>
-                <article class="review-card">
-                    <div class="review-stars">★★★★★</div>
-                    <p class="review-text">"OxyHyperbaric's therapy has made a noticeable difference in my overall well-being. My focus and clarity have improved remarkably since starting sessions. The serene environment and attentive staff make each visit a pleasure. Highly recommended for anyone considering hyperbaric oxygen therapy."</p>
-                    <p class="review-author">— Laura Hayes</p>
-                </article>
+            <div class="google-reviews-box">
+                <div class="google-reviews-head">
+                    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" width="92" height="30" loading="lazy">
+                    <p class="section-label" style="margin:0;">Google Reviews</p>
+                </div>
+                <h2 class="section-title" style="margin-top:8px;">What Our Clients Say on Google</h2>
+                <div class="google-reviews-score" aria-label="Google rating: 5.0 out of 5 stars">
+                    <div class="google-rating-value" id="google-rating-value">5.0</div>
+                    <div>
+                        <div class="google-rating-stars" aria-hidden="true">★★★★★</div>
+                        <div class="google-rating-meta" id="google-rating-meta">Verified rating on Google</div>
+                    </div>
+                </div>
+                <div id="google-reviews-grid" class="reviews-grid" aria-label="Google review excerpts">
+                    <article class="review-card google-review-card">
+                        <div class="review-header">
+                            <span class="review-author">James Bittick</span>
+                            <span class="review-stars" aria-label="5 stars">★★★★★</span>
+                        </div>
+                        <blockquote class="review-text">"Had my first session today and extremely impressed. Great operation and team. Most relaxing hour I have had in a while. Feel fantastic and energized, ready to take on the holidays."</blockquote>
+                        <p class="review-source">Google review · 6 months ago</p>
+                    </article>
+                    <article class="review-card google-review-card">
+                        <div class="review-header">
+                            <span class="review-author">Sara Campus</span>
+                            <span class="review-stars" aria-label="5 stars">★★★★★</span>
+                        </div>
+                        <blockquote class="review-text">"Tomé mi primer sesión ayer, estuvo genial. Muy super atentos; muy limpio todo. Después de la sesión muy relajada, como flotando. Dormí muy bien."</blockquote>
+                        <p class="review-source">Google review · 5 months ago</p>
+                    </article>
+                    <article class="review-card google-review-card">
+                        <div class="review-header">
+                            <span class="review-author">Ken McCleary</span>
+                            <span class="review-stars" aria-label="5 stars">★★★★★</span>
+                        </div>
+                        <blockquote class="review-text">"The service I received was excellent. My treatment made me feel so much better. I would recommend this service to everyone"</blockquote>
+                        <p class="review-source">Google review · 6 months ago</p>
+                    </article>
+                </div>
+                <div class="google-reviews-actions">
+                    <a href="https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu" class="btn-google-reviews" target="_blank" rel="noopener">See all reviews on Google</a>
+                    <a href="https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu" class="btn btn-accent" target="_blank" rel="noopener">Write a review on Google</a>
+                </div>
             </div>
         </div>
     </section>
@@ -575,7 +619,7 @@
                 <p><a href="tel:7135913379">(713) 591-3379</a> · <a href="mailto:hello@oxyhyperbaric.com">hello@oxyhyperbaric.com</a></p>
                 <p style="font-size:0.92rem;margin-top:12px;"><strong>Booking is necessary to attend sessions.</strong></p>
                 <div class="map-btns">
-                    <a href="https://maps.app.goo.gl/nj8cXrgnqekB8pTC7" class="btn btn-primary" target="_blank" rel="noopener">Google Maps</a>
+                    <a href="https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu" class="btn btn-primary" target="_blank" rel="noopener">Google Maps</a>
                     <a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-accent">Book Online</a>
                 </div>
             </div>

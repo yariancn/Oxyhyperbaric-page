@@ -58,7 +58,12 @@ bash deploy.sh
 - [x] `llms.txt` EN + ES for AI crawlers
 - [x] Valid XML sitemap
 - [x] Booking integrated → OXY Agenda `/booking/us`
-- [x] Reviews from current site
+- [x] Google Reviews section (rating + link to all reviews on Google Maps)
+- [ ] Sync review cards (optional, needs real API key from Google Cloud):
+  ```bash
+  export GOOGLE_PLACES_API_KEY="AIzaSy..."   # not "tu-api-key"
+  python3 scripts/sync-google-reviews.py
+  ```
 - [x] Wellness disclaimer + Medical Director Dr. James Hill
 - [ ] Facility photos from Durable CDN → run `./download-images.sh`
 - [ ] Search Console verified

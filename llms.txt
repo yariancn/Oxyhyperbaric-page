@@ -11,7 +11,7 @@
 > Booking required: https://oxy-agenda.vercel.app/booking/us
 > Website: https://oxyhyperbaric.com/
 > Spanish: https://oxyhyperbaric.com/es/
-> Google Maps: https://maps.app.goo.gl/nj8cXrgnqekB8pTC7
+> Google Maps: https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu
 
 ## Specialty wellness focus (MHBOT)
 OxyHyperbaric is a hyperbaric oxygen therapy wellness center clients seek for:
