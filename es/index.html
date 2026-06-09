@@ -134,17 +134,17 @@
         .btn-accent:hover { background: var(--cyan-light); }
         .btn-outline { background: transparent; color: var(--navy); border: 2px solid var(--navy); }
         .btn-lang { padding: 8px 14px; font-size: 0.82rem; background: var(--cream); color: var(--navy); border: 1px solid var(--border); border-radius: 6px; font-weight: 700; text-decoration: none; }
-        .hero { background-color: var(--navy-deep); color: #ffffff; padding: 28px 20px 64px; text-align: center; }
-        .hero-logo-container { margin: 0 auto 24px; max-width: 240px; }
+        .hero { background-color: var(--navy-deep); color: #ffffff; padding: 16px 20px 56px; text-align: center; }
+        .hero-logo-container { margin: 0 auto 8px; max-width: 240px; }
         .hero-logo-container img { width: 100%; height: auto; display: block; border-radius: 12px; }
-        .hero-eyebrow { letter-spacing: 0.2em; font-size: 0.82rem; font-weight: 700; color: #ffffff; margin-bottom: 14px; }
-        .hero h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); margin: 0 0 16px; font-weight: 800; line-height: 1.2; color: #ffffff; }
-        .hero p { font-size: 1.1rem; max-width: 720px; margin: 0 auto 30px; color: #e8f4fa; }
+        .hero-eyebrow { letter-spacing: 0.22em; font-size: 1.05rem; font-weight: 800; color: #ffffff; margin: 0 0 10px; }
+        .hero h1 { font-size: clamp(2rem, 4.8vw, 3rem); margin: 0 0 14px; font-weight: 800; line-height: 1.2; color: #ffffff; }
+        .hero p { font-size: 1.22rem; max-width: 720px; margin: 0 auto 28px; color: #ffffff; line-height: 1.6; font-weight: 500; }
         .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
         .btn-hero-light { background: #ffffff; color: var(--navy); border: 2px solid #ffffff; }
         .btn-hero-accent { background: var(--cyan); color: var(--navy-deep); border: 2px solid var(--cyan); }
-        section { padding: 72px 0; }
-        section:nth-child(even) { background: var(--white); }
+        section:not(.hero) { padding: 72px 0; }
+        section:nth-of-type(even):not(.hero) { background: var(--white); }
         .section-label { text-align: center; color: var(--cyan); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
         .section-title { text-align: center; color: var(--navy); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 0 0 12px; font-weight: 800; }
         .section-sub { text-align: center; color: var(--muted); max-width: 680px; margin: 0 auto 48px; }
