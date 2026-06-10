@@ -32,6 +32,8 @@
     <link rel="icon" type="image/png" href="/assets/images/logo.png">
     <link rel="apple-touch-icon" href="/assets/images/logo.png">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site summary">
+    <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM full site reference">
 
     <script type="application/ld+json">
     {
@@ -111,7 +113,45 @@
             "https://instagram.com/oxyhyperbaric",
             "https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu"
           ],
-          "hasMap": "https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu"
+          "hasMap": "https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu",
+          "medicalDirector": { "@id": "https://oxyhyperbaric.com/#medical-director" },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5.0",
+            "reviewCount": "3",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "review": [
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "James Bittick" },
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "reviewBody": "Had my first session today and extremely impressed. Great operation and team. Most relaxing hour I have had in a while. Feel fantastic and energized, ready to take on the holidays.",
+              "publisher": { "@type": "Organization", "name": "Google" }
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Sara Campus" },
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "reviewBody": "Tomé mi primer sesión ayer, estuvo genial. Muy super atentos; muy limpio todo. Después de la sesión muy relajada, como flotando. Dormí muy bien.",
+              "publisher": { "@type": "Organization", "name": "Google" }
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Ken McCleary" },
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "reviewBody": "The service I received was excellent. My treatment made me feel so much better. I would recommend this service to everyone",
+              "publisher": { "@type": "Organization", "name": "Google" }
+            }
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://oxyhyperbaric.com/#medical-director",
+          "name": "Dr. James Hill",
+          "jobTitle": "Medical Director",
+          "worksFor": { "@id": "https://oxyhyperbaric.com/#business" }
         },
         {
           "@type": "FAQPage",
@@ -301,6 +341,11 @@
         .btn-more-reviews:hover { background: #1a4a6e; }
         .google-maps-embed { width: 100%; height: 360px; border: 0; border-radius: 12px; margin: 0 0 24px; box-shadow: var(--shadow); }
 
+        .specialty-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .specialty-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 22px; box-shadow: var(--shadow); }
+        .specialty-card h3 { margin: 0 0 10px; color: var(--navy); font-size: 1.05rem; }
+        .specialty-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+
         .faq-list { max-width: 800px; margin: 0 auto; }
         .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 14px; }
         .faq-item h3 { margin: 0 0 8px; color: var(--navy); font-size: 1.05rem; }
@@ -347,6 +392,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="#services">Services</a></li>
+                <li><a href="#specialties">Specialties</a></li>
                 <li><a href="#benefits">Benefits</a></li>
                 <li><a href="#pricing">Pricing</a></li>
                 <li><a href="#reviews">Reviews</a></li>
@@ -419,6 +465,36 @@
                         <h3>Customized Plans</h3>
                         <p>Receive tailored hyperbaric therapy designed to meet your unique health and wellness needs with flexible session packages.</p>
                     </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="specialties">
+        <div class="container">
+            <p class="section-label">Wellness Focus</p>
+            <h2 class="section-title">Specialty Wellness Programs (MHBOT)</h2>
+            <p class="section-sub">OxyHyperbaric in Shenandoah, Texas is a mild hyperbaric oxygen therapy wellness center clients seek for these focused wellness goals. Sessions are for general wellness only — not medical treatment.</p>
+            <div class="specialty-grid">
+                <article class="specialty-card">
+                    <h3>Post-Surgical Recovery Wellness</h3>
+                    <p>Supervised MHBOT sessions in FDA-approved chambers that support healing and recovery wellness goals after surgery.</p>
+                </article>
+                <article class="specialty-card">
+                    <h3>Stroke Recovery Wellness Support</h3>
+                    <p>Mild hyperbaric oxygen sessions that may support cognitive clarity, vitality, and stroke recovery wellness goals.</p>
+                </article>
+                <article class="specialty-card">
+                    <h3>Autism Wellness Hyperbaric Therapy</h3>
+                    <p>Families explore supervised mild hyperbaric oxygen sessions for autism-related wellness support in a safe clinical environment.</p>
+                </article>
+                <article class="specialty-card">
+                    <h3>Fibromyalgia Wellness Support</h3>
+                    <p>MHBOT wellness sessions that clients use to support fibromyalgia-related comfort and overall wellness goals.</p>
+                </article>
+                <article class="specialty-card">
+                    <h3>Diabetes Wellness &amp; Vitality</h3>
+                    <p>Mild hyperbaric oxygen therapy sessions supporting diabetes-related wellness, energy, and vitality goals.</p>
                 </article>
             </div>
         </div>
@@ -603,8 +679,28 @@
                     <p><strong>Booking is necessary to attend sessions.</strong></p>
                 </div>
                 <div class="faq-item">
+                    <h3>How much does a hyperbaric session cost?</h3>
+                    <p>Introductory session: $115. 5 sessions: $525. 10 sessions: $850. 20 sessions: $1,700. All prices subject to 8.25% Texas sales tax at checkout.</p>
+                </div>
+                <div class="faq-item">
                     <h3>How do I book a session?</h3>
                     <p><a href="https://oxy-agenda.vercel.app/booking/us">Book online through our scheduling portal</a> or call <a href="tel:7135913379">(713) 591-3379</a>. Booking is required before your visit.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Does OxyHyperbaric offer hyperbaric therapy for post-surgical recovery?</h3>
+                    <p>Yes. We provide mild hyperbaric oxygen therapy (MHBOT) wellness sessions that support post-surgical recovery and healing wellness goals in FDA-approved chambers.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Can hyperbaric wellness support stroke recovery goals?</h3>
+                    <p>We offer supervised MHBOT wellness sessions that may support stroke recovery wellness, cognitive clarity, and overall vitality. Sessions are for wellness purposes only.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Does OxyHyperbaric provide hyperbaric therapy for autism wellness?</h3>
+                    <p>Yes. We provide mild hyperbaric oxygen wellness sessions that families explore for autism-related wellness support in a safe, supervised environment.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Is hyperbaric therapy available for fibromyalgia and diabetes wellness?</h3>
+                    <p>We offer MHBOT wellness sessions that clients use to support fibromyalgia-related comfort goals and diabetes-related wellness and vitality goals.</p>
                 </div>
             </div>
         </div>

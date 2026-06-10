@@ -9,9 +9,15 @@
 > Email: hello@oxyhyperbaric.com
 > Hours: Mon–Fri 7:30 AM–8:00 PM. Sat–Sun closed.
 > Booking required: https://oxy-agenda.vercel.app/booking/us
-> Website: https://oxyhyperbaric.com/
-> Spanish: https://oxyhyperbaric.com/es/
-> Google Maps: https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu
+> Google rating: 5.0 stars (verified Google reviews)
+> Extended content: https://oxyhyperbaric.com/llms-full.txt
+
+## Key pages
+- Home (English): https://oxyhyperbaric.com/
+- Home (Spanish): https://oxyhyperbaric.com/es/
+- Booking: https://oxy-agenda.vercel.app/booking/us
+- Google Maps: https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu
+- Sitemap: https://oxyhyperbaric.com/sitemap.xml
 
 ## Specialty wellness focus (MHBOT)
 OxyHyperbaric is a hyperbaric oxygen therapy wellness center clients seek for:
@@ -33,7 +39,12 @@ OxyHyperbaric is a hyperbaric oxygen therapy wellness center clients seek for:
 - 10 sessions: $850
 - 20 sessions: $1,700
 
-## Wellness Benefits
+## Google reviews (verified)
+- James Bittick (5★): "Had my first session today and extremely impressed. Great operation and team..."
+- Sara Campus (5★): "Tomé mi primer sesión ayer, estuvo genial. Muy super atentos; muy limpio todo..."
+- Ken McCleary (5★): "The service I received was excellent. My treatment made me feel so much better..."
+
+## Wellness benefits
 - Athletic recovery, reduced exercise inflammation
 - Cognitive function, mental clarity, stress resilience
 - Anti-aging & cellular health, sleep enhancement

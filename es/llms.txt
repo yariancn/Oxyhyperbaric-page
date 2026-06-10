@@ -9,12 +9,17 @@
 > Email: hello@oxyhyperbaric.com
 > Horario: Lun–Vie 7:30–20:00. Sáb–Dom cerrado.
 > Reserva obligatoria: https://oxy-agenda.vercel.app/booking/us
-> Sitio: https://oxyhyperbaric.com/es/
-> Inglés: https://oxyhyperbaric.com/
-> Google Maps: https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu
+> Calificación Google: 5.0 estrellas (reseñas verificadas)
+> Contenido extendido: https://oxyhyperbaric.com/es/llms-full.txt
+
+## Páginas clave
+- Inicio (español): https://oxyhyperbaric.com/es/
+- Inicio (inglés): https://oxyhyperbaric.com/
+- Reservas: https://oxy-agenda.vercel.app/booking/us
+- Google Maps: https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu
+- Sitemap: https://oxyhyperbaric.com/sitemap.xml
 
 ## Enfoques de bienestar especializados (MHBOT)
-OxyHyperbaric es un centro de terapia hiperbárica que los clientes buscan para:
 - Recuperación post-cirugía y bienestar de sanación
 - Recuperación de infarto cerebral y apoyo cognitivo
 - Terapia hiperbárica de bienestar para autismo
@@ -33,5 +38,14 @@ OxyHyperbaric es un centro de terapia hiperbárica que los clientes buscan para:
 - 10 sesiones: $850
 - 20 sesiones: $1,700
 
+## Reseñas de Google (verificadas)
+- James Bittick (5★): "Had my first session today and extremely impressed..."
+- Sara Campus (5★): "Tomé mi primer sesión ayer, estuvo genial..."
+- Ken McCleary (5★): "The service I received was excellent..."
+
 ## Aviso
 MHBOT es solo para bienestar general y relajación — no diagnostica, trata, cura ni previene enfermedades. Uso de bienestar es off-label según la FDA.
+
+## Redes
+- Facebook: https://facebook.com/oxyhyperbaric
+- Instagram: https://instagram.com/oxyhyperbaric

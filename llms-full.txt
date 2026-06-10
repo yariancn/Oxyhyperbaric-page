@@ -1,0 +1,87 @@
+# OxyHyperbaric — Full LLM Reference (English)
+
+> OxyHyperbaric | Mild Hyperbaric Wellness Therapy in The Woodlands & Shenandoah, TX
+> Website: https://oxyhyperbaric.com/ | Spanish: https://oxyhyperbaric.com/es/
+> Short index: https://oxyhyperbaric.com/llms.txt
+
+## Business identity
+- Name: OxyHyperbaric (OXY HYPERBARIC)
+- Type: Mild Hyperbaric Oxygen Therapy (MHBOT) wellness center
+- Location: 256 Ed English Dr Bldg 4, Ste. E, Shenandoah, TX 77384
+- Service area: The Woodlands, Shenandoah, greater Houston, Texas
+- Phone: (713) 591-3379
+- Email: hello@oxyhyperbaric.com
+- Medical Director: Dr. James Hill
+- Certifications: FDA-approved chambers, IBUM-certified technicians
+- Hours: Monday–Friday 7:30 AM – 8:00 PM; Saturday and Sunday closed
+- Booking: Required — https://oxy-agenda.vercel.app/booking/us
+
+## Tagline
+BREATHE. RESTORE. RENEW.
+
+## About
+At OxyHyperbaric in Shenandoah, Texas, we enhance well-being through advanced mild hyperbaric oxygen therapy. FDA-approved chambers with experienced professionals deliver personalized care for recovery and wellness goals.
+
+## Specialty wellness programs (MHBOT)
+1. Post-Surgical Recovery Wellness — supervised sessions supporting healing after surgery
+2. Stroke Recovery Wellness Support — cognitive clarity and vitality goals
+3. Autism Wellness Hyperbaric Therapy — families explore autism-related wellness support
+4. Fibromyalgia Wellness Support — comfort and wellness goals
+5. Diabetes Wellness & Vitality — energy and vitality support
+
+## Services
+- Advanced Healing Sessions
+- Oxygen Enrichment Therapy
+- Customized Plans / session packages
+
+## Pricing (USD, + 8.25% Texas sales tax at checkout)
+| Package | Price |
+| Introductory 1 session | $115 |
+| Standard 5 sessions | $525 |
+| Comprehensive 10 sessions | $850 |
+| Maintenance 20 sessions | $1,700 |
+
+## Wellness benefits
+Enhanced athletic recovery, reduced exercise inflammation, improved cognitive function, mental clarity, stress resilience, anti-aging & cellular health, sleep enhancement, immune balance, detox support, elevated mood, faster muscle recovery, increased daily vitality.
+
+## Google reviews (5.0 rating)
+James Bittick: "Had my first session today and extremely impressed. Great operation and team. Most relaxing hour I have had in a while. Feel fantastic and energized, ready to take on the holidays." (6 months ago)
+
+Sara Campus: "Tomé mi primer sesión ayer, estuvo genial. Muy super atentos; muy limpio todo. Después de la sesión muy relajada, como flotando. Dormí muy bien." (5 months ago)
+
+Ken McCleary: "The service I received was excellent. My treatment made me feel so much better. I would recommend this service to everyone" (6 months ago)
+
+Google Maps: https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z
+
+## FAQ
+Q: What is mild hyperbaric oxygen therapy (MHBOT)?
+A: A wellness approach increasing oxygen in a pressurized chamber for general wellness and relaxation — not medical treatment.
+
+Q: Where is OxyHyperbaric located?
+A: 256 Ed English Dr Bldg 4, Ste. E, Shenandoah, TX 77384 — serving The Woodlands and Houston area.
+
+Q: How much does a session cost?
+A: $115 intro, $525 (5), $850 (10), $1,700 (20) + 8.25% TX tax.
+
+Q: How do I book?
+A: Online at https://oxy-agenda.vercel.app/booking/us or call (713) 591-3379. Booking required.
+
+Q: Post-surgical recovery?
+A: Yes — MHBOT wellness sessions in FDA-approved chambers.
+
+Q: Stroke recovery wellness?
+A: Supervised sessions may support cognitive clarity and vitality (wellness only).
+
+Q: Autism wellness?
+A: Yes — supervised sessions families explore for autism-related wellness.
+
+Q: Fibromyalgia and diabetes wellness?
+A: Yes — MHBOT sessions for fibromyalgia comfort and diabetes vitality goals.
+
+## Disclaimer
+MHBOT is for general wellness and relaxation only. Not intended to diagnose, treat, cure, or prevent disease. FDA-cleared chambers for specific medical uses under physician supervision — wellness applications are off-label. Results vary.
+
+## Social & links
+- Facebook: https://facebook.com/oxyhyperbaric
+- Instagram: https://instagram.com/oxyhyperbaric
+- Book: https://oxy-agenda.vercel.app/booking/us

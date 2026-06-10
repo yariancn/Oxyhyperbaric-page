@@ -27,6 +27,8 @@
     <link rel="icon" type="image/png" href="/assets/images/logo.png">
     <link rel="apple-touch-icon" href="/assets/images/logo.png">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <link rel="alternate" type="text/plain" href="/es/llms.txt" title="Resumen del sitio para LLM">
+    <link rel="alternate" type="text/plain" href="/es/llms-full.txt" title="Referencia completa para LLM">
 
     <script type="application/ld+json">
     {
@@ -39,6 +41,37 @@
           "name": "OxyHyperbaric",
           "inLanguage": "es-MX",
           "publisher": { "@id": "https://oxyhyperbaric.com/#business" }
+        },
+        {
+          "@type": ["HealthAndBeautyBusiness", "MedicalBusiness"],
+          "@id": "https://oxyhyperbaric.com/#business",
+          "name": "OxyHyperbaric",
+          "url": "https://oxyhyperbaric.com/es/",
+          "telephone": "+1-713-591-3379",
+          "email": "hello@oxyhyperbaric.com",
+          "medicalDirector": { "@id": "https://oxyhyperbaric.com/#medical-director" },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5.0",
+            "reviewCount": "3",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "256 Ed English Dr Bldg 4, Ste. E",
+            "addressLocality": "Shenandoah",
+            "addressRegion": "TX",
+            "postalCode": "77384",
+            "addressCountry": "US"
+          }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://oxyhyperbaric.com/#medical-director",
+          "name": "Dr. James Hill",
+          "jobTitle": "Medical Director",
+          "worksFor": { "@id": "https://oxyhyperbaric.com/#business" }
         },
         {
           "@type": "FAQPage",
@@ -58,6 +91,14 @@
               "acceptedAnswer": {
                 "@type": "Answer",
                 "text": "256 Ed English Dr Bldg 4, Ste. E, Shenandoah, TX 77384, atendiendo The Woodlands y el área metropolitana de Houston."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cuánto cuesta una sesión hiperbárica?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sesión introductoria: $115. 5 sesiones: $525. 10 sesiones: $850. 20 sesiones: $1,700. Todos los precios sujetos a 8.25% de impuesto de ventas de Texas al pagar."
               }
             },
             {
@@ -193,6 +234,10 @@
         .btn-more-reviews { padding: 12px 22px; background: var(--navy); color: var(--white); border: none; border-radius: 8px; font-weight: 700; font-size: 0.92rem; cursor: pointer; }
         .btn-more-reviews:hover { background: #1a4a6e; }
         .google-maps-embed { width: 100%; height: 360px; border: 0; border-radius: 12px; margin: 0 0 24px; box-shadow: var(--shadow); }
+        .specialty-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .specialty-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 22px; box-shadow: var(--shadow); }
+        .specialty-card h3 { margin: 0 0 10px; color: var(--navy); font-size: 1.05rem; }
+        .specialty-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
         .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 14px; max-width: 800px; margin-left: auto; margin-right: auto; }
         .faq-item h3 { margin: 0 0 8px; color: var(--navy); }
         .faq-item p { margin: 0; color: var(--muted); }
@@ -217,6 +262,7 @@
             <a href="#inicio" class="logo-link"><img src="/assets/images/logo-light.jpg" alt="OxyHyperbaric" width="280" height="104"></a>
             <ul class="nav-links">
                 <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#especialidades">Especialidades</a></li>
                 <li><a href="#beneficios">Beneficios</a></li>
                 <li><a href="#precios">Precios</a></li>
                 <li><a href="#resenas">Reseñas</a></li>
@@ -278,6 +324,36 @@
                 <article class="card-treatment">
                     <img class="treatment-image" src="/assets/images/facility-3.jpg" alt="Planes personalizados">
                     <div class="treatment-content"><h3>Planes Personalizados</h3><p>Terapia hiperbárica adaptada a tus necesidades únicas de salud y bienestar.</p></div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="especialidades">
+        <div class="container">
+            <p class="section-label">Enfoque de Bienestar</p>
+            <h2 class="section-title">Programas de Bienestar Especializados (MHBOT)</h2>
+            <p class="section-sub">OxyHyperbaric en Shenandoah, Texas es un centro de terapia hiperbárica suave que los clientes buscan para estos objetivos de bienestar. Las sesiones son solo para bienestar general — no tratamiento médico.</p>
+            <div class="specialty-grid">
+                <article class="specialty-card">
+                    <h3>Recuperación Post-Cirugía</h3>
+                    <p>Sesiones MHBOT supervisadas en cámaras aprobadas por la FDA que apoyan la sanación y recuperación después de cirugía.</p>
+                </article>
+                <article class="specialty-card">
+                    <h3>Recuperación de Infarto Cerebral</h3>
+                    <p>Sesiones de oxígeno hiperbárico suave que pueden apoyar claridad cognitiva, vitalidad y objetivos de recuperación.</p>
+                </article>
+                <article class="specialty-card">
+                    <h3>Bienestar en Autismo</h3>
+                    <p>Familias exploran sesiones supervisadas de oxígeno hiperbárico suave para apoyo de bienestar relacionado con autismo.</p>
+                </article>
+                <article class="specialty-card">
+                    <h3>Apoyo para Fibromialgia</h3>
+                    <p>Sesiones MHBOT que los clientes usan para apoyar comodidad y bienestar relacionado con fibromialgia.</p>
+                </article>
+                <article class="specialty-card">
+                    <h3>Bienestar en Diabetes y Vitalidad</h3>
+                    <p>Terapia de oxígeno hiperbárico suave que apoya objetivos de bienestar, energía y vitalidad relacionados con diabetes.</p>
                 </article>
             </div>
         </div>
@@ -378,7 +454,12 @@
             <div class="faq-item"><h3>¿Qué es la terapia hiperbárica suave?</h3><p>Es un enfoque de bienestar con oxígeno en cámara presurizada. No sustituye tratamiento médico.</p></div>
             <div class="faq-item"><h3>¿Dónde están ubicados?</h3><p>256 Ed English Dr Bldg 4, Ste. E, Shenandoah, TX 77384 — atendemos The Woodlands y Houston.</p></div>
             <div class="faq-item"><h3>¿Cuál es el horario?</h3><p>Lunes a viernes 7:30 AM – 8:00 PM. Sábado y domingo cerrado.</p><p><strong>La reserva es necesaria para asistir a las sesiones.</strong></p></div>
+            <div class="faq-item"><h3>¿Cuánto cuesta una sesión?</h3><p>Intro: $115. 5 sesiones: $525. 10 sesiones: $850. 20 sesiones: $1,700. Sujeto a 8.25% de impuesto de ventas de Texas al pagar.</p></div>
             <div class="faq-item"><h3>¿Cómo reservo?</h3><p><a href="https://oxy-agenda.vercel.app/booking/us">Reserva en línea en nuestro portal de citas</a> o llama al <a href="tel:7135913379">(713) 591-3379</a>. La reserva es obligatoria antes de tu visita.</p></div>
+            <div class="faq-item"><h3>¿Ofrecen terapia hiperbárica para recuperación post-cirugía?</h3><p>Sí. Ofrecemos sesiones MHBOT de bienestar que apoyan la recuperación post-cirugía en cámaras aprobadas por la FDA.</p></div>
+            <div class="faq-item"><h3>¿Puede apoyar la recuperación de infarto cerebral?</h3><p>Ofrecemos sesiones MHBOT supervisadas que pueden apoyar claridad cognitiva, vitalidad y objetivos de recuperación. Solo para bienestar.</p></div>
+            <div class="faq-item"><h3>¿Tienen terapia hiperbárica para bienestar en autismo?</h3><p>Sí. Familias exploran sesiones de oxígeno hiperbárico suave para apoyo de bienestar relacionado con autismo en un entorno seguro.</p></div>
+            <div class="faq-item"><h3>¿Hay terapia para fibromialgia y diabetes?</h3><p>Ofrecemos sesiones MHBOT que los clientes usan para apoyar bienestar relacionado con fibromialgia y diabetes.</p></div>
         </div>
     </section>
 

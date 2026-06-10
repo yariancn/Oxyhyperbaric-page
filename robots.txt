@@ -1,3 +1,28 @@
+# OxyHyperbaric — AI crawlers welcome for search and citation.
+# Note: Cloudflare may append managed rules. Enable AI crawlers in:
+# Cloudflare Dashboard → oxyhyperbaric.com → Security → Bots / AI Crawl Control
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 User-agent: *
 Allow: /
 
