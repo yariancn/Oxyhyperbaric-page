@@ -1,0 +1,6 @@
+# Static site deploy for Cloudflare Workers (Git → npx wrangler deploy)
+name = "oxyhyperbaric-page"
+compatibility_date = "2026-06-10"
+
+[assets]
+directory = "."
