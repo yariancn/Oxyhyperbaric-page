@@ -41,6 +41,7 @@ echo "Downloading hero background video..."
 if curl -fsSL -o "$VIDEOS/hero-bg.mov" \
   "https://cdn.durable.co/getty-videos/1ahOcZdN9VhO0SXiJGcVyi45mzBe0Q1v3QRUvvroihMJjpV5yLBNG5XXZmcFXJhh.mov"; then
   echo "OK: assets/videos/hero-bg.mov"
+  bash "$(dirname "$0")/scripts/convert-hero-video.sh" || echo "WARN: MP4 conversion skipped"
 else
   echo "FAIL: hero-bg.mov — site will use CDN fallback until downloaded"
 fi
