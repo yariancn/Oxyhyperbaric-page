@@ -174,13 +174,46 @@
         .btn-accent:hover { background: var(--cyan-light); }
         .btn-outline { background: transparent; color: var(--navy); border: 2px solid var(--navy); }
         .btn-lang { padding: 8px 14px; font-size: 0.82rem; background: var(--cream); color: var(--navy); border: 1px solid var(--border); border-radius: 6px; font-weight: 700; text-decoration: none; }
-        .hero { background-color: var(--navy-deep); color: #ffffff; padding: 16px 20px 56px; text-align: center; }
-        .hero-logo-container { margin: 0 auto 8px; max-width: 240px; }
-        .hero-logo-container img { width: 100%; height: auto; display: block; border-radius: 12px; }
-        .hero-eyebrow { letter-spacing: 0.22em; font-size: 1.2rem; font-weight: 800; color: #ffffff; margin: 0 0 10px; }
-        .hero h1 { font-size: clamp(2rem, 4.8vw, 3rem); margin: 0 0 14px; font-weight: 800; line-height: 1.2; color: #ffffff; }
-        .hero p { font-size: 1.22rem; max-width: 720px; margin: 0 auto 28px; color: #ffffff; line-height: 1.6; font-weight: 500; }
-        .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .hero {
+            position: relative;
+            color: #ffffff;
+            padding: 40px 20px 64px;
+            min-height: 420px;
+            overflow: hidden;
+            background-color: var(--navy-deep);
+        }
+        .hero-media { position: absolute; inset: 0; z-index: 0; }
+        .hero-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, rgba(10, 22, 40, 0.88) 0%, rgba(10, 22, 40, 0.55) 55%, rgba(10, 22, 40, 0.35) 100%);
+        }
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 28px 40px;
+            align-items: center;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .hero-content { text-align: left; }
+        .hero-logo-side { flex-shrink: 0; align-self: center; }
+        .hero-logo-side img {
+            width: 132px;
+            max-width: 132px;
+            height: auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+        }
+        .hero-eyebrow { letter-spacing: 0.22em; font-size: 1.05rem; font-weight: 800; color: #ffffff; margin: 0 0 10px; }
+        .hero h1 { font-size: clamp(1.85rem, 4.2vw, 2.75rem); margin: 0 0 14px; font-weight: 800; line-height: 1.2; color: #ffffff; }
+        .hero p { font-size: 1.1rem; max-width: 640px; margin: 0 0 28px; color: #ffffff; line-height: 1.6; font-weight: 500; }
+        .hero-btns { display: flex; gap: 14px; justify-content: flex-start; flex-wrap: wrap; }
         .btn-hero-light { background: #ffffff; color: var(--navy); border: 2px solid #ffffff; }
         .btn-hero-accent { background: var(--cyan); color: var(--navy-deep); border: 2px solid var(--cyan); }
         section:not(.hero) { padding: 72px 0; }
@@ -253,7 +286,22 @@
         .float-btn { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.25); text-decoration: none; }
         .float-book { background: var(--cyan); color: var(--navy-deep); font-weight: 800; font-size: 0.65rem; text-align: center; }
         .float-call { background: var(--navy); color: var(--white); font-size: 1.4rem; }
-        @media (max-width: 768px) { body { padding-top: 148px; } .logo-link img { height: 78px; } .nav-links { display: none; } .about-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            body { padding-top: 148px; }
+            .logo-link img { height: 78px; }
+            .nav-links { display: none; }
+            .about-grid { grid-template-columns: 1fr; }
+            .hero { padding: 28px 16px 48px; min-height: 360px; }
+            .hero-inner { grid-template-columns: 1fr; text-align: center; }
+            .hero-content { text-align: center; }
+            .hero-logo-side { justify-self: end; margin-bottom: 4px; }
+            .hero-logo-side img { width: 100px; max-width: 100px; }
+            .hero-btns { justify-content: center; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-video { display: none; }
+            .hero-overlay { background: var(--navy-deep); }
+        }
     </style>
 </head>
 <body>
@@ -276,16 +324,25 @@
     </header>
 
     <section class="hero" id="inicio">
-        <div class="container">
-            <div class="hero-logo-container">
-                <img src="/assets/images/logo-dark.jpg" alt="OXY HYPERBARIC" width="480" height="200">
+        <div class="hero-media" aria-hidden="true">
+            <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/images/facility-1.jpg">
+                <source src="/assets/videos/hero-bg.mov" type="video/quicktime">
+                <source src="https://cdn.durable.co/getty-videos/1ahOcZdN9VhO0SXiJGcVyi45mzBe0Q1v3QRUvvroihMJjpV5yLBNG5XXZmcFXJhh.mov" type="video/quicktime">
+            </video>
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-inner">
+            <div class="hero-content">
+                <p class="hero-eyebrow">RESPIRA. RESTAURA. RENUEVA.</p>
+                <h1>Bienestar Hiperbárico Suave en The Woodlands y Shenandoah</h1>
+                <p>Descubre los beneficios transformadores de la Terapia de Oxígeno Hiperbárico Suave (MHBOT) para mejorar tu bienestar, recuperación y vitalidad — en cámaras aprobadas por la FDA con un equipo certificado.</p>
+                <div class="hero-btns">
+                    <a href="#beneficios" class="btn btn-hero-light">Ver Beneficios</a>
+                    <a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-hero-accent">Reservar Sesión</a>
+                </div>
             </div>
-            <p class="hero-eyebrow">RESPIRA. RESTAURA. RENUEVA.</p>
-            <h1>Bienestar Hiperbárico Suave en The Woodlands y Shenandoah</h1>
-            <p>Descubre los beneficios transformadores de la Terapia de Oxígeno Hiperbárico Suave (MHBOT) para mejorar tu bienestar, recuperación y vitalidad — en cámaras aprobadas por la FDA con un equipo certificado.</p>
-            <div class="hero-btns">
-                <a href="#beneficios" class="btn btn-hero-light">Ver Beneficios</a>
-                <a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-hero-accent">Reservar Sesión</a>
+            <div class="hero-logo-side">
+                <img src="/assets/images/logo-dark.jpg" alt="OXY HYPERBARIC" width="132" height="55">
             </div>
         </div>
     </section>

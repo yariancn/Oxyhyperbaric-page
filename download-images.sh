@@ -35,5 +35,15 @@ download "benefit-anti-aging.jpg" "https://cdn.durable.co/getty/21LgtXsriyI1k8Lf
 download "benefit-sleep.jpg" "https://cdn.durable.co/getty/1dVbkcnnIqB1jwSbDlFSkT4zFkTlGOfzvs3k9tU6UlE7F4hs5IQuodWylif5hRzq.jpeg"
 download "service-healing.jpg" "https://cdn.durable.co/getty/2d6RUmZBjdadHWpRvkEBQHnFAsx2AY92Hnycf6Buy6GhNB8AigkTW9WQkReeNk4F.jpeg"
 
+VIDEOS="$(cd "$(dirname "$0")" && pwd)/assets/videos"
+mkdir -p "$VIDEOS"
+echo "Downloading hero background video..."
+if curl -fsSL -o "$VIDEOS/hero-bg.mov" \
+  "https://cdn.durable.co/getty-videos/1ahOcZdN9VhO0SXiJGcVyi45mzBe0Q1v3QRUvvroihMJjpV5yLBNG5XXZmcFXJhh.mov"; then
+  echo "OK: assets/videos/hero-bg.mov"
+else
+  echo "FAIL: hero-bg.mov — site will use CDN fallback until downloaded"
+fi
+
 echo "---"
-echo "Done. Update index.html facility-grid to use facility-*.jpg when ready."
+echo "Done."
