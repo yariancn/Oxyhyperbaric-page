@@ -209,7 +209,7 @@
             font-size: clamp(1.05rem, 2.8vw, 2rem);
             font-weight: 400;
             letter-spacing: 0.02em;
-            line-height: 1.15;
+            line-height: 1.5;
             color: #ffffff;
             margin: 0 auto 14px;
             text-align: center;
@@ -217,6 +217,7 @@
             width: max-content;
             max-width: none;
         }
+        .hero-eyebrow-break { display: none; }
         .hero h1 {
             font-size: clamp(1.35rem, 2.5vw, 1.85rem);
             margin: 0 auto 12px;
@@ -314,6 +315,13 @@
             .nav-links { display: none; }
             .about-grid { grid-template-columns: 1fr; }
             .hero { padding: 28px 16px 48px; min-height: 360px; }
+            .hero-eyebrow {
+                white-space: normal;
+                width: auto;
+                max-width: 100%;
+                line-height: 1.5;
+            }
+            .hero-eyebrow-break { display: block; }
         }
         @media (prefers-reduced-motion: reduce) {
             .hero-video { display: none; }
@@ -350,7 +358,7 @@
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-inner">
-            <p class="hero-eyebrow">RESPIRA. RESTAURA. RENUEVA.</p>
+            <p class="hero-eyebrow">RESPIRA. RESTAURA.<br class="hero-eyebrow-break" aria-hidden="true"> RENUEVA.</p>
             <h1>Bienestar Hiperbárico Suave en The Woodlands y Shenandoah</h1>
             <p>Descubre los beneficios transformadores de la Terapia de Oxígeno Hiperbárico Suave (MHBOT) para mejorar tu bienestar, recuperación y vitalidad — en cámaras aprobadas por la FDA con un equipo certificado.</p>
             <div class="hero-btns">

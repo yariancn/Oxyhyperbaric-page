@@ -306,7 +306,7 @@
             font-size: clamp(1.05rem, 2.8vw, 2rem);
             font-weight: 400;
             letter-spacing: 0.02em;
-            line-height: 1.15;
+            line-height: 1.5;
             color: #ffffff;
             margin: 0 auto 14px;
             text-align: center;
@@ -314,6 +314,7 @@
             width: max-content;
             max-width: none;
         }
+        .hero-eyebrow-break { display: none; }
         .hero h1 {
             font-size: clamp(1.35rem, 2.5vw, 1.85rem);
             margin: 0 auto 12px;
@@ -441,6 +442,13 @@
             .about-grid { grid-template-columns: 1fr; }
             .pricing-table th, .pricing-table td { padding: 12px 14px; font-size: 0.88rem; }
             .hero { padding: 28px 16px 48px; min-height: 360px; }
+            .hero-eyebrow {
+                white-space: normal;
+                width: auto;
+                max-width: 100%;
+                line-height: 1.5;
+            }
+            .hero-eyebrow-break { display: block; }
         }
         @media (prefers-reduced-motion: reduce) {
             .hero-video { display: none; }
@@ -479,7 +487,7 @@
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-inner">
-            <p class="hero-eyebrow">BREATHE. RESTORE. RENEW.</p>
+            <p class="hero-eyebrow">BREATHE. RESTORE.<br class="hero-eyebrow-break" aria-hidden="true"> RENEW.</p>
             <h1>Mild Hyperbaric Wellness in The Woodlands &amp; Shenandoah</h1>
             <p>Discover the transformative benefits of Mild Hyperbaric Oxygen Therapy (MHBOT) for enhanced wellness, recovery, and vitality — in FDA-approved chambers with a certified team.</p>
             <div class="hero-btns">
