@@ -1,2 +1,10 @@
 /contact /#location 301
 /contact/ /#location 301
+/privacy-policy /privacy-policy.html 200
+/privacy-policy/ /privacy-policy.html 200
+/terms-and-conditions /terms-and-conditions.html 200
+/terms-and-conditions/ /terms-and-conditions.html 200
+/es/politica-de-privacidad /es/politica-de-privacidad.html 200
+/es/politica-de-privacidad/ /es/politica-de-privacidad.html 200
+/es/terminos-y-condiciones /es/terminos-y-condiciones.html 200
+/es/terminos-y-condiciones/ /es/terminos-y-condiciones.html 200
