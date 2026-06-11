@@ -176,6 +176,9 @@
         .btn-lang { padding: 8px 14px; font-size: 0.82rem; background: var(--cream); color: var(--navy); border: 1px solid var(--border); border-radius: 6px; font-weight: 700; text-decoration: none; }
         .hero {
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #ffffff;
             padding: 40px 20px 64px;
             min-height: 420px;
@@ -187,14 +190,18 @@
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(105deg, rgba(10, 22, 40, 0.88) 0%, rgba(10, 22, 40, 0.55) 55%, rgba(10, 22, 40, 0.35) 100%);
+            background: radial-gradient(ellipse at center, rgba(10, 22, 40, 0.42) 0%, rgba(10, 22, 40, 0.78) 100%);
         }
         .hero-inner {
             position: relative;
             z-index: 1;
-            max-width: 820px;
+            width: 100%;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
         }
         .hero-logo-float {
@@ -211,9 +218,35 @@
             border-radius: 8px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
         }
-        .hero-eyebrow { letter-spacing: 0.22em; font-size: 1.05rem; font-weight: 800; color: #ffffff; margin: 0 0 10px; }
-        .hero h1 { font-size: clamp(1.85rem, 4.2vw, 2.75rem); margin: 0 0 14px; font-weight: 800; line-height: 1.2; color: #ffffff; }
-        .hero p { font-size: 1.1rem; max-width: 640px; margin: 0 0 28px; color: #ffffff; line-height: 1.6; font-weight: 500; }
+        .hero-eyebrow {
+            font-family: Zapfino, "Zapfino Linotype One", "Palatino Linotype", Palatino, serif;
+            font-size: clamp(2.4rem, 6.2vw, 4rem);
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            line-height: 1.15;
+            color: #ffffff;
+            margin: 0 auto 14px;
+            text-align: center;
+            max-width: none;
+        }
+        .hero h1 {
+            font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+            margin: 0 auto 12px;
+            font-weight: 700;
+            line-height: 1.25;
+            color: #ffffff;
+            max-width: 720px;
+            text-align: center;
+        }
+        .hero-inner > p:not(.hero-eyebrow) {
+            font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+            max-width: 600px;
+            margin: 0 auto 28px;
+            color: #ffffff;
+            line-height: 1.6;
+            font-weight: 500;
+            text-align: center;
+        }
         .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
         .btn-hero-light { background: #ffffff; color: var(--navy); border: 2px solid #ffffff; }
         .btn-hero-accent { background: var(--cyan); color: var(--navy-deep); border: 2px solid var(--cyan); }
