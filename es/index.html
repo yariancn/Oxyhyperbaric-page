@@ -204,20 +204,6 @@
             align-items: center;
             text-align: center;
         }
-        .hero-logo-float {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 2;
-        }
-        .hero-logo-float img {
-            width: 96px;
-            max-width: 96px;
-            height: auto;
-            display: block;
-            border-radius: 8px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-        }
         .hero-eyebrow {
             font-family: Zapfino, "Zapfino Linotype One", "Palatino Linotype", Palatino, serif;
             font-size: clamp(1.05rem, 2.8vw, 2rem);
@@ -328,8 +314,6 @@
             .nav-links { display: none; }
             .about-grid { grid-template-columns: 1fr; }
             .hero { padding: 28px 16px 48px; min-height: 360px; }
-            .hero-logo-float { top: 12px; right: 12px; }
-            .hero-logo-float img { width: 72px; max-width: 72px; }
         }
         @media (prefers-reduced-motion: reduce) {
             .hero-video { display: none; }
@@ -364,9 +348,6 @@
                 <source src="https://cdn.durable.co/getty-videos/1ahOcZdN9VhO0SXiJGcVyi45mzBe0Q1v3QRUvvroihMJjpV5yLBNG5XXZmcFXJhh.mov" type="video/quicktime">
             </video>
             <div class="hero-overlay"></div>
-        </div>
-        <div class="hero-logo-float">
-            <img src="/assets/images/logo-dark.jpg" alt="OXY HYPERBARIC" width="96" height="40">
         </div>
         <div class="hero-inner">
             <p class="hero-eyebrow">RESPIRA. RESTAURA. RENUEVA.</p>
