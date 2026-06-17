@@ -62,25 +62,33 @@ Mismo proceso que **oxygengdl.com**. Hoy el dominio está en **Namecheap** y apu
 
 ---
 
-### Paso 3 — Conectar dominio al proyecto (Workers & Pages)
+### Paso 3 — Conectar dominio al proyecto (solo Dashboard, sin Wrangler)
 
-1. Cloudflare → **Workers & Pages**
-2. Abre el proyecto **oxyhyperbaric-page** (el conectado a GitHub, **no** el Pages duplicado manual)
-3. **Settings** → **Domains & Routes** (o **Custom domains**)
-4. **Add custom domain**:
-   - `oxyhyperbaric.com`
-   - `www.oxyhyperbaric.com`
-5. Cloudflare creará automáticamente los registros DNS (CNAME / A) hacia el Worker
-6. En **DNS** → **Records**, verifica:
-   - Registros del proyecto **oxyhyperbaric-page** → **Proxied** (nube naranja)
-   - **Borra** registros viejos de Canva (A, CNAME o ANAME hacia `canva.site`, `cname.canva.com`, etc.)
+Igual que OXYGENGDL: todo desde https://dash.cloudflare.com — **no** hace falta terminal ni Wrangler.
 
-Registros típicos después del cutover (Cloudflare los crea solo):
+1. Menú lateral → **Workers & Pages**
+2. Abre **oxyhyperbaric-page** (conectado a GitHub `yariancn/Oxyhyperbaric-page`)
+3. Pestaña **Settings** → **Domains & Routes** → **Add custom domain**
+4. Agrega: `oxyhyperbaric.com` y luego `www.oxyhyperbaric.com`
+5. Cloudflare creará los registros DNS del sitio nuevo automáticamente
 
-| Type | Name | Content | Proxy |
-|------|------|---------|-------|
-| CNAME | `@` o A flatten | Worker/Pages target | Proxied |
-| CNAME | `www` | `oxyhyperbaric.com` o target del proyecto | Proxied |
+### Paso 3b — Limpiar DNS (pantalla que tienes abierta: DNS → Records)
+
+**Tu DNS hoy (11 registros) — qué tocar:**
+
+| Registro | Acción |
+|----------|--------|
+| **A** `oxyhyperbaric.com` → `162.255.119.122` (Proxied) | **BORRAR** — apunta al hosting viejo (Durable) |
+| **A** `oxyhyperbaric.com` → `172.66.0.42` (Proxied) | **BORRAR** — conflicto con el sitio viejo |
+| **CNAME** `_acme-challenge` | Dejar (certificados SSL) |
+| **CNAME** `autoconfig` / `autodiscover` / `mail` → `privateemail.com` | **NO BORRAR** — correo Namecheap |
+| **MX** → `mx1` / `mx2.privateemail.com` | **NO BORRAR** — correo |
+| **SRV** `_autodiscover._tcp` | **NO BORRAR** — correo |
+| **TXT** SPF y DKIM (`default._domainkey`) | **NO BORRAR** — correo |
+
+Después de agregar el custom domain en el Paso 3, en DNS deberías ver **nuevos** registros hacia `oxyhyperbaric-page` (Workers). Solo entonces borra los dos **A** viejos.
+
+**No borres nada de email** (`privateemail.com`, MX, TXT).
 
 ---
 
@@ -183,11 +191,9 @@ Comprobar en Google: `site:oxyhyperbaric.com` — debe mostrar solo el sitio Clo
 
 ---
 
-## Deploy manual (solo emergencia)
+## Deploy
 
-```bash
-bash deploy.sh
-```
+Solo **git push** a `main` — Cloudflare despliega solo (como OXYGENGDL). No uses Wrangler ni `deploy.sh` salvo emergencia.
 
 ## Imágenes adicionales desde Durable
 
