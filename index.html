@@ -194,7 +194,7 @@
               "name": "Does OxyHyperbaric offer hyperbaric therapy for post-surgical recovery?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. OxyHyperbaric in Shenandoah, Texas provides mild hyperbaric oxygen therapy (MHBOT) wellness sessions that support post-surgical recovery and healing wellness goals in FDA-approved chambers."
+                "text": "Yes. OxyHyperbaric in Shenandoah, Texas provides mild hyperbaric oxygen therapy (MHBOT) wellness sessions that support post-surgical recovery and wellness goals in FDA-approved chambers."
               }
             },
             {
@@ -250,7 +250,10 @@
         .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: var(--white); border-bottom: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
         body { padding-top: 118px; }
         .nav-wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 20px; max-width: 1140px; margin: 0 auto; flex-wrap: wrap; }
+        .logo-block { display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0; line-height: 1.2; }
+        .logo-link { display: block; text-decoration: none; }
         .logo-link img { height: 104px; width: auto; max-width: 280px; }
+        .logo-tagline { display: block; font-size: 0.68rem; font-weight: 500; color: var(--muted); letter-spacing: 0.04em; margin-top: -2px; padding-left: 3px; }
         .nav-links { display: flex; align-items: center; gap: 6px 18px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
         .nav-links a { text-decoration: none; color: var(--navy); font-weight: 600; font-size: 0.88rem; white-space: nowrap; }
         .nav-links a:hover { color: var(--cyan); }
@@ -428,7 +431,6 @@
         .footer-grid a:hover { color: var(--cyan-light); }
         .footer-logo { height: 56px; margin-bottom: 12px; }
         .footer-legal { text-align: center; padding: 14px 20px 0; font-size: 0.85rem; color: #a8b8c8; }
-        .footer-dba { text-align: center; padding: 10px 20px 0; font-size: 0.82rem; color: #9fb0c0; margin: 0; }
         .footer-legal a { color: var(--cyan-light); text-decoration: none; display: inline; }
         .footer-legal a:hover { text-decoration: underline; }
         .disclaimer { text-align: center; font-size: 0.78rem; color: #8fa3b8; padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); line-height: 1.55; max-width: 900px; margin: 0 auto; }
@@ -442,6 +444,7 @@
         @media (max-width: 768px) {
             body { padding-top: 148px; }
             .logo-link img { height: 78px; }
+            .logo-tagline { font-size: 0.62rem; margin-top: 0; padding-left: 2px; }
             .nav-links { display: none; }
             .about-grid { grid-template-columns: 1fr; }
             .pricing-table th, .pricing-table td { padding: 12px 14px; font-size: 0.88rem; }
@@ -463,9 +466,12 @@
 <body>
     <header class="site-header">
         <div class="nav-wrap">
-            <a href="#home" class="logo-link" aria-label="OxyHyperbaric home">
-                <img src="/assets/images/logo-light.jpg" alt="OxyHyperbaric logo" width="280" height="104">
-            </a>
+            <div class="logo-block">
+                <a href="#home" class="logo-link" aria-label="OxyHyperbaric home">
+                    <img src="/assets/images/logo-light.jpg" alt="OxyHyperbaric logo" width="280" height="104">
+                </a>
+                <span class="logo-tagline">by Regenoxy</span>
+            </div>
             <ul class="nav-links">
                 <li><a href="#services">Services</a></li>
                 <li><a href="#specialties">Specialties</a></li>
@@ -504,7 +510,7 @@
     <section id="about">
         <div class="container about-grid">
             <div>
-                <h2>Your Hyperbaric Wellness Home Near Houston</h2>
+                <h2>Your Hyperbaric Wellness Home in The Woodlands</h2>
                 <p>At OxyHyperbaric, nestled in Shenandoah, Texas, we are dedicated to enhancing well-being through advanced mild hyperbaric oxygen therapy. Our mission is to provide the best MHBOT solutions for a variety of wellness needs.</p>
                 <p>Emphasizing safety and comfort, our FDA-approved chambers are staffed by experienced professionals committed to delivering personalized care. Whether you're seeking faster recovery or exploring new wellness avenues, OxyHyperbaric is here to guide your journey.</p>
                 <ul class="feature-list">
@@ -527,17 +533,17 @@
             <p class="section-sub">Personalized mild hyperbaric oxygen therapy designed to support your unique wellness goals.</p>
             <div class="grid-treatments">
                 <article class="card-treatment">
-                    <img class="treatment-image" src="/assets/images/treatments/IMAGEN-CIRUGIA.jpg" alt="Advanced healing hyperbaric session" loading="lazy">
+                    <img class="treatment-image" src="/assets/images/treatments/IMAGEN-CIRUGIA.jpg" alt="Advanced recovery hyperbaric session" loading="lazy">
                     <div class="treatment-content">
-                        <h3>Advanced Healing Sessions</h3>
-                        <p>Our sessions use mild hyperbaric oxygen therapy to promote faster recovery. Increased oxygen levels support healing and improve overall wellness.</p>
+                        <h3>Advanced Recovery Sessions</h3>
+                        <p>Our sessions use mild hyperbaric oxygen therapy to promote faster recovery. Increased oxygen levels support tissue recovery and improve overall wellness.</p>
                     </div>
                 </article>
                 <article class="card-treatment">
                     <img class="treatment-image" src="/assets/images/oxygen-enrichment.jpg" alt="Oxygen enrichment therapy in hyperbaric chamber" loading="lazy">
                     <div class="treatment-content">
                         <h3>Oxygen Enrichment Therapy</h3>
-                        <p>Boost your body's natural healing processes with concentrated oxygen treatments in a comfortable, supervised environment.</p>
+                        <p>Boost your body's natural recovery processes with concentrated oxygen treatments in a comfortable, supervised environment.</p>
                     </div>
                 </article>
                 <article class="card-treatment">
@@ -617,7 +623,7 @@
             <div class="specialty-grid">
                 <article class="specialty-card">
                     <h3>Post-Surgical Recovery Wellness</h3>
-                    <p>Supervised MHBOT sessions in FDA-approved chambers that support healing and recovery wellness goals after surgery.</p>
+                    <p>Supervised MHBOT sessions in FDA-approved chambers that support post-surgical recovery and wellness goals after surgery.</p>
                 </article>
                 <article class="specialty-card">
                     <h3>Stroke Recovery Wellness Support</h3>
@@ -769,7 +775,7 @@
                 </div>
                 <div class="faq-item">
                     <h3>Does OxyHyperbaric offer hyperbaric therapy for post-surgical recovery?</h3>
-                    <p>Yes. We provide mild hyperbaric oxygen therapy (MHBOT) wellness sessions that support post-surgical recovery and healing wellness goals in FDA-approved chambers.</p>
+                    <p>Yes. We provide mild hyperbaric oxygen therapy (MHBOT) wellness sessions that support post-surgical recovery and wellness goals in FDA-approved chambers.</p>
                 </div>
                 <div class="faq-item">
                     <h3>Can hyperbaric wellness support stroke recovery goals?</h3>
@@ -838,7 +844,6 @@
         <p class="footer-legal">
             <a href="/privacy-policy">Privacy Policy</a> · <a href="/terms-and-conditions">Terms &amp; Conditions</a>
         </p>
-        <p class="footer-dba">REGENOXY LLC d/b/a OxyHyperbaric</p>
         <p class="disclaimer">
             <strong>Wellness Disclaimer:</strong> Mild Hyperbaric Oxygen Therapy (MHBOT) is provided for general wellness and relaxation purposes only. It is not intended to diagnose, treat, cure, or prevent any disease or medical condition. The FDA has cleared hyperbaric chambers only for specific medical uses under physician supervision in accredited facilities — wellness applications are off-label and not FDA-evaluated for these benefits. Results may vary; these statements have not been evaluated by the FDA. <strong>Medical Director: Dr. James Hill.</strong>
         </p>

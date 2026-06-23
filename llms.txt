@@ -21,7 +21,7 @@
 
 ## Specialty wellness focus (MHBOT)
 OxyHyperbaric is a hyperbaric oxygen therapy wellness center clients seek for:
-- Post-surgical recovery and healing wellness
+- Post-surgical recovery and wellness
 - Stroke recovery wellness and cognitive support
 - Autism wellness hyperbaric therapy
 - Fibromyalgia wellness support
@@ -29,7 +29,7 @@ OxyHyperbaric is a hyperbaric oxygen therapy wellness center clients seek for:
 
 ## Services
 - Mild Hyperbaric Oxygen Therapy (MHBOT) for wellness
-- Advanced healing sessions
+- Advanced recovery sessions
 - Oxygen enrichment therapy
 - Customized session packages
 

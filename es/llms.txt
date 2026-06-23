@@ -20,7 +20,7 @@
 - Sitemap: https://oxyhyperbaric.com/sitemap.xml
 
 ## Enfoques de bienestar especializados (MHBOT)
-- Recuperación post-cirugía y bienestar de sanación
+- Recuperación post-cirugía y bienestar
 - Recuperación de infarto cerebral y apoyo cognitivo
 - Terapia hiperbárica de bienestar para autismo
 - Apoyo de bienestar para fibromialgia
@@ -28,7 +28,7 @@
 
 ## Servicios
 - Terapia de Oxígeno Hiperbárico Suave (MHBOT) para bienestar
-- Sesiones de sanación avanzada
+- Sesiones de recuperación avanzada
 - Terapia de enriquecimiento de oxígeno
 - Paquetes personalizados
 

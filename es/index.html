@@ -161,7 +161,10 @@
         .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: var(--white); border-bottom: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
         body { padding-top: 118px; }
         .nav-wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 20px; max-width: 1140px; margin: 0 auto; flex-wrap: wrap; }
+        .logo-block { display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0; line-height: 1.2; }
+        .logo-link { display: block; text-decoration: none; }
         .logo-link img { height: 104px; width: auto; max-width: 280px; }
+        .logo-tagline { display: block; font-size: 0.68rem; font-weight: 500; color: var(--muted); letter-spacing: 0.04em; margin-top: -2px; padding-left: 3px; }
         .nav-links { display: flex; align-items: center; gap: 6px 18px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
         .nav-links a { text-decoration: none; color: var(--navy); font-weight: 600; font-size: 0.88rem; white-space: nowrap; }
         .nav-links a:hover { color: var(--cyan); }
@@ -305,7 +308,6 @@
         .footer-grid h4 { color: var(--cyan-light); margin: 0 0 12px; }
         .footer-grid p, .footer-grid a { color: #c8d6e5; margin: 6px 0; text-decoration: none; display: block; }
         .footer-legal { text-align: center; padding: 14px 20px 0; font-size: 0.85rem; color: #a8b8c8; }
-        .footer-dba { text-align: center; padding: 10px 20px 0; font-size: 0.82rem; color: #9fb0c0; margin: 0; }
         .footer-legal a { color: var(--cyan-light); text-decoration: none; display: inline; }
         .footer-legal a:hover { text-decoration: underline; }
         .disclaimer { text-align: center; font-size: 0.78rem; color: #8fa3b8; padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); line-height: 1.55; max-width: 900px; margin: 0 auto; }
@@ -316,6 +318,7 @@
         @media (max-width: 768px) {
             body { padding-top: 148px; }
             .logo-link img { height: 78px; }
+            .logo-tagline { font-size: 0.62rem; margin-top: 0; padding-left: 2px; }
             .nav-links { display: none; }
             .about-grid { grid-template-columns: 1fr; }
             .hero { padding: 28px 16px 48px; min-height: 360px; }
@@ -336,7 +339,12 @@
 <body>
     <header class="site-header">
         <div class="nav-wrap">
-            <a href="#inicio" class="logo-link"><img src="/assets/images/logo-light.jpg" alt="OxyHyperbaric" width="280" height="104"></a>
+            <div class="logo-block">
+                <a href="#inicio" class="logo-link" aria-label="OxyHyperbaric inicio">
+                    <img src="/assets/images/logo-light.jpg" alt="OxyHyperbaric" width="280" height="104">
+                </a>
+                <span class="logo-tagline">by Regenoxy</span>
+            </div>
             <ul class="nav-links">
                 <li><a href="#servicios">Servicios</a></li>
                 <li><a href="#especialidades">Especialidades</a></li>
@@ -396,12 +404,12 @@
             <p class="section-sub">Terapia personalizada de oxígeno hiperbárico suave para tus objetivos de bienestar.</p>
             <div class="grid-treatments">
                 <article class="card-treatment">
-                    <img class="treatment-image" src="/assets/images/treatments/IMAGEN-CIRUGIA.jpg" alt="Sesiones de sanación avanzada">
-                    <div class="treatment-content"><h3>Sesiones de Sanación Avanzada</h3><p>Sesiones que promueven una recuperación más rápida con mayores niveles de oxígeno para apoyar la sanación y el bienestar general.</p></div>
+                    <img class="treatment-image" src="/assets/images/treatments/IMAGEN-CIRUGIA.jpg" alt="Sesiones de recuperación avanzada">
+                    <div class="treatment-content"><h3>Sesiones de Recuperación Avanzada</h3><p>Sesiones que promueven una recuperación más rápida con mayores niveles de oxígeno para apoyar la recuperación y el bienestar general.</p></div>
                 </article>
                 <article class="card-treatment">
                     <img class="treatment-image" src="/assets/images/oxygen-enrichment.jpg" alt="Terapia de enriquecimiento de oxígeno">
-                    <div class="treatment-content"><h3>Terapia de Enriquecimiento de Oxígeno</h3><p>Potencia los procesos naturales de sanación de tu cuerpo con tratamientos de oxígeno concentrado.</p></div>
+                    <div class="treatment-content"><h3>Terapia de Enriquecimiento de Oxígeno</h3><p>Potencia los procesos naturales de recuperación de tu cuerpo con tratamientos de oxígeno concentrado.</p></div>
                 </article>
                 <article class="card-treatment">
                     <img class="treatment-image" src="/assets/images/facility-3.jpg" alt="Planes personalizados">
@@ -441,7 +449,7 @@
             <div class="specialty-grid">
                 <article class="specialty-card">
                     <h3>Recuperación Post-Cirugía</h3>
-                    <p>Sesiones MHBOT supervisadas en cámaras aprobadas por la FDA que apoyan la sanación y recuperación después de cirugía.</p>
+                    <p>Sesiones MHBOT supervisadas en cámaras aprobadas por la FDA que apoyan la recuperación y el bienestar después de cirugía.</p>
                 </article>
                 <article class="specialty-card">
                     <h3>Recuperación de Infarto Cerebral</h3>
@@ -577,7 +585,6 @@
         <p class="footer-legal">
             <a href="/es/politica-de-privacidad">Política de Privacidad</a> · <a href="/es/terminos-y-condiciones">Términos y Condiciones</a>
         </p>
-        <p class="footer-dba">REGENOXY LLC d/b/a OxyHyperbaric</p>
         <p class="disclaimer">
             <strong>Aviso de bienestar:</strong> La Terapia de Oxígeno Hiperbárico Suave (MHBOT) se ofrece solo para bienestar general y relajación. No pretende diagnosticar, tratar, curar ni prevenir enfermedades. La FDA ha aprobado cámaras hiperbáricas solo para usos médicos específicos bajo supervisión médica — las aplicaciones de bienestar son off-label. Los resultados pueden variar. <strong>Director Médico: Dr. James Hill.</strong>
         </p>
