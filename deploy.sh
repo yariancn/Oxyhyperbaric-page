@@ -1,6 +1,6 @@
 #!/bin/bash
-# Deploy OxyHyperbaric to Cloudflare Pages (direct upload)
-# Requiere: npx wrangler login (una vez)
+# DEPRECATED: Este script desplegaba al proyecto Pages duplicado (ya eliminado).
+# Usa: npx wrangler deploy
 set -e
 cd "$(dirname "$0")"
 PROJECT_NAME="${1:-oxyhyperbaric-page}"

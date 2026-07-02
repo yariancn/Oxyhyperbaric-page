@@ -1,17 +1,31 @@
 # OxyHyperbaric — Deploy & SEO
 
-## Deploy automático (conectado a Git)
+## Deploy automático
 
-Proyecto activo: **oxyhyperbaric-page** (Worker con Git)  
+Proyecto activo: **oxyhyperbaric-page** (Cloudflare Worker)  
 URL staging: https://oxyhyperbaric-page.yarianc.workers.dev  
+Dominio: `oxyhyperbaric.com` y `www.oxyhyperbaric.com`  
 Repo: **yariancn/Oxyhyperbaric-page** · branch **main**
 
-Cada `git push` a `main` despliega automáticamente — igual que OXYGENGDL.
+Cada `git push` a `main` dispara **GitHub Actions** (`.github/workflows/deploy.yml`) que ejecuta `npx wrangler deploy`.
 
-### Proyecto Pages duplicado (ignorar)
+### Secretos requeridos en GitHub (una sola vez)
 
-`oxyhyperbaric-page.pages.dev` fue creado con `deploy.sh` (upload manual) y **no tiene Git**.
-No usarlo. Opcional: borrarlo en Cloudflare para evitar confusión.
+En https://github.com/yariancn/Oxyhyperbaric-page/settings/secrets/actions:
+
+| Secreto | Valor |
+|---------|-------|
+| `CLOUDFLARE_API_TOKEN` | Token de API con permiso **Workers Scripts → Edit** ([crear aquí](https://dash.cloudflare.com/profile/api-tokens)) |
+
+### Proyecto Pages duplicado (eliminado)
+
+El proyecto Pages `oxyhyperbaric-page` (creado con `deploy.sh`, sin Git) fue **eliminado** el 2 jul 2026. Solo queda el Worker con el dominio.
+
+### Deploy manual (solo emergencia)
+
+```bash
+npx wrangler deploy
+```
 
 ---
 
@@ -193,7 +207,7 @@ Comprobar en Google: `site:oxyhyperbaric.com` — debe mostrar solo el sitio Clo
 
 ## Deploy
 
-Solo **git push** a `main` — Cloudflare despliega solo (como OXYGENGDL). No uses Wrangler ni `deploy.sh` salvo emergencia.
+Solo **git push** a `main` — GitHub Actions despliega al Worker automáticamente. Emergencia: `npx wrangler deploy`.
 
 ## Imágenes adicionales desde Durable
 
