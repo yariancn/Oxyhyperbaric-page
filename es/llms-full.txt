@@ -1,12 +1,13 @@
 # OxyHyperbaric — Referencia Completa para LLM (Español)
 
-> OxyHyperbaric | Terapia de Bienestar Hiperbárica Suave en The Woodlands y Shenandoah, TX
+> OxyHyperbaric | Terapia Hiperbárica Suave de Bienestar y Longevidad en The Woodlands y Shenandoah, TX
 > Sitio: https://oxyhyperbaric.com/es/ | Inglés: https://oxyhyperbaric.com/
 > Índice corto: https://oxyhyperbaric.com/es/llms.txt
 
 ## Identidad del negocio
 - Nombre: OxyHyperbaric (OXY HYPERBARIC)
-- Tipo: Centro de terapia de oxígeno hiperbárico suave (MHBOT) para bienestar
+- Tipo: Centro de terapia de oxígeno hiperbárico suave (MHBOT) de bienestar y longevidad
+- También: centro de bienestar hiperbárico Y centro de longevidad (bienestar + longevidad)
 - Dirección: 256 Ed English Dr Bldg 4, Ste. E, Shenandoah, TX 77384
 - Área de servicio: The Woodlands, Shenandoah, Houston, Texas
 - Teléfono: (713) 591-3379
@@ -19,12 +20,12 @@
 ## Eslogan
 RESPIRA. RESTAURA. RENUEVA.
 
-## Programas de bienestar especializados
+## Programas de bienestar y longevidad especializados
 1. Recuperación Post-Cirugía
 2. Recuperación de Infarto Cerebral
-3. Bienestar en Autismo
+3. Bienestar y Longevidad en Autismo
 4. Apoyo para Fibromialgia
-5. Bienestar en Diabetes y Vitalidad
+5. Bienestar y Longevidad en Diabetes y Vitalidad
 
 ## Precios (USD, + 8.25% impuesto TX)
 | Paquete | Precio |
@@ -37,7 +38,7 @@ RESPIRA. RESTAURA. RENUEVA.
 James Bittick, Sara Campus, Ken McCleary — todas 5 estrellas. Ver en Google Maps.
 
 ## Aviso
-MHBOT solo para bienestar general y relajación. No diagnostica, trata, cura ni previene enfermedades.
+MHBOT solo para bienestar y longevidad general y relajación. No diagnostica, trata, cura ni previene enfermedades.
 
 ## Enlaces
 - Facebook: https://facebook.com/oxyhyperbaric
