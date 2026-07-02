@@ -23,6 +23,13 @@
     <priority>0.4</priority>
   </url>
   <url>
+    <loc>https://oxyhyperbaric.com/politica-de-privacidad</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oxyhyperbaric.com/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://oxyhyperbaric.com/es/politica-de-privacidad"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
     <loc>https://oxyhyperbaric.com/es/politica-de-privacidad</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oxyhyperbaric.com/privacy-policy"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://oxyhyperbaric.com/es/politica-de-privacidad"/>
@@ -31,6 +38,13 @@
   </url>
   <url>
     <loc>https://oxyhyperbaric.com/terms-and-conditions</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oxyhyperbaric.com/terms-and-conditions"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://oxyhyperbaric.com/es/terminos-y-condiciones"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://oxyhyperbaric.com/terminos-y-condiciones</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oxyhyperbaric.com/terms-and-conditions"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://oxyhyperbaric.com/es/terminos-y-condiciones"/>
     <changefreq>yearly</changefreq>
