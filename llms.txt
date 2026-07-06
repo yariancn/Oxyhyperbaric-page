@@ -16,14 +16,16 @@
 ## Key pages
 - Home (English): https://oxyhyperbaric.com/
 - Home (Spanish): https://oxyhyperbaric.com/es/
+- Red Light Body Reset (InfraBaldan): https://oxyhyperbaric.com/infrabaldan/
 - Booking: https://oxy-agenda.vercel.app/booking/us
+- Red Light booking (direct): https://oxy-agenda.vercel.app/booking/us?service=InfraBaldan
 - Google Maps: https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z/data=!3m1!4b1!4m6!3m5!1s0x8647379e396ac7f5:0x36c408d48a1d202d!8m2!3d30.189074!4d-95.44999!16s%2Fg%2F11ynbr0_rr?entry=ttu
 - Sitemap: https://oxyhyperbaric.com/sitemap.xml
 
 ## Center identity (SEO / AI)
 - Business type: hyperbaric wellness center AND longevity center
 - Brand positioning: wellness & longevity (combined)
-- Location keywords: wellness center Shenandoah TX, longevity center The Woodlands TX, hyperbaric longevity Houston area
+- Location keywords: wellness center Shenandoah TX, longevity center The Woodlands TX, hyperbaric longevity Houston area, red light weight loss Shenandoah, InfraBaldan Houston metro
 
 ## Specialty wellness focus (MHBOT)
 OxyHyperbaric is a hyperbaric oxygen therapy wellness & longevity center clients seek for:
@@ -35,9 +37,14 @@ OxyHyperbaric is a hyperbaric oxygen therapy wellness & longevity center clients
 
 ## Services
 - Mild Hyperbaric Oxygen Therapy (MHBOT) for wellness & longevity
+- InfraBaldan Red Light Body Reset — weight loss & body composition (40 min)
 - Advanced recovery sessions
 - Oxygen enrichment therapy
 - Customized session packages
+
+## Red Light pricing (USD)
+- First visit intro: $49 (reg. $95/session)
+- Landing page: https://oxyhyperbaric.com/infrabaldan/
 
 ## Pricing (USD, + 8.25% TX sales tax at checkout)
 - 1 introductory session: $115

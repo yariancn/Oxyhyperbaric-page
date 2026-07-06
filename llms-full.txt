@@ -16,6 +16,8 @@
 - Certifications: FDA-approved chambers, IBUM-certified technicians
 - Hours: Monday–Friday 7:30 AM – 8:00 PM; Saturday and Sunday closed
 - Booking: Required — https://oxy-agenda.vercel.app/booking/us
+- Red Light (InfraBaldan) landing: https://oxyhyperbaric.com/infrabaldan/
+- Red Light direct booking: https://oxy-agenda.vercel.app/booking/us?service=InfraBaldan
 
 ## Tagline
 BREATHE. RESTORE. RENEW.
@@ -34,6 +36,12 @@ At OxyHyperbaric in Shenandoah, Texas, we enhance well-being through advanced mi
 - Advanced Recovery Sessions
 - Oxygen Enrichment Therapy
 - Customized Plans / session packages
+- **InfraBaldan Red Light Body Reset** — 40-min active infrared cabin for weight loss & body composition (landing: https://oxyhyperbaric.com/infrabaldan/)
+
+## Red Light Body Reset pricing (USD, new patients)
+| Offer | Price |
+| First visit intro (scan + session + plan) | $49 |
+| Regular session | $95 |
 
 ## Pricing (USD, + 8.25% Texas sales tax at checkout)
 | Package | Price |
