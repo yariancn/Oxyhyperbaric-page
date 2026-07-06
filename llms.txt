@@ -46,7 +46,7 @@ OxyHyperbaric is a hyperbaric oxygen therapy wellness & longevity center clients
 - First visit intro: $49 (reg. $95/session)
 - Landing page: https://oxyhyperbaric.com/infrabaldan/
 
-## Pricing (USD, + 8.25% TX sales tax at checkout)
+## Pricing (USD)
 - 1 introductory session: $95
 - 5 sessions: $450
 - 10 sessions: $750

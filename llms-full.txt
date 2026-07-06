@@ -43,7 +43,7 @@ At OxyHyperbaric in Shenandoah, Texas, we enhance well-being through advanced mi
 | First visit intro (scan + session + plan) | $49 |
 | Regular session | $95 |
 
-## Pricing (USD, + 8.25% Texas sales tax at checkout)
+## Pricing (USD)
 | Package | Price |
 | Introductory 1 session | $95 |
 | Standard 5 sessions | $450 |
@@ -70,7 +70,7 @@ Q: Where is OxyHyperbaric located?
 A: 256 Ed English Dr Bldg 4, Ste. E, Shenandoah, TX 77384 — serving The Woodlands and Houston area.
 
 Q: How much does a session cost?
-A: $95 intro, $450 (5), $750 (10), $1,400 (20) + 8.25% TX tax.
+A: $95 intro, $450 (5), $750 (10), $1,400 (20).
 
 Q: How do I book?
 A: Online at https://oxy-agenda.vercel.app/booking/us or call (713) 591-3379. Booking required.

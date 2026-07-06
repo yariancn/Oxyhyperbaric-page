@@ -67,7 +67,10 @@
             "Stroke recovery wellness support",
             "Autism wellness hyperbaric therapy",
             "Fibromyalgia wellness support",
-            "Diabetes wellness support"
+            "Diabetes wellness support",
+            "Weight loss wellness",
+            "Red light therapy",
+            "InfraBaldan body reset"
           ],
           "telephone": "+1-713-591-3379",
           "email": "hello@oxyhyperbaric.com",
@@ -182,7 +185,7 @@
               "name": "How much does a hyperbaric session cost?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Introductory session: $95. 5 sessions: $450. 10 sessions: $750. 20 sessions: $1,400. All prices subject to 8.25% Texas sales tax at checkout."
+                "text": "Introductory session: $95. 5 sessions: $450. 10 sessions: $750. 20 sessions: $1,400."
               }
             },
             {
@@ -394,8 +397,6 @@
         .pricing-table td { padding: 18px 20px; border-bottom: 1px solid var(--border); color: var(--forest); }
         .pricing-table tr:last-child td { border-bottom: none; }
         .price-val { font-size: 1.35rem; font-weight: 800; color: var(--navy); white-space: nowrap; }
-        .tax-note { text-align: center; margin-top: 16px; font-size: 0.88rem; color: var(--muted); }
-
         .google-reviews-box { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 36px 28px; box-shadow: var(--shadow); }
         .google-reviews-head { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
         .google-reviews-head img { height: 22px; width: auto; }
@@ -425,6 +426,12 @@
         .specialty-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 22px; box-shadow: var(--shadow); }
         .specialty-card h3 { margin: 0 0 10px; color: var(--navy); font-size: 1.05rem; }
         .specialty-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+        .specialty-card--visual { padding: 0; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .specialty-card--visual:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(18, 38, 71, 0.16); }
+        .specialty-card--visual a { display: block; text-decoration: none; color: inherit; }
+        .specialty-card--visual .specialty-image { width: 100%; height: 195px; object-fit: cover; display: block; background: var(--cream); }
+        .specialty-card--visual h3 { margin: 0; padding: 18px 22px 22px; color: var(--navy); font-size: 1.05rem; line-height: 1.35; }
+        .specialty-card--visual .specialty-tag { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
 
         .faq-list { max-width: 800px; margin: 0 auto; }
         .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 14px; }
@@ -638,9 +645,15 @@
     <section id="specialties">
         <div class="container">
             <p class="section-label">Wellness Focus</p>
-            <h2 class="section-title">Specialty Wellness Programs (MHBOT)</h2>
-            <p class="section-sub">OxyHyperbaric in Shenandoah, Texas is a mild hyperbaric oxygen therapy wellness & longevity center clients seek for these focused wellness goals. Sessions are for general wellness only — not medical treatment.</p>
+            <h2 class="section-title">Specialty Wellness Programs</h2>
+            <p class="section-sub">OxyHyperbaric in Shenandoah, Texas is a wellness & longevity center clients seek for these focused goals — including weight loss with InfraBaldan red light and mild hyperbaric oxygen therapy (MHBOT). Sessions are for general wellness only — not medical treatment.</p>
             <div class="specialty-grid">
+                <article class="specialty-card specialty-card--visual">
+                    <a href="/infrabaldan/">
+                        <img class="specialty-image" src="/assets/images/infrabaldan/library/brand-hero-poster.jpg" alt="InfraBaldan red light weight loss program at OxyHyperbaric Shenandoah Texas" loading="lazy" width="600" height="395">
+                        <h3><span class="specialty-tag">Weight Loss</span>Red Light Body Reset · InfraBaldan</h3>
+                    </a>
+                </article>
                 <article class="specialty-card">
                     <h3>Post-Surgical Recovery Wellness</h3>
                     <p>Supervised MHBOT sessions in FDA-approved chambers that support post-surgical recovery and wellness goals after surgery.</p>
@@ -714,7 +727,6 @@
                     </tr>
                 </tbody>
             </table>
-            <p class="tax-note">All prices subject to 8.25% Texas sales tax. Tax applied at checkout.</p>
         </div>
     </section>
 
@@ -787,7 +799,7 @@
                 </div>
                 <div class="faq-item">
                     <h3>How much does a hyperbaric session cost?</h3>
-                    <p>Introductory session: $95. 5 sessions: $450. 10 sessions: $750. 20 sessions: $1,400. All prices subject to 8.25% Texas sales tax at checkout.</p>
+                    <p>Introductory session: $95. 5 sessions: $450. 10 sessions: $750. 20 sessions: $1,400.</p>
                 </div>
                 <div class="faq-item">
                     <h3>How do I book a session?</h3>

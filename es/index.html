@@ -107,7 +107,7 @@
               "name": "¿Cuánto cuesta una sesión hiperbárica?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Sesión introductoria: $95. 5 sesiones: $450. 10 sesiones: $750. 20 sesiones: $1,400. Todos los precios sujetos a 8.25% de impuesto de ventas de Texas al pagar."
+                "text": "Sesión introductoria: $95. 5 sesiones: $450. 10 sesiones: $750. 20 sesiones: $1,400."
               }
             },
             {
@@ -289,7 +289,6 @@
         .pricing-table th { background: var(--navy); color: var(--white); padding: 16px 20px; text-align: left; }
         .pricing-table td { padding: 18px 20px; border-bottom: 1px solid var(--border); }
         .price-val { font-size: 1.35rem; font-weight: 800; color: var(--navy); }
-        .tax-note { text-align: center; margin-top: 16px; font-size: 0.88rem; color: var(--muted); }
         .google-reviews-box { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 36px 28px; box-shadow: var(--shadow); }
         .google-reviews-head { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
         .google-reviews-head img { height: 22px; width: auto; }
@@ -318,6 +317,12 @@
         .specialty-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 22px; box-shadow: var(--shadow); }
         .specialty-card h3 { margin: 0 0 10px; color: var(--navy); font-size: 1.05rem; }
         .specialty-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+        .specialty-card--visual { padding: 0; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .specialty-card--visual:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(18, 38, 71, 0.16); }
+        .specialty-card--visual a { display: block; text-decoration: none; color: inherit; }
+        .specialty-card--visual .specialty-image { width: 100%; height: 195px; object-fit: cover; display: block; background: var(--cream); }
+        .specialty-card--visual h3 { margin: 0; padding: 18px 22px 22px; color: var(--navy); font-size: 1.05rem; line-height: 1.35; }
+        .specialty-card--visual .specialty-tag { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
         .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 14px; max-width: 800px; margin-left: auto; margin-right: auto; }
         .faq-item h3 { margin: 0 0 8px; color: var(--navy); }
         .faq-item p { margin: 0; color: var(--muted); }
@@ -469,9 +474,15 @@
     <section id="especialidades">
         <div class="container">
             <p class="section-label">Enfoque de Bienestar</p>
-            <h2 class="section-title">Programas de Bienestar Especializados (MHBOT)</h2>
-            <p class="section-sub">OxyHyperbaric en Shenandoah, Texas es un centro de terapia hiperbárica suave de bienestar y longevidad que los clientes buscan para estos objetivos de bienestar. Las sesiones son solo para bienestar general — no tratamiento médico.</p>
+            <h2 class="section-title">Programas de Bienestar Especializados</h2>
+            <p class="section-sub">OxyHyperbaric en Shenandoah, Texas es un centro de bienestar y longevidad que los clientes buscan para estos objetivos — incluyendo pérdida de peso con red light InfraBaldan y oxigenoterapia hiperbárica suave (MHBOT). Las sesiones son solo para bienestar general — no tratamiento médico.</p>
             <div class="specialty-grid">
+                <article class="specialty-card specialty-card--visual">
+                    <a href="/infrabaldan/">
+                        <img class="specialty-image" src="/assets/images/infrabaldan/library/brand-hero-poster.jpg" alt="Programa InfraBaldan red light para pérdida de peso en OxyHyperbaric Shenandoah Texas" loading="lazy" width="600" height="395">
+                        <h3><span class="specialty-tag">Pérdida de Peso</span>Red Light Body Reset · InfraBaldan</h3>
+                    </a>
+                </article>
                 <article class="specialty-card">
                     <h3>Recuperación Post-Cirugía</h3>
                     <p>Sesiones MHBOT supervisadas en cámaras aprobadas por la FDA que apoyan la recuperación y el bienestar después de cirugía.</p>
@@ -509,7 +520,6 @@
                     <tr><td><strong>Mantenimiento — 20 Sesiones</strong></td><td>20 sesiones · Mejor valor</td><td class="price-val">$1,400</td><td><a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-accent" style="padding:8px 14px;font-size:0.82rem;">Reservar</a></td></tr>
                 </tbody>
             </table>
-            <p class="tax-note">Todos los precios sujetos a 8.25% de impuesto de ventas de Texas al pagar.</p>
         </div>
     </section>
 
@@ -569,7 +579,7 @@
             <div class="faq-item"><h3>¿Qué es la terapia hiperbárica suave?</h3><p>La Terapia de Oxígeno Hiperbárico Suave (MHBOT) es un enfoque de bienestar y longevidad en el que te relajas en una cámara presurizada y respiras oxígeno por encima de la presión atmosférica normal. Al aumentar el oxígeno en el cuerpo, muchos clientes usan las sesiones para apoyar objetivos de bienestar cotidianos — como ayudar al cuerpo a manejar la inflamación, mejorar la oxigenación y apoyar la función de las mitocondrias (los centros de energía dentro de tus células).</p></div>
             <div class="faq-item"><h3>¿Dónde están ubicados?</h3><p>256 Ed English Dr Bldg 4, Ste. E, Shenandoah, TX 77384 — atendemos The Woodlands y Houston.</p></div>
             <div class="faq-item"><h3>¿Cuál es el horario?</h3><p>Lunes a viernes 7:30 AM – 8:00 PM. Sábado y domingo cerrado.</p><p><strong>La reserva es necesaria para asistir a las sesiones.</strong></p></div>
-            <div class="faq-item"><h3>¿Cuánto cuesta una sesión?</h3><p>Intro: $95. 5 sesiones: $450. 10 sesiones: $750. 20 sesiones: $1,400. Sujeto a 8.25% de impuesto de ventas de Texas al pagar.</p></div>
+            <div class="faq-item"><h3>¿Cuánto cuesta una sesión?</h3><p>Intro: $95. 5 sesiones: $450. 10 sesiones: $750. 20 sesiones: $1,400.</p></div>
             <div class="faq-item"><h3>¿Cómo reservo?</h3><p><a href="https://oxy-agenda.vercel.app/booking/us">Reserva en línea en nuestro portal de citas</a> o llama al <a href="tel:7135913379">(713) 591-3379</a>. La reserva es obligatoria antes de tu visita.</p></div>
             <div class="faq-item"><h3>¿Ofrecen terapia hiperbárica para recuperación post-cirugía?</h3><p>Sí. Ofrecemos sesiones MHBOT de bienestar y longevidad que apoyan la recuperación post-cirugía en cámaras aprobadas por la FDA.</p></div>
             <div class="faq-item"><h3>¿Puede apoyar la recuperación de infarto cerebral?</h3><p>Ofrecemos sesiones MHBOT supervisadas que pueden apoyar claridad cognitiva, vitalidad y objetivos de recuperación. Solo para bienestar y longevidad.</p></div>
