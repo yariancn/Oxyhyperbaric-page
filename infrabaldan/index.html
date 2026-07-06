@@ -17,13 +17,13 @@
     <meta property="og:url" content="https://oxyhyperbaric.com/infrabaldan/">
     <meta property="og:title" content="Red Light Body Reset · $49 First Visit | OxyHyperbaric">
     <meta property="og:description" content="InfraBaldan active infrared red light therapy for weight loss &amp; body composition — only at OxyHyperbaric longevity &amp; wellness center in Shenandoah, TX.">
-    <meta property="og:image" content="https://oxyhyperbaric.com/assets/images/infrabaldan/library/dsc02165.jpg">
-    <meta property="og:image:alt" content="InfraBaldan red light cabin at OxyHyperbaric Shenandoah Texas">
+    <meta property="og:image" content="https://oxyhyperbaric.com/assets/images/infrabaldan/library/brand-hero-poster.jpg">
+    <meta property="og:image:alt" content="InfraBaldan red light body reset at OxyHyperbaric Shenandoah Texas">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="40-Min Red Light Body Reset · $49 | OxyHyperbaric">
     <meta name="twitter:description" content="Weight-loss focused red light therapy in Shenandoah TX. Book your $49 first visit online.">
-    <meta name="twitter:image" content="https://oxyhyperbaric.com/assets/images/infrabaldan/library/dsc02165.jpg">
+    <meta name="twitter:image" content="https://oxyhyperbaric.com/assets/images/infrabaldan/library/brand-hero-poster.jpg">
 
     <link rel="icon" type="image/png" href="/assets/images/logo.png">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
@@ -44,7 +44,7 @@
           "description": "InfraBaldan red light body reset for weight loss and body composition at OxyHyperbaric longevity & wellness center in Shenandoah, Texas.",
           "isPartOf": { "@id": "https://oxyhyperbaric.com/#website" },
           "about": { "@id": "https://oxyhyperbaric.com/infrabaldan/#service" },
-          "primaryImageOfPage": "https://oxyhyperbaric.com/assets/images/infrabaldan/library/dsc02165.jpg",
+          "primaryImageOfPage": "https://oxyhyperbaric.com/assets/images/infrabaldan/library/brand-hero-poster.jpg",
           "inLanguage": "en-US"
         },
         {
@@ -225,42 +225,125 @@
         }
 
         .hero {
-            padding: 3rem 1rem 3.5rem;
-            text-align: center;
-            max-width: 48rem;
-            margin: 0 auto;
-        }
-        .hero-kicker { font-size: 0.95rem; color: var(--muted); margin: 0 0 1rem; }
-        .hero h1 {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-weight: 400;
-            font-size: clamp(2rem, 5.5vw, 3.25rem);
-            line-height: 1.05;
-            margin: 0 0 1.25rem;
-        }
-        .hero h1 em { font-style: italic; }
-        .price-row {
+            position: relative;
+            width: 100%;
+            min-height: 100svh;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-bottom: 0.5rem;
         }
-        .price-was { text-decoration: line-through; color: var(--muted); font-size: 1rem; }
-        .price-now { font-size: 1.1rem; font-weight: 500; }
-        .price-sub { font-size: 0.9rem; color: var(--muted); margin: 0 0 1.5rem; }
+        @media (min-width: 768px) { .hero { min-height: 92vh; } }
+        .hero-media {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .hero-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(20,12,10,0.65) 0%, rgba(20,12,10,0.45) 40%, rgba(20,12,10,0.85) 100%);
+        }
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            padding: 3rem 1.25rem;
+            max-width: 48rem;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 1.5rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(250,246,240,0.96);
+            text-decoration: none;
+            font-size: 0.7rem;
+        }
+        .hero-badge .star { color: #fbbc04; letter-spacing: 0.05em; }
+        .hero-badge strong { color: var(--ink); font-weight: 600; }
+        .hero-badge span:last-child { color: var(--muted); font-size: 0.62rem; }
+        .hero-kicker {
+            font-size: 0.7rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: #f6c9b9;
+            font-weight: 600;
+            margin: 0 0 1.25rem;
+        }
+        .hero h1 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-weight: 500;
+            font-size: clamp(2.4rem, 6vw, 4.6rem);
+            line-height: 1.02;
+            letter-spacing: 0.005em;
+            margin: 0 0 1.25rem;
+            color: var(--bg);
+        }
+        .hero h1 .accent { color: #f6c9b9; font-style: normal; font-weight: 600; }
+        .hero h1 .price-accent {
+            color: #f6c9b9;
+            font-style: normal;
+            font-weight: 600;
+            font-size: clamp(3.4rem, 9vw, 6.5rem);
+            line-height: 1;
+            display: inline-block;
+            vertical-align: baseline;
+        }
+        .price-was {
+            text-decoration: line-through;
+            color: rgba(250,246,240,0.6);
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin: 0 0 0.5rem;
+        }
+        .price-sub {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f6c9b9;
+            margin: 0 0 1.75rem;
+        }
         .checklist {
             list-style: none;
             padding: 0;
             margin: 0 auto 2rem;
-            max-width: 26rem;
+            max-width: 28rem;
             text-align: left;
             font-size: 0.95rem;
+            color: var(--bg);
         }
-        .checklist li { padding: 0.35rem 0; }
-        .checklist li::before { content: '✓'; color: var(--accent); font-weight: 700; margin-right: 0.5rem; }
-        .hero-note { font-size: 0.8rem; color: var(--muted); margin-top: 0.75rem; }
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding: 0.35rem 0;
+            font-weight: 500;
+        }
+        .checklist li::before {
+            content: '✓';
+            color: #f6c9b9;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .hero .btn-book-lg { width: 100%; max-width: 20rem; }
+        @media (min-width: 768px) { .hero .btn-book-lg { width: auto; max-width: none; } }
+        .hero-note {
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(250,246,240,0.7);
+            margin-top: 1rem;
+        }
 
         .book-section {
             padding: 2.5rem 1rem 3rem;
@@ -503,20 +586,31 @@
     </nav>
 
     <header class="hero">
-        <p class="hero-kicker">Stubborn belly, thighs, or arms?</p>
-        <h1 class="serif">Get The 40-Min <em>Red Light Body Reset</em> For Only <em>$49</em> Today!</h1>
-        <div class="price-row">
-            <span class="price-was">Usually $95</span>
+        <div class="hero-media" aria-hidden="true">
+            <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="/assets/images/infrabaldan/library/brand-hero-poster.jpg">
+                <source src="/assets/videos/infrabaldan/brand-hero.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
         </div>
-        <p class="price-sub">$180 value · $49 today · Save $131</p>
-        <ul class="checklist">
-            <li>Sit, pedal slow, watch Netflix — 40 minutes</li>
-            <li>No diet · No gym · No soreness · No sweat</li>
-            <li>Targets stubborn belly, thighs, and arms</li>
-            <li>20+ years · 17 countries · 5.0★ on Google</li>
-        </ul>
-        <a href="https://oxy-agenda.vercel.app/booking/us?service=InfraBaldan" class="btn-book btn-book-lg">Book My First Visit — $49</a>
-        <p class="hero-note">New patients only · 20 spots this month</p>
+        <div class="hero-inner">
+            <a href="https://www.google.com/maps/place/OXYHYPERBARIC/@30.1890786,-95.4525649,17z" class="hero-badge" target="_blank" rel="noopener noreferrer">
+                <span class="star">★★★★★</span>
+                <strong>5.0 on Google</strong>
+                <span>(14)</span>
+            </a>
+            <p class="hero-kicker">Stubborn belly, thighs, or arms?</p>
+            <h1 class="serif">Get The 40-Min <span class="accent">Red Light Body Reset</span> For Only <span class="price-accent">$49</span> Today!</h1>
+            <p class="price-was">Usually $95</p>
+            <p class="price-sub">$180 value · $49 today · Save $131</p>
+            <ul class="checklist">
+                <li>Sit, pedal slow, watch Netflix — 40 minutes</li>
+                <li>No diet · No gym · No soreness · No sweat</li>
+                <li>Targets stubborn belly, thighs, and arms</li>
+                <li>20+ years · 17 countries · 5.0★ on Google</li>
+            </ul>
+            <a href="https://oxy-agenda.vercel.app/booking/us?service=InfraBaldan" class="btn-book btn-book-lg">Book My First Visit — $49</a>
+            <p class="hero-note">New patients only · 20 spots this month</p>
+        </div>
     </header>
 
     <section id="book" class="book-section">
