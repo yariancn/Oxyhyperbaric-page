@@ -1,6 +1,12 @@
 # Static site deploy for Cloudflare Workers (Git → npx wrangler deploy)
 name = "oxyhyperbaric-page"
 compatibility_date = "2026-06-10"
+main = "_worker.js"
+
+# Funnel lead notifications — set in Dashboard → Settings → Variables:
+# LEAD_WEBHOOK_URL, RESEND_API_KEY, LEAD_NOTIFY_TO, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# WELLNESS_ORIGIN for /your-wellness proxy
 
 [assets]
 directory = "."
+binding = "ASSETS"

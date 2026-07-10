@@ -27,6 +27,26 @@ El proyecto Pages `oxyhyperbaric-page` (creado con `deploy.sh`, sin Git) fue **e
 npx wrangler deploy
 ```
 
+### Funnel Meta Ads — `/hyperbaric/`
+
+Landing de captación (como InfraBaldan): https://oxyhyperbaric.com/hyperbaric/
+
+Flujo: el visitante llena nombre, teléfono, email y objetivo → `POST /api/funnel-lead` → notificación al equipo → botón para elegir hora en oxy-agenda.
+
+**Variables del Worker** (Cloudflare Dashboard → Workers → oxyhyperbaric-page → Settings → Variables):
+
+| Variable | Tipo | Para qué |
+|----------|------|----------|
+| `LEAD_WEBHOOK_URL` | Secret | URL POST (Zapier, Make, Slack, Discord) — recibe JSON del lead |
+| `RESEND_API_KEY` | Secret | Email vía [Resend](https://resend.com) |
+| `LEAD_NOTIFY_TO` | Plain | Emails destino separados por coma (default: `hello@oxyhyperbaric.com`) |
+| `TELEGRAM_BOT_TOKEN` | Secret | Bot de Telegram para alertas instantáneas |
+| `TELEGRAM_CHAT_ID` | Plain | Chat ID donde llegan los leads |
+
+Configura **al menos uno** (webhook, Resend o Telegram). Sin variables, el lead se registra en logs del Worker pero no llega notificación.
+
+URL alternativa en Marktr (mismo funnel): https://oxyhyperbaric.marktr.co/hyperbaric — para Meta Ads puedes usar cualquiera de las dos cuando indiques.
+
 ---
 
 ## Migrar dominio: Namecheap (Canva) → Cloudflare
