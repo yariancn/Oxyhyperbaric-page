@@ -5,6 +5,7 @@ main = "_worker.js"
 
 # Funnel lead notifications — set in Dashboard → Settings → Variables:
 # LEAD_WEBHOOK_URL, RESEND_API_KEY, LEAD_NOTIFY_TO, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, TWILIO_MESSAGING_SERVICE_SID, LEAD_NOTIFY_SMS_TO
 # WELLNESS_ORIGIN for /your-wellness proxy
 
 [assets]

@@ -42,8 +42,23 @@ Flujo: el visitante llena nombre, teléfono, email y objetivo → `POST /api/fun
 | `LEAD_NOTIFY_TO` | Plain | Emails destino separados por coma (default: `hello@oxyhyperbaric.com`) |
 | `TELEGRAM_BOT_TOKEN` | Secret | Bot de Telegram para alertas instantáneas |
 | `TELEGRAM_CHAT_ID` | Plain | Chat ID donde llegan los leads |
+| `TWILIO_ACCOUNT_SID` | Secret | Misma cuenta Twilio que oxy-agenda (Shenandoah) |
+| `TWILIO_AUTH_TOKEN` | Secret | Token de Twilio |
+| `TWILIO_PHONE_NUMBER` | Plain | Número remitente Twilio (+1...) — copiar de Vercel oxy-agenda-gdl |
+| `TWILIO_MESSAGING_SERVICE_SID` | Plain | Opcional: Messaging Service A2P (MG...) si no usas número directo |
+| `LEAD_NOTIFY_SMS_TO` | Plain | Celular(es) del equipo en E.164, separados por coma (default: `+17135913379`) |
+| `FUNNEL_LEAD_SECRET` | Secret | Token compartido con oxy-agenda para SMS vía Twilio (recomendado) |
+| `OXY_AGENDA_FUNNEL_NOTIFY_URL` | Plain | Opcional; default `https://oxy-agenda.vercel.app/api/public/funnel-lead-notify` |
 
-Configura **al menos uno** (webhook, Resend o Telegram). Sin variables, el lead se registra en logs del Worker pero no llega notificación.
+Configura **al menos uno** (webhook, Resend, Telegram, Twilio directo, o **FUNNEL_LEAD_SECRET** con oxy-agenda). Sin variables, el lead se registra en logs del Worker pero no llega notificación.
+
+**SMS vía oxy-agenda + Twilio (recomendado):** reutiliza la cuenta Twilio ya configurada en oxy-agenda. El Worker llama a `/api/public/funnel-lead-notify` y oxy-agenda envía el SMS a los teléfonos de alerta staff (`staff_alert_phones` en Admin) o a `+17135913379` como respaldo.
+
+1. En Vercel → **oxy-agenda-gdl** → Environment Variables → `FUNNEL_LEAD_SECRET` (mismo valor en ambos lados)
+2. En Cloudflare Worker → `FUNNEL_LEAD_SECRET` (secret)
+3. Redeploy oxy-agenda y el Worker
+
+Al enviar el formulario en `/hyperbaric/`, recibes un SMS con nombre, teléfono, email y objetivo. El mensaje indica que **aún no reservó en línea** — si completan la cita en oxy-agenda, recibirás la alerta de cita nueva por separado (Admin → alertas staff).
 
 URL alternativa en Marktr (mismo funnel): https://oxyhyperbaric.marktr.co/hyperbaric — para Meta Ads puedes usar cualquiera de las dos cuando indiques.
 

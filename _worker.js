@@ -8,11 +8,21 @@
  *   LEAD_NOTIFY_TO           — comma-separated emails (default: hello@oxyhyperbaric.com)
  *   TELEGRAM_BOT_TOKEN       — optional Telegram bot token
  *   TELEGRAM_CHAT_ID         — optional Telegram chat id for instant alerts
+ *   TWILIO_ACCOUNT_SID       — same Twilio account as oxy-agenda (Shenandoah)
+ *   TWILIO_AUTH_TOKEN        — Twilio auth token
+ *   TWILIO_PHONE_NUMBER      — Twilio sender (+1...) or use TWILIO_MESSAGING_SERVICE_SID
+ *   TWILIO_MESSAGING_SERVICE_SID — optional A2P messaging service (MG...)
+ *   LEAD_NOTIFY_SMS_TO       — comma-separated E.164 numbers for staff SMS alerts
+ *   OXY_AGENDA_FUNNEL_NOTIFY_URL — optional; default oxy-agenda funnel SMS endpoint
+ *   FUNNEL_LEAD_SECRET       — shared bearer token with oxy-agenda (reuses Twilio there)
  */
 
 const WELLNESS_PREFIX = "/your-wellness";
 const LEAD_API = "/api/funnel-lead";
 const DEFAULT_NOTIFY_TO = "hello@oxyhyperbaric.com";
+const DEFAULT_NOTIFY_SMS_TO = "+17135913379";
+const DEFAULT_OXY_AGENDA_FUNNEL_URL =
+  "https://oxy-agenda.vercel.app/api/public/funnel-lead-notify";
 
 export default {
   async fetch(request, env) {
@@ -142,7 +152,29 @@ async function handleFunnelLead(request, env) {
     );
   }
 
-  if (!env.LEAD_WEBHOOK_URL && !env.RESEND_API_KEY && !(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID)) {
+  if (isTwilioConfigured(env)) {
+    tasks.push(
+      sendTwilioSms(env, lead).catch((e) => {
+        errors.push(`sms: ${e.message}`);
+      }),
+    );
+  }
+
+  if (env.FUNNEL_LEAD_SECRET) {
+    tasks.push(
+      notifyViaOxyAgenda(env, lead).catch((e) => {
+        errors.push(`oxy-agenda: ${e.message}`);
+      }),
+    );
+  }
+
+  if (
+    !env.LEAD_WEBHOOK_URL &&
+    !env.RESEND_API_KEY &&
+    !(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) &&
+    !isTwilioConfigured(env) &&
+    !env.FUNNEL_LEAD_SECRET
+  ) {
     console.log("FUNNEL_LEAD (no notify channels configured):", JSON.stringify(lead));
     errors.push("no notify channels configured — lead logged only");
   }
@@ -219,6 +251,117 @@ async function sendTelegram(env, lead) {
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Telegram HTTP ${res.status}`);
+  }
+}
+
+function isTwilioConfigured(env) {
+  const sid = Boolean(env.TWILIO_ACCOUNT_SID);
+  const token = Boolean(env.TWILIO_AUTH_TOKEN);
+  const fromPhone = Boolean(env.TWILIO_PHONE_NUMBER);
+  const messagingService = Boolean(String(env.TWILIO_MESSAGING_SERVICE_SID || "").trim());
+  return sid && token && (fromPhone || messagingService);
+}
+
+function parseSmsRecipients(raw, defaultTo) {
+  return String(raw || defaultTo)
+    .split(/[,;\n]+/)
+    .map((s) => toE164Us(s.trim()))
+    .filter(Boolean);
+}
+
+function toE164Us(phone) {
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+  if (String(phone || "").trim().startsWith("+") && digits.length >= 10) return `+${digits}`;
+  return "";
+}
+
+function normalizePhoneDigits(phone) {
+  return String(phone || "").replace(/\D/g, "");
+}
+
+async function sendTwilioSms(env, lead) {
+  const recipients = parseSmsRecipients(env.LEAD_NOTIFY_SMS_TO, DEFAULT_NOTIFY_SMS_TO);
+  if (!recipients.length) {
+    throw new Error("No LEAD_NOTIFY_SMS_TO recipients");
+  }
+
+  const fromDigits = normalizePhoneDigits(env.TWILIO_PHONE_NUMBER);
+  const body = formatLeadSms(lead);
+  const messagingServiceSid = String(env.TWILIO_MESSAGING_SERVICE_SID || "").trim();
+  const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`;
+
+  let sent = 0;
+  const failures = [];
+
+  for (const to of recipients) {
+    if (fromDigits && normalizePhoneDigits(to) === fromDigits) {
+      failures.push(`${to}: same as TWILIO_PHONE_NUMBER`);
+      continue;
+    }
+
+    const params = { To: to, Body: body };
+    if (messagingServiceSid) {
+      params.MessagingServiceSid = messagingServiceSid;
+    } else {
+      params.From = env.TWILIO_PHONE_NUMBER;
+    }
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(params),
+    });
+
+    if (res.ok) {
+      sent += 1;
+    } else {
+      const detail = (await res.text()).slice(0, 120);
+      failures.push(`${to}: HTTP ${res.status} ${detail}`);
+    }
+  }
+
+  if (!sent) {
+    throw new Error(failures.join("; ") || "Twilio send failed");
+  }
+}
+
+function formatLeadSms(lead) {
+  const goal = lead.goal ? ` Goal: ${lead.goal.slice(0, 80)}` : "";
+  return [
+    "OxyHyperbaric funnel lead — no online booking yet.",
+    `${lead.name}. ${lead.phone}. ${lead.email}.${goal}`,
+    "Follow up if they do not book on oxy-agenda.",
+  ]
+    .join(" ")
+    .slice(0, 1500);
+}
+
+async function notifyViaOxyAgenda(env, lead) {
+  const url = env.OXY_AGENDA_FUNNEL_NOTIFY_URL || DEFAULT_OXY_AGENDA_FUNNEL_URL;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.FUNNEL_LEAD_SECRET}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(lead),
+  });
+
+  if (!res.ok) {
+    const detail = (await res.text()).slice(0, 160);
+    throw new Error(`HTTP ${res.status}: ${detail}`);
+  }
+
+  const data = await res.json().catch(() => ({}));
+  if (!data.ok) {
+    throw new Error(data.error || "oxy-agenda notify failed");
   }
 }
 
