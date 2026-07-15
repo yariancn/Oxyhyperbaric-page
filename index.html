@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OxyHyperbaric | Mild Hyperbaric Wellness & Longevity Therapy in The Woodlands &amp; Shenandoah, TX</title>
-    <meta name="description" content="Mild hyperbaric oxygen wellness &amp; longevity therapy — a hyperbaric wellness center and longevity center in Shenandoah and The Woodlands, Texas. FDA-approved chambers, certified team, sessions from $95. Book online or call (713) 591-3379.">
+    <meta name="description" content="Mild hyperbaric oxygen wellness &amp; longevity therapy — a hyperbaric wellness center and longevity center in Shenandoah and The Woodlands, Texas. FDA-approved chambers, certified team. Best pricing based on the ideal protocol for you. Book online or call (713) 591-3379.">
     <meta name="keywords" content="mild hyperbaric therapy The Woodlands, hyperbaric wellness center Shenandoah TX, longevity center The Woodlands, hyperbaric longevity center Houston, MHBOT wellness and longevity, OxyHyperbaric, hyperbaric oxygen chamber near me, post-surgical recovery hyperbaric, stroke recovery hyperbaric therapy, autism hyperbaric wellness, fibromyalgia hyperbaric therapy, diabetes wellness hyperbaric, surgical recovery oxygen therapy">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <link rel="canonical" href="https://oxyhyperbaric.com/">
@@ -94,12 +94,9 @@
           ],
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
-            "name": "Mild Hyperbaric Therapy Packages",
+            "name": "Mild Hyperbaric Therapy Programs",
             "itemListElement": [
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Introductory 1 Session" }, "price": "95", "priceCurrency": "USD" },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Standard Package 5 Sessions" }, "price": "450", "priceCurrency": "USD" },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Comprehensive Care 10 Sessions" }, "price": "750", "priceCurrency": "USD" },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Maintenance Plan 20 Sessions" }, "price": "1400", "priceCurrency": "USD" },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Personalized Hyperbaric Protocol", "description": "Custom MHBOT plan with best pricing based on the ideal protocol for each client." } },
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Post-Surgical Recovery Wellness", "description": "Mild hyperbaric oxygen sessions to support wellness after surgery." } },
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Stroke Recovery Wellness Support", "description": "MHBOT wellness sessions supporting cognitive and recovery wellness goals after stroke." } },
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Autism Wellness Hyperbaric Therapy", "description": "Supervised mild hyperbaric oxygen sessions for autism-related wellness support." } },
@@ -185,7 +182,7 @@
               "name": "How much does a hyperbaric session cost?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Introductory session: $95. 5 sessions: $450. 10 sessions: $750. 20 sessions: $1,400."
+                "text": "We offer you the best pricing based on the ideal protocol for you. After your assessment, we recommend a personalized plan and pricing tailored to your wellness goals."
               }
             },
             {
@@ -400,12 +397,13 @@
         .facility-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
         .facility-grid img { border-radius: 12px; width: 100%; height: 220px; object-fit: cover; box-shadow: var(--shadow); }
 
-        .pricing-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
-        .pricing-table th { background: var(--navy); color: var(--white); padding: 16px 20px; text-align: left; font-size: 0.95rem; }
-        .pricing-table td { padding: 18px 20px; border-bottom: 1px solid var(--border); color: var(--forest); }
-        .pricing-table tr:last-child td { border-bottom: none; }
-        .price-val { font-size: 1.35rem; font-weight: 800; color: var(--navy); white-space: nowrap; }
-        .pricing-note { text-align: center; margin-top: 16px; font-size: 0.88rem; color: var(--muted); }
+        .pricing-message {
+            max-width: 720px; margin: 0 auto; text-align: center;
+            background: var(--white); border-radius: 14px; padding: 2.5rem 2rem;
+            box-shadow: var(--shadow);
+        }
+        .pricing-message p { font-size: 1.15rem; line-height: 1.6; color: var(--forest); margin: 0 0 1.25rem; }
+        .pricing-message .pricing-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
         .google-reviews-box { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 36px 28px; box-shadow: var(--shadow); }
         .google-reviews-head { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
         .google-reviews-head img { height: 22px; width: auto; }
@@ -479,7 +477,8 @@
             .logo-tagline { font-size: 0.62rem; line-height: 1; margin-top: -10px; padding-left: 0; }
             .nav-links { display: none; }
             .about-grid { grid-template-columns: 1fr; }
-            .pricing-table th, .pricing-table td { padding: 12px 14px; font-size: 0.88rem; }
+            .pricing-message { padding: 1.75rem 1.25rem; }
+            .pricing-message p { font-size: 1.05rem; }
             .hero { padding: 28px 16px 48px; min-height: 360px; }
             .hero-eyebrow {
                 white-space: normal;
@@ -702,41 +701,16 @@
 
     <section id="pricing">
         <div class="container">
-            <p class="section-label">Packages</p>
-            <h2 class="section-title">Hyperbaric Oxygen Therapy Pricing</h2>
-            <p class="section-sub">Flexible session packages for introductory visits and long-term wellness & longevity maintenance.</p>
-            <table class="pricing-table">
-                <thead>
-                    <tr><th>Package</th><th>Includes</th><th>Price</th><th></th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Introductory — 1 Session</strong><br><small style="color:var(--muted)">One hour · Assessment &amp; induction</small></td>
-                        <td>Relaxation · First-time experience</td>
-                        <td class="price-val">$95</td>
-                        <td><a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-accent" style="padding:8px 14px;font-size:0.82rem;">Book</a></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Standard — 5 Sessions</strong></td>
-                        <td>5 full-hour sessions · Standard package</td>
-                        <td class="price-val">$450</td>
-                        <td><a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-accent" style="padding:8px 14px;font-size:0.82rem;">Book</a></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Comprehensive — 10 Sessions</strong></td>
-                        <td>10 sessions · Comprehensive care plan</td>
-                        <td class="price-val">$750</td>
-                        <td><a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-accent" style="padding:8px 14px;font-size:0.82rem;">Book</a></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Maintenance — 20 Sessions</strong></td>
-                        <td>20 sessions · Best long-term value</td>
-                        <td class="price-val">$1,400</td>
-                        <td><a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-accent" style="padding:8px 14px;font-size:0.82rem;">Book</a></td>
-                    </tr>
-                </tbody>
-            </table>
-            <p class="pricing-note">Taxes may apply.</p>
+            <p class="section-label">Pricing</p>
+            <h2 class="section-title">Built Around Your Protocol</h2>
+            <p class="section-sub">Every plan starts with what you actually need — not a one-size-fits-all package list.</p>
+            <div class="pricing-message">
+                <p>We offer you the best pricing based on the ideal protocol for you.</p>
+                <div class="pricing-cta">
+                    <a href="https://oxy-agenda.vercel.app/booking/us" class="btn btn-accent">Book Your Session</a>
+                    <a href="tel:7135913379" class="btn btn-primary">Call (713) 591-3379</a>
+                </div>
+            </div>
         </div>
     </section>
         <div class="container">
@@ -807,7 +781,7 @@
                 </div>
                 <div class="faq-item">
                     <h3>How much does a hyperbaric session cost?</h3>
-                    <p>Introductory session: $95. 5 sessions: $450. 10 sessions: $750. 20 sessions: $1,400.</p>
+                    <p>We offer you the best pricing based on the ideal protocol for you. After your assessment, we recommend a personalized plan and pricing tailored to your wellness goals.</p>
                 </div>
                 <div class="faq-item">
                     <h3>How do I book a session?</h3>
