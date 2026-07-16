@@ -21,10 +21,13 @@
 
 const WELLNESS_PREFIX = "/your-wellness";
 const LEAD_API = "/api/funnel-lead";
+const LEAD_ABANDON_API = "/api/funnel-lead-abandon";
 const DEFAULT_NOTIFY_TO = "hello@oxyhyperbaric.com";
 const DEFAULT_NOTIFY_SMS_TO = "+17135913379";
 const DEFAULT_OXY_AGENDA_FUNNEL_URL =
   "https://oxy-agenda.vercel.app/api/public/funnel-lead-notify";
+const DEFAULT_OXY_AGENDA_ABANDON_URL =
+  "https://oxy-agenda.vercel.app/api/public/funnel-lead-abandon";
 const DEFAULT_PREDICTACORE_OXY_LEADS_URL =
   "https://predictacore.ai/ads/api/oxy/funnel-leads";
 const DEFAULT_OXY_AGENDA_FOLLOWUP_CRON_URL =
@@ -40,6 +43,16 @@ export default {
       }
       if (request.method === "POST") {
         return handleFunnelLead(request, env);
+      }
+      return json({ error: "Method not allowed" }, 405);
+    }
+
+    if (url.pathname === LEAD_ABANDON_API) {
+      if (request.method === "OPTIONS") {
+        return corsPreflight(request);
+      }
+      if (request.method === "POST") {
+        return handleFunnelAbandon(request, env);
       }
       return json({ error: "Method not allowed" }, 405);
     }
@@ -361,6 +374,54 @@ async function notifyViaOxyAgenda(env, lead) {
   const data = await res.json().catch(() => ({}));
   if (!data.ok) {
     throw new Error(data.error || "oxy-agenda notify failed");
+  }
+}
+
+async function handleFunnelAbandon(request, env) {
+  const origin = request.headers.get("Origin") || "";
+  const allowedOrigin =
+    origin.endsWith("oxyhyperbaric.com") || origin.endsWith("oxyhyperbaric.marktr.co");
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON" }, 400);
+  }
+
+  const lead = {
+    name: clean(body.name, 120),
+    phone: clean(body.phone, 40),
+    email: clean(body.email, 160),
+    goal: clean(body.goal, 500),
+    source: clean(body.source || "hyperbaric", 40),
+    page: clean(body.page || "", 200),
+  };
+
+  if (!lead.email && !lead.phone) {
+    return json({ error: "email_or_phone_required" }, 400);
+  }
+
+  const headers = { "Content-Type": "application/json" };
+  if (allowedOrigin) headers["Access-Control-Allow-Origin"] = origin;
+
+  try {
+    const url = env.OXY_AGENDA_ABANDON_URL || DEFAULT_OXY_AGENDA_ABANDON_URL;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(lead),
+    });
+    const data = await res.json().catch(() => ({}));
+    return new Response(JSON.stringify({ ok: res.ok, ...data }), {
+      status: res.ok ? 200 : 502,
+      headers,
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ ok: false, error: error.message }), {
+      status: 500,
+      headers,
+    });
   }
 }
 
