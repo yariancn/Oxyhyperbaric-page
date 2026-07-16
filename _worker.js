@@ -192,10 +192,16 @@ async function handleFunnelLead(request, env) {
       ok: true,
       notified,
       warnings: errors.length ? errors : undefined,
-      bookingUrl: "https://oxy-agenda.vercel.app/booking/us",
+      bookingUrl: bookingUrlForSource(source),
     }),
     { status: 200, headers },
   );
+}
+
+function bookingUrlForSource(source) {
+  return source === "infrabaldan"
+    ? "https://oxy-agenda.vercel.app/booking/us?service=InfraBaldan"
+    : "https://oxy-agenda.vercel.app/booking/us";
 }
 
 function clean(value, max) {
