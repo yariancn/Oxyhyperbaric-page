@@ -14,7 +14,9 @@
  *   TWILIO_MESSAGING_SERVICE_SID — optional A2P messaging service (MG...)
  *   LEAD_NOTIFY_SMS_TO       — comma-separated E.164 numbers for staff SMS alerts
  *   OXY_AGENDA_FUNNEL_NOTIFY_URL — optional; default oxy-agenda funnel SMS endpoint
- *   FUNNEL_LEAD_SECRET       — shared bearer token with oxy-agenda (reuses Twilio there)
+ *   FUNNEL_LEAD_SECRET       — shared bearer token with oxy-agenda + Predictacore Ads
+ *   OXY_LEADS_SECRET         — optional alias for Predictacore Ads persistence (falls back to FUNNEL_LEAD_SECRET)
+ *   PREDICTACORE_OXY_LEADS_URL — optional; default https://predictacore.ai/ads/api/oxy/funnel-leads
  */
 
 const WELLNESS_PREFIX = "/your-wellness";
@@ -23,6 +25,8 @@ const DEFAULT_NOTIFY_TO = "hello@oxyhyperbaric.com";
 const DEFAULT_NOTIFY_SMS_TO = "+17135913379";
 const DEFAULT_OXY_AGENDA_FUNNEL_URL =
   "https://oxy-agenda.vercel.app/api/public/funnel-lead-notify";
+const DEFAULT_PREDICTACORE_OXY_LEADS_URL =
+  "https://predictacore.ai/ads/api/oxy/funnel-leads";
 
 export default {
   async fetch(request, env) {
@@ -128,6 +132,14 @@ async function handleFunnelLead(request, env) {
   const errors = [];
   const tasks = [];
 
+  if (getOxyLeadsSecret(env)) {
+    tasks.push(
+      persistViaPredictacoreAds(env, lead).catch((e) => {
+        errors.push(`predictacore: ${e.message}`);
+      }),
+    );
+  }
+
   if (env.LEAD_WEBHOOK_URL) {
     tasks.push(
       postWebhook(env.LEAD_WEBHOOK_URL, lead).catch((e) => {
@@ -169,6 +181,7 @@ async function handleFunnelLead(request, env) {
   }
 
   if (
+    !getOxyLeadsSecret(env) &&
     !env.LEAD_WEBHOOK_URL &&
     !env.RESEND_API_KEY &&
     !(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) &&
@@ -368,6 +381,44 @@ async function notifyViaOxyAgenda(env, lead) {
   const data = await res.json().catch(() => ({}));
   if (!data.ok) {
     throw new Error(data.error || "oxy-agenda notify failed");
+  }
+}
+
+function getOxyLeadsSecret(env) {
+  return String(env.OXY_LEADS_SECRET || env.FUNNEL_LEAD_SECRET || "").trim();
+}
+
+/**
+ * Persist hyperbaric + infrabaldan leads in Predictacore Ads (oxy_funnel_leads panel).
+ */
+async function persistViaPredictacoreAds(env, lead) {
+  const secret = getOxyLeadsSecret(env);
+  if (!secret) {
+    throw new Error("OXY_LEADS_SECRET / FUNNEL_LEAD_SECRET missing");
+  }
+
+  const url = String(env.PREDICTACORE_OXY_LEADS_URL || DEFAULT_PREDICTACORE_OXY_LEADS_URL).trim();
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${secret}`,
+      "x-oxy-leads-secret": secret,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      event: "funnel_lead",
+      ...lead,
+    }),
+  });
+
+  if (!res.ok) {
+    const detail = (await res.text()).slice(0, 160);
+    throw new Error(`HTTP ${res.status}: ${detail}`);
+  }
+
+  const data = await res.json().catch(() => ({}));
+  if (!data.ok) {
+    throw new Error(data.error || "predictacore persist failed");
   }
 }
 

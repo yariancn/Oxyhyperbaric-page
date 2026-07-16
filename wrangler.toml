@@ -4,6 +4,8 @@ compatibility_date = "2026-06-10"
 main = "_worker.js"
 
 # Funnel lead notifications — set in Dashboard → Settings → Variables:
+# FUNNEL_LEAD_SECRET (required for SMS via oxy-agenda + lead store in Predictacore Ads)
+# PREDICTACORE_OXY_LEADS_URL (optional; default https://predictacore.ai/ads/api/oxy/funnel-leads)
 # LEAD_WEBHOOK_URL, RESEND_API_KEY, LEAD_NOTIFY_TO, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 # TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, TWILIO_MESSAGING_SERVICE_SID, LEAD_NOTIFY_SMS_TO
 # WELLNESS_ORIGIN for /your-wellness proxy
