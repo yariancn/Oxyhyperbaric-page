@@ -274,12 +274,22 @@
         .hero-badge strong { color: var(--ink); font-weight: 600; }
         .hero-badge span:last-child { color: var(--muted); font-size: 0.62rem; }
         .hero-kicker {
-            font-size: 0.7rem;
-            letter-spacing: 0.32em;
-            text-transform: uppercase;
-            color: #f6c9b9;
+            font-family: 'Inter Tight', system-ui, sans-serif;
+            font-size: clamp(1.15rem, 2.8vw, 1.65rem);
             font-weight: 600;
-            margin: 0 0 1.25rem;
+            letter-spacing: 0.02em;
+            text-transform: none;
+            color: #f6c9b9;
+            margin: 0 0 0.35rem;
+            line-height: 1.25;
+        }
+        .hero-claim-note {
+            font-family: 'Inter Tight', system-ui, sans-serif;
+            font-size: 0.72rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            color: rgba(250, 246, 240, 0.65);
+            margin: 0 0 1.15rem;
         }
         .hero h1 {
             font-family: 'Cormorant Garamond', Georgia, serif;
@@ -639,7 +649,8 @@
                 <strong>5.0 on Google</strong>
                 <span>(14)</span>
             </a>
-            <p class="hero-kicker">1 Lb per session</p>
+            <p class="hero-kicker">Lose up to 1 lb per session</p>
+            <p class="hero-claim-note">Results may vary.</p>
             <h1 class="serif">Try The 40-Min <span class="accent">Red Light Body Reset</span> For <span class="price-accent">$49</span> Today</h1>
             <ul class="checklist">
                 <li>Sit, pedal slow, watch Netflix — 40 minutes</li>
@@ -791,7 +802,7 @@
                 <img src="/assets/images/infrabaldan/library/dsc02165.jpg" alt="Red light cabin interior" loading="lazy" width="300" height="400">
                 <img src="/assets/images/infrabaldan/library/dsc06908.jpg" alt="InfraBaldan red light wellness equipment" loading="lazy" width="300" height="400">
             </div>
-            <p class="disclaimer">Individual experiences vary. Red light sessions are offered for general wellness and body composition support.</p>
+            <p class="disclaimer">Results may vary. Individual experiences differ. Red light sessions are offered for general wellness and body composition support.</p>
             <a href="#lead-form" class="btn-book btn-book-lg js-cta" data-label-form="Book My First Visit — $49" data-label-book="Book My First Visit — $49" style="margin-top:2rem;">Book My First Visit — $49</a>
         </div>
     </section>
