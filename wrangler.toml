@@ -6,9 +6,12 @@ main = "_worker.js"
 # Funnel lead notifications — set in Dashboard → Settings → Variables:
 # FUNNEL_LEAD_SECRET (required for SMS via oxy-agenda + lead store in Predictacore Ads)
 # PREDICTACORE_OXY_LEADS_URL (optional; default https://predictacore.ai/ads/api/oxy/funnel-leads)
-# LEAD_WEBHOOK_URL, RESEND_API_KEY, LEAD_NOTIFY_TO, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
-# TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, TWILIO_MESSAGING_SERVICE_SID, LEAD_NOTIFY_SMS_TO
-# WELLNESS_ORIGIN for /your-wellness proxy
+# OXY_AGENDA_FOLLOWUP_CRON_URL (optional; default https://oxy-agenda.vercel.app/api/cron/funnel-lead-followup)
+# LEAD_WEBHOOK_URL, WELLNESS_ORIGIN
+# Staff SMS is deferred (~20 min) only if the lead does not book.
+
+[triggers]
+crons = ["*/10 * * * *"]
 
 [assets]
 directory = "."

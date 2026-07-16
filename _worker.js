@@ -27,6 +27,8 @@ const DEFAULT_OXY_AGENDA_FUNNEL_URL =
   "https://oxy-agenda.vercel.app/api/public/funnel-lead-notify";
 const DEFAULT_PREDICTACORE_OXY_LEADS_URL =
   "https://predictacore.ai/ads/api/oxy/funnel-leads";
+const DEFAULT_OXY_AGENDA_FOLLOWUP_CRON_URL =
+  "https://oxy-agenda.vercel.app/api/cron/funnel-lead-followup";
 
 export default {
   async fetch(request, env) {
@@ -66,6 +68,13 @@ export default {
     }
 
     return env.ASSETS.fetch(request);
+  },
+
+  /**
+   * Every 10 minutes: ask oxy-agenda to SMS staff about leads that never booked.
+   */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runFunnelFollowupCron(env));
   },
 };
 
@@ -132,6 +141,8 @@ async function handleFunnelLead(request, env) {
   const errors = [];
   const tasks = [];
 
+  // Persist + schedule deferred staff SMS (only if they do not book).
+  // Do NOT SMS immediately — booking SMS is separate when they reserve.
   if (getOxyLeadsSecret(env)) {
     tasks.push(
       persistViaPredictacoreAds(env, lead).catch((e) => {
@@ -148,30 +159,6 @@ async function handleFunnelLead(request, env) {
     );
   }
 
-  if (env.RESEND_API_KEY) {
-    tasks.push(
-      sendResendEmail(env, lead).catch((e) => {
-        errors.push(`email: ${e.message}`);
-      }),
-    );
-  }
-
-  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
-    tasks.push(
-      sendTelegram(env, lead).catch((e) => {
-        errors.push(`telegram: ${e.message}`);
-      }),
-    );
-  }
-
-  if (isTwilioConfigured(env)) {
-    tasks.push(
-      sendTwilioSms(env, lead).catch((e) => {
-        errors.push(`sms: ${e.message}`);
-      }),
-    );
-  }
-
   if (env.FUNNEL_LEAD_SECRET) {
     tasks.push(
       notifyViaOxyAgenda(env, lead).catch((e) => {
@@ -180,14 +167,7 @@ async function handleFunnelLead(request, env) {
     );
   }
 
-  if (
-    !getOxyLeadsSecret(env) &&
-    !env.LEAD_WEBHOOK_URL &&
-    !env.RESEND_API_KEY &&
-    !(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) &&
-    !isTwilioConfigured(env) &&
-    !env.FUNNEL_LEAD_SECRET
-  ) {
+  if (!getOxyLeadsSecret(env) && !env.LEAD_WEBHOOK_URL && !env.FUNNEL_LEAD_SECRET) {
     console.log("FUNNEL_LEAD (no notify channels configured):", JSON.stringify(lead));
     errors.push("no notify channels configured — lead logged only");
   }
@@ -382,6 +362,28 @@ async function notifyViaOxyAgenda(env, lead) {
   if (!data.ok) {
     throw new Error(data.error || "oxy-agenda notify failed");
   }
+}
+
+async function runFunnelFollowupCron(env) {
+  const secret = String(env.FUNNEL_LEAD_SECRET || env.OXY_LEADS_SECRET || "").trim();
+  if (!secret) {
+    console.log("FUNNEL_FOLLOWUP skipped: missing FUNNEL_LEAD_SECRET");
+    return;
+  }
+  const url = String(env.OXY_AGENDA_FOLLOWUP_CRON_URL || DEFAULT_OXY_AGENDA_FOLLOWUP_CRON_URL).trim();
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${secret}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const detail = await res.text().catch(() => "");
+  if (!res.ok) {
+    console.log("FUNNEL_FOLLOWUP failed", res.status, detail.slice(0, 200));
+    return;
+  }
+  console.log("FUNNEL_FOLLOWUP ok", detail.slice(0, 200));
 }
 
 function getOxyLeadsSecret(env) {
