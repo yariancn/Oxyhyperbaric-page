@@ -154,8 +154,7 @@ async function handleFunnelLead(request, env) {
   const errors = [];
   const tasks = [];
 
-  // Persist + schedule deferred staff SMS (only if they do not book).
-  // Do NOT SMS immediately — booking SMS is separate when they reserve.
+  // Persist lead, alert staff now, and schedule abandon SMS if they never book.
   if (getOxyLeadsSecret(env)) {
     tasks.push(
       persistViaPredictacoreAds(env, lead).catch((e) => {
@@ -172,6 +171,35 @@ async function handleFunnelLead(request, env) {
     );
   }
 
+  if (env.RESEND_API_KEY) {
+    tasks.push(
+      sendResendEmail(env, lead).catch((e) => {
+        errors.push(`email: ${e.message}`);
+      }),
+    );
+    tasks.push(
+      sendVisitorAckEmail(env, lead).catch((e) => {
+        errors.push(`visitor-email: ${e.message}`);
+      }),
+    );
+  }
+
+  if (isTwilioConfigured(env)) {
+    tasks.push(
+      sendTwilioSms(env, lead).catch((e) => {
+        errors.push(`sms: ${e.message}`);
+      }),
+    );
+  }
+
+  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+    tasks.push(
+      sendTelegram(env, lead).catch((e) => {
+        errors.push(`telegram: ${e.message}`);
+      }),
+    );
+  }
+
   if (env.FUNNEL_LEAD_SECRET) {
     tasks.push(
       notifyViaOxyAgenda(env, lead).catch((e) => {
@@ -180,7 +208,13 @@ async function handleFunnelLead(request, env) {
     );
   }
 
-  if (!getOxyLeadsSecret(env) && !env.LEAD_WEBHOOK_URL && !env.FUNNEL_LEAD_SECRET) {
+  if (
+    !getOxyLeadsSecret(env)
+    && !env.LEAD_WEBHOOK_URL
+    && !env.RESEND_API_KEY
+    && !isTwilioConfigured(env)
+    && !env.FUNNEL_LEAD_SECRET
+  ) {
     console.log("FUNNEL_LEAD (no notify channels configured):", JSON.stringify(lead));
     errors.push("no notify channels configured — lead logged only");
   }
@@ -206,7 +240,7 @@ async function handleFunnelLead(request, env) {
 
 function bookingUrlForSource(source) {
   return source === "infrabaldan"
-    ? "https://oxy-agenda.vercel.app/booking/us?service=InfraBaldan"
+    ? "https://oxy-agenda.vercel.app/booking/us?service=red%20light"
     : "https://oxy-agenda.vercel.app/booking/us";
 }
 
@@ -254,6 +288,38 @@ async function sendResendEmail(env, lead) {
   if (!res.ok) {
     const detail = await res.text();
     throw new Error(`Resend ${res.status}: ${detail.slice(0, 120)}`);
+  }
+}
+
+async function sendVisitorAckEmail(env, lead) {
+  const bookingUrl = bookingUrlForSource(lead.source);
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: "OxyHyperbaric <hello@oxyhyperbaric.com>",
+      to: [lead.email],
+      subject: "You're almost booked — pick your time",
+      text: [
+        `Hi ${lead.name},`,
+        "",
+        "Thanks for sharing your details with OxyHyperbaric.",
+        "Please choose an available time on the page to finish your reservation.",
+        "",
+        `Book here: ${bookingUrl}`,
+        "",
+        "Questions? Call (713) 591-3379.",
+      ].join("\n"),
+      html: `<p>Hi ${escapeHtml(lead.name)},</p><p>Thanks for sharing your details with OxyHyperbaric. Please choose an available time on the page to finish your reservation.</p><p><a href="${escapeHtml(bookingUrl)}">Pick your time</a></p><p>Questions? Call (713) 591-3379.</p>`,
+    }),
+  });
+
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Resend visitor ${res.status}: ${detail.slice(0, 120)}`);
   }
 }
 
@@ -347,9 +413,9 @@ async function sendTwilioSms(env, lead) {
 function formatLeadSms(lead) {
   const goal = lead.goal ? ` Goal: ${lead.goal.slice(0, 80)}` : "";
   return [
-    "OxyHyperbaric funnel lead — no online booking yet.",
+    `OxyHyperbaric NEW funnel lead (${lead.source}).`,
     `${lead.name}. ${lead.phone}. ${lead.email}.${goal}`,
-    "Follow up if they do not book on oxy-agenda.",
+    "They still need to pick a time — follow up if they do not book.",
   ]
     .join(" ")
     .slice(0, 1500);

@@ -358,7 +358,7 @@
             border-bottom: 1px solid var(--border);
         }
         .lead-card {
-            max-width: 32rem;
+            max-width: 40rem;
             margin: 0 auto;
             background: var(--cream);
             border: 1px solid var(--border);
@@ -443,6 +443,38 @@
             margin: 0 0 0.5rem;
         }
         .success-panel p { color: var(--muted); font-size: 0.92rem; margin: 0 0 1.5rem; }
+        .success-panel .success-intro.hidden { display: none; }
+        .booking-embed-wrap {
+            margin-top: 0.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #f1f5f9;
+            min-height: 640px;
+        }
+        .booking-embed {
+            width: 100%;
+            min-height: 640px;
+            height: 70vh;
+            border: 0;
+            display: block;
+            background: #f8fafc;
+        }
+        .booking-embed[hidden] { display: none; }
+        .booked-panel {
+            display: none;
+            margin-top: 1.25rem;
+            padding: 1.25rem;
+            border-radius: 1rem;
+            background: rgba(94, 184, 217, 0.12);
+        }
+        .booked-panel.visible { display: block; }
+        .booked-panel h4 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.4rem;
+            margin: 0 0 0.4rem;
+        }
+        .booked-panel p { margin: 0; color: var(--muted); font-size: 0.9rem; }
         .lead-form.hidden { display: none; }
 
         section { padding: 3.5rem 1rem; }
@@ -737,7 +769,7 @@
         <div class="container text-center">
             <p class="eyebrow">Reserve Your First Session</p>
             <h2 class="section-title serif">Drop your details, then <em>pick a time.</em></h2>
-            <p class="lead">Yarian walks into your session already knowing your wellness goals. Only 20 new-client slots a month.</p>
+            <p class="lead">Leave your details, then choose an open time below — finish your reservation without leaving this page.</p>
             <div class="lead-card">
                 <form id="lead-form-el" class="lead-form" novalidate>
                     <label>
@@ -768,10 +800,18 @@
                     <button type="submit" class="btn-cta btn-cta-lg" id="submit-btn" style="width:100%;">Reserve My First Session — $49</button>
                 </form>
                 <div id="success-panel" class="success-panel" aria-live="polite">
-                    <div class="check-icon" aria-hidden="true">✓</div>
-                    <h3>You're in.</h3>
-                    <p>Thanks — Yarian will see your info before your session. Pick a time that works for you.</p>
-                    <a href="https://oxy-agenda.vercel.app/booking/us" class="btn-cta btn-cta-lg">Pick your time</a>
+                    <div class="success-intro">
+                        <div class="check-icon" aria-hidden="true">✓</div>
+                        <h3>You're in — now pick your time.</h3>
+                        <p>Available openings are below. Choose a date and time to complete your reservation here.</p>
+                    </div>
+                    <div class="booking-embed-wrap">
+                        <iframe id="booking-embed" class="booking-embed" title="Book your hyperbaric session" hidden loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <div id="booked-panel" class="booked-panel">
+                        <h4>You're booked.</h4>
+                        <p>We'll see you at the clinic. Check your email/SMS for confirmation details.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1051,210 +1091,15 @@
     </div>
 
     <script>
-    (function () {
-        var STORAGE_KEY = 'oxyhyperbaric_hyperbaric_lead';
-        var PENDING_KEY = 'oxy_funnel_pending';
-        var BOOKING_URL = 'https://oxy-agenda.vercel.app/booking/us';
-        var LEAD_ANCHOR = '#lead-form';
-
-        var form = document.getElementById('lead-form-el');
-        var successPanel = document.getElementById('success-panel');
-        var formError = document.getElementById('form-error');
-        var submitBtn = document.getElementById('submit-btn');
-        var ctaEls = document.querySelectorAll('.js-cta');
-
-        var pendingLead = null;
-        var skipAbandon = false;
-        var abandonSent = false;
-
-        function hasLead() {
-            try { return sessionStorage.getItem(STORAGE_KEY) === '1'; } catch (e) { return false; }
-        }
-
-        function setLeadSubmitted() {
-            try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
-        }
-
-        function savePendingLead(lead) {
-            pendingLead = lead;
-            try { sessionStorage.setItem(PENDING_KEY, JSON.stringify(lead)); } catch (e) {}
-        }
-
-        function loadPendingLead() {
-            try {
-                var raw = sessionStorage.getItem(PENDING_KEY);
-                if (!raw) return null;
-                return JSON.parse(raw);
-            } catch (e) { return null; }
-        }
-
-        function sendAbandonBeacon() {
-            if (abandonSent || skipAbandon || !pendingLead) return;
-            abandonSent = true;
-            var body = JSON.stringify(pendingLead);
-            try {
-                if (navigator.sendBeacon) {
-                    navigator.sendBeacon('/api/funnel-lead-abandon', new Blob([body], { type: 'application/json' }));
-                    return;
-                }
-            } catch (e) {}
-            try {
-                fetch('/api/funnel-lead-abandon', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: body,
-                    keepalive: true
-                });
-            } catch (e2) {}
-        }
-
-        function buildBookingUrl(lead) {
-            var base = BOOKING_URL;
-            if (!lead) return base;
-            try {
-                var packed = btoa(unescape(encodeURIComponent(JSON.stringify({
-                    name: lead.name || '',
-                    phone: lead.phone || '',
-                    email: lead.email || '',
-                    goal: lead.goal || '',
-                    source: lead.source || '',
-                })))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-                return base + (base.indexOf('?') >= 0 ? '&' : '?') + 'oxy_funnel=' + packed;
-            } catch (e) {
-                return base;
-            }
-        }
-
-        function goingToBooking(e) {
-            skipAbandon = true;
-            if (!pendingLead) return;
-            var url = buildBookingUrl(pendingLead);
-            if (e && e.currentTarget && e.currentTarget.tagName === 'A') {
-                e.currentTarget.href = url;
-            }
-        }
-
-        function showSuccess() {
-            if (form) form.classList.add('hidden');
-            if (successPanel) successPanel.classList.add('visible');
-        }
-
-        function updateCtas() {
-            var booked = hasLead();
-            ctaEls.forEach(function (el) {
-                if (booked) {
-                    el.href = buildBookingUrl(pendingLead) || BOOKING_URL;
-                    el.removeAttribute('data-scroll-only');
-                    var bookLabel = el.getAttribute('data-label-book') || 'Book Now';
-                    el.textContent = bookLabel;
-                    el.addEventListener('click', goingToBooking);
-                } else {
-                    el.href = LEAD_ANCHOR;
-                    el.setAttribute('data-scroll-only', '1');
-                    var formLabel = el.getAttribute('data-label-form') || 'Reserve';
-                    el.textContent = formLabel;
-                }
-            });
-            if (successPanel) {
-                var bookLink = successPanel.querySelector('a.btn-cta, a[href*="booking"]');
-                if (bookLink) {
-                    bookLink.href = buildBookingUrl(pendingLead) || BOOKING_URL;
-                    bookLink.addEventListener('click', goingToBooking);
-                }
-            }
-        }
-
-        pendingLead = loadPendingLead();
-        if (hasLead()) {
-            showSuccess();
-            updateCtas();
-        }
-
-        window.addEventListener('pagehide', sendAbandonBeacon);
-
-        if (form) {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                formError.classList.remove('visible');
-                formError.textContent = '';
-
-                var fd = new FormData(form);
-                if (fd.get('website')) {
-                    showSuccess();
-                    setLeadSubmitted();
-                    updateCtas();
-                    return;
-                }
-
-                if (!fd.get('consent')) {
-                    formError.textContent = 'Please accept the privacy policy to continue.';
-                    formError.classList.add('visible');
-                    return;
-                }
-
-                var payload = {
-                    name: (fd.get('name') || '').toString().trim(),
-                    phone: (fd.get('phone') || '').toString().trim(),
-                    email: (fd.get('email') || '').toString().trim(),
-                    goal: (fd.get('goal') || '').toString().trim(),
-                    source: 'hyperbaric',
-                    page: window.location.href
-                };
-
-                if (!payload.name || !payload.phone || !payload.email) {
-                    formError.textContent = 'Name, phone, and email are required.';
-                    formError.classList.add('visible');
-                    return;
-                }
-
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Sending…';
-
-                fetch('/api/funnel-lead', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                })
-                .then(function (res) {
-                    if (!res.ok) {
-                        return res.json().catch(function () { return {}; }).then(function (data) {
-                            throw new Error(data.error || 'Something went wrong. Please call (713) 591-3379.');
-                        });
-                    }
-                    return res.json();
-                })
-                .then(function (data) {
-                    if (data && data.bookingUrl) BOOKING_URL = data.bookingUrl;
-                    savePendingLead(payload);
-                    abandonSent = false;
-                    skipAbandon = false;
-                    setLeadSubmitted();
-                    showSuccess();
-                    updateCtas();
-                    successPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                })
-                .catch(function (err) {
-                    formError.textContent = err.message || 'Could not submit. Please try again or call (713) 591-3379.';
-                    formError.classList.add('visible');
-                })
-                .finally(function () {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Reserve My First Session — $49';
-                });
-            });
-        }
-
-        ctaEls.forEach(function (el) {
-            el.addEventListener('click', function (e) {
-                if (hasLead()) return;
-                if (el.getAttribute('href') === LEAD_ANCHOR || el.getAttribute('href') === '#lead-form') {
-                    e.preventDefault();
-                    var target = document.getElementById('lead-form');
-                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-    })();
+    window.OXY_FUNNEL_CONFIG = {
+        storageKey: 'oxyhyperbaric_hyperbaric_lead',
+        source: 'hyperbaric',
+        service: '',
+        bookingBase: 'https://oxy-agenda.vercel.app/booking/us',
+        submitLabel: 'Reserve My First Session — $49',
+        abandonAfterMs: 15 * 60 * 1000
+    };
     </script>
+    <script src="/assets/js/funnel-booking-embed.js" defer></script>
 </body>
 </html>
