@@ -14,6 +14,7 @@
  *   TWILIO_MESSAGING_SERVICE_SID — optional A2P messaging service (MG...)
  *   LEAD_NOTIFY_SMS_TO       — comma-separated E.164 numbers for staff SMS alerts
  *   OXY_AGENDA_FUNNEL_NOTIFY_URL — optional; default oxy-agenda funnel SMS endpoint
+ *   OXY_AGENDA_VISITOR_EMAIL_URL — optional; default oxy-agenda visitor ack/nudge email
  *   FUNNEL_LEAD_SECRET       — shared bearer token with oxy-agenda + Predictacore Ads
  *   OXY_LEADS_SECRET         — optional alias for Predictacore Ads persistence (falls back to FUNNEL_LEAD_SECRET)
  *   PREDICTACORE_OXY_LEADS_URL — optional; default https://predictacore.ai/ads/api/oxy/funnel-leads
@@ -28,6 +29,8 @@ const DEFAULT_OXY_AGENDA_FUNNEL_URL =
   "https://oxy-agenda.vercel.app/api/public/funnel-lead-notify";
 const DEFAULT_OXY_AGENDA_ABANDON_URL =
   "https://oxy-agenda.vercel.app/api/public/funnel-lead-abandon";
+const DEFAULT_OXY_AGENDA_VISITOR_EMAIL_URL =
+  "https://oxy-agenda.vercel.app/api/public/funnel-visitor-email";
 const DEFAULT_PREDICTACORE_OXY_LEADS_URL =
   "https://predictacore.ai/ads/api/oxy/funnel-leads";
 const DEFAULT_OXY_AGENDA_FOLLOWUP_CRON_URL =
@@ -178,6 +181,16 @@ async function handleFunnelLead(request, env) {
         errors.push(`email: ${e.message}`);
       }),
     );
+  }
+
+  // Immediate visitor thank-you + booking link (via oxy-agenda Resend, same as clinic mail).
+  if (env.FUNNEL_LEAD_SECRET) {
+    tasks.push(
+      sendVisitorAckViaOxyAgenda(env, lead).catch((e) => {
+        errors.push(`visitor-email: ${e.message}`);
+      }),
+    );
+  } else if (env.RESEND_API_KEY) {
     tasks.push(
       sendVisitorAckEmail(env, lead).catch((e) => {
         errors.push(`visitor-email: ${e.message}`);
@@ -209,6 +222,7 @@ async function handleFunnelLead(request, env) {
     && !env.RESEND_API_KEY
     && !(isTwilioConfigured(env) && !env.FUNNEL_LEAD_SECRET)
     && !env.TELEGRAM_BOT_TOKEN
+    && !env.FUNNEL_LEAD_SECRET
   ) {
     console.log("FUNNEL_LEAD (no notify channels configured):", JSON.stringify(lead));
     errors.push("no notify channels configured — lead logged only");
@@ -286,8 +300,38 @@ async function sendResendEmail(env, lead) {
   }
 }
 
+async function sendVisitorAckViaOxyAgenda(env, lead) {
+  const url = env.OXY_AGENDA_VISITOR_EMAIL_URL || DEFAULT_OXY_AGENDA_VISITOR_EMAIL_URL;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.FUNNEL_LEAD_SECRET}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      kind: "ack",
+      name: lead.name,
+      email: lead.email,
+      phone: lead.phone,
+      goal: lead.goal,
+      source: lead.source,
+    }),
+  });
+
+  if (!res.ok) {
+    const detail = (await res.text()).slice(0, 160);
+    throw new Error(`HTTP ${res.status}: ${detail}`);
+  }
+
+  const data = await res.json().catch(() => ({}));
+  if (!data.ok && !data.skipped) {
+    throw new Error(data.error || data.detail || "visitor email failed");
+  }
+}
+
 async function sendVisitorAckEmail(env, lead) {
   const bookingUrl = bookingUrlForSource(lead.source);
+  const from = env.VISITOR_EMAIL_FROM || "OxyHyperbaric <inf@oxyhyperbaric.com>";
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -295,20 +339,20 @@ async function sendVisitorAckEmail(env, lead) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "OxyHyperbaric <hello@oxyhyperbaric.com>",
+      from,
       to: [lead.email],
-      subject: "You're almost booked — pick your time",
+      subject: "Thanks — pick your time at OxyHyperbaric",
       text: [
         `Hi ${lead.name},`,
         "",
         "Thanks for sharing your details with OxyHyperbaric.",
-        "Please choose an available time on the page to finish your reservation.",
+        "Your next step is to choose an available time so we can hold your visit.",
         "",
         `Book here: ${bookingUrl}`,
         "",
-        "Questions? Call (713) 591-3379.",
+        "Questions? Call or text (713) 591-3379.",
       ].join("\n"),
-      html: `<p>Hi ${escapeHtml(lead.name)},</p><p>Thanks for sharing your details with OxyHyperbaric. Please choose an available time on the page to finish your reservation.</p><p><a href="${escapeHtml(bookingUrl)}">Pick your time</a></p><p>Questions? Call (713) 591-3379.</p>`,
+      html: `<p>Hi ${escapeHtml(lead.name)},</p><p>Thanks for sharing your details with OxyHyperbaric. Your next step is to choose an available time so we can hold your visit.</p><p><a href="${escapeHtml(bookingUrl)}">Pick your time</a></p><p>Questions? Call or text (713) 591-3379.</p>`,
     }),
   });
 
