@@ -116,6 +116,21 @@
     bookingFrame.classList.add('visible');
   }
 
+  function trackMeta(eventName, params) {
+    try {
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', eventName, params || {});
+      }
+    } catch (e) {}
+  }
+
+  function trackMetaLead() {
+    trackMeta('Lead', {
+      content_name: SOURCE === 'infrabaldan' ? 'Red Light InfraBaldan' : 'Hyperbaric First Session',
+      content_category: 'wellness'
+    });
+  }
+
   function showBookedSuccess() {
     skipAbandon = true;
     abandonSent = true;
@@ -125,6 +140,10 @@
     }
     pendingLead = null;
     clearLeadFlags();
+    trackMeta('Schedule', {
+      content_name: SOURCE === 'infrabaldan' ? 'Red Light InfraBaldan' : 'Hyperbaric First Session',
+      content_category: 'wellness'
+    });
     if (bookingFrame) {
       bookingFrame.setAttribute('hidden', 'hidden');
       bookingFrame.removeAttribute('src');
@@ -249,6 +268,7 @@
           abandonSent = false;
           skipAbandon = false;
           setLeadSubmitted();
+          trackMetaLead();
           showSuccess();
           updateCtas();
           scheduleAbandon();

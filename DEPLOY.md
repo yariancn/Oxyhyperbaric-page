@@ -33,6 +33,8 @@ Landing de captación (como InfraBaldan): https://oxyhyperbaric.com/hyperbaric/
 
 Flujo: el visitante llena nombre, teléfono, email y objetivo → `POST /api/funnel-lead` → notificación al equipo → botón para elegir hora en oxy-agenda.
 
+**Meta Pixel (`1934798400510737`):** el Worker inyecta el base code en el `<head>` de **todas** las páginas HTML (PageView). En `/hyperbaric/` e `/infrabaldan/` también dispara `ViewContent`. El form dispara `Lead` vía `funnel-booking-embed.js`. Booking en oxy-agenda dispara `PageView` + `Schedule` al confirmar.
+
 **Variables del Worker** (Cloudflare Dashboard → Workers → oxyhyperbaric-page → Settings → Variables):
 
 | Variable | Tipo | Para qué |
