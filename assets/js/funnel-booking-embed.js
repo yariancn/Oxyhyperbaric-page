@@ -273,14 +273,16 @@
           updateCtas();
           scheduleAbandon();
           if (successPanel) successPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sent';
+          }
         })
         .catch(function (err) {
           if (formError) {
             formError.textContent = err.message || 'Could not submit. Please try again or call (713) 591-3379.';
             formError.classList.add('visible');
           }
-        })
-        .finally(function () {
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = SUBMIT_LABEL;

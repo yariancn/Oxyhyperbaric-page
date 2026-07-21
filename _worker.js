@@ -154,7 +154,8 @@ async function handleFunnelLead(request, env) {
   const errors = [];
   const tasks = [];
 
-  // Persist lead, alert staff now, and schedule abandon SMS if they never book.
+  // Single source of truth for the lead row. Do NOT also call oxy-agenda notify —
+  // that endpoint used to re-POST the same lead and raced a second insert.
   if (getOxyLeadsSecret(env)) {
     tasks.push(
       persistViaPredictacoreAds(env, lead).catch((e) => {
@@ -184,7 +185,9 @@ async function handleFunnelLead(request, env) {
     );
   }
 
-  if (isTwilioConfigured(env)) {
+  // Immediate Twilio SMS duplicates the later abandon/cron SMS ("did not book").
+  // Only send here when the deferred oxy-agenda follow-up path is not configured.
+  if (isTwilioConfigured(env) && !env.FUNNEL_LEAD_SECRET) {
     tasks.push(
       sendTwilioSms(env, lead).catch((e) => {
         errors.push(`sms: ${e.message}`);
@@ -200,20 +203,12 @@ async function handleFunnelLead(request, env) {
     );
   }
 
-  if (env.FUNNEL_LEAD_SECRET) {
-    tasks.push(
-      notifyViaOxyAgenda(env, lead).catch((e) => {
-        errors.push(`oxy-agenda: ${e.message}`);
-      }),
-    );
-  }
-
   if (
     !getOxyLeadsSecret(env)
     && !env.LEAD_WEBHOOK_URL
     && !env.RESEND_API_KEY
-    && !isTwilioConfigured(env)
-    && !env.FUNNEL_LEAD_SECRET
+    && !(isTwilioConfigured(env) && !env.FUNNEL_LEAD_SECRET)
+    && !env.TELEGRAM_BOT_TOKEN
   ) {
     console.log("FUNNEL_LEAD (no notify channels configured):", JSON.stringify(lead));
     errors.push("no notify channels configured — lead logged only");
