@@ -1,7 +1,10 @@
 .git
 .gitignore
 .wrangler
+.github
 scripts
 deploy.sh
 download-images.sh
 DEPLOY.md
+_worker.js
+wrangler.toml

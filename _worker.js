@@ -80,7 +80,7 @@ export default {
       return fetch(proxyRequest);
     }
 
-    return serveSiteAssets(request, env);
+    return env.ASSETS.fetch(request);
   },
 
   /**
@@ -90,56 +90,6 @@ export default {
     ctx.waitUntil(runFunnelFollowupCron(env));
   },
 };
-
-/** Meta Pixel — exists on ad account; must fire from every public HTML page. */
-const META_PIXEL_ID = "1934798400510737";
-
-function metaPixelHeadHtml(pathname) {
-  const path = (pathname || "/").replace(/\/+$/, "") || "/";
-  const isHyperbaric = path === "/hyperbaric";
-  const isInfrabaldan = path === "/infrabaldan";
-  const viewContent =
-    isHyperbaric || isInfrabaldan
-      ? `fbq('track','ViewContent',{content_name:'${
-          isInfrabaldan ? "Red Light InfraBaldan" : "Hyperbaric First Session"
-        }',content_category:'wellness'});`
-      : "";
-
-  return `<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init','${META_PIXEL_ID}');
-fbq('track','PageView');
-${viewContent}
-</script>
-<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1" alt="" /></noscript>
-<!-- End Meta Pixel Code -->`;
-}
-
-/**
- * Inject Meta Pixel into every HTML response so home, landings, legal, and ES
- * pages all fire without editing each file.
- */
-async function serveSiteAssets(request, env) {
-  const response = await env.ASSETS.fetch(request);
-  const contentType = response.headers.get("content-type") || "";
-  if (!contentType.includes("text/html")) {
-    return response;
-  }
-
-  const url = new URL(request.url);
-  return new HTMLRewriter()
-    .on("head", {
-      element(element) {
-        element.append(metaPixelHeadHtml(url.pathname), { html: true });
-      },
-    })
-    .transform(response);
-}
 
 function corsPreflight(request) {
   const origin = request.headers.get("Origin") || "";
