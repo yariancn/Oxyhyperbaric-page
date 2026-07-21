@@ -274,16 +274,6 @@
         .hero-badge .star { color: #fbbc04; letter-spacing: 0.05em; }
         .hero-badge strong { color: var(--ink); font-weight: 600; }
         .hero-badge span:last-child { color: var(--muted); font-size: 0.62rem; }
-        .hero-kicker {
-            font-family: 'Inter Tight', system-ui, sans-serif;
-            font-size: clamp(1.15rem, 2.8vw, 1.65rem);
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            text-transform: none;
-            color: #f6c9b9;
-            margin: 0 0 1.15rem;
-            line-height: 1.25;
-        }
         .hero-claim-note {
             font-family: 'Inter Tight', system-ui, sans-serif;
             font-size: 0.72rem;
@@ -296,19 +286,25 @@
             font-family: 'Cormorant Garamond', Georgia, serif;
             font-weight: 500;
             font-size: clamp(2.4rem, 6vw, 4.6rem);
-            line-height: 1.02;
+            line-height: 1.08;
             letter-spacing: 0.005em;
-            margin: 0 0 1.25rem;
+            margin: 0 0 0.35rem;
             color: var(--bg);
+        }
+        .hero h1 .hero-line {
+            display: block;
+        }
+        .hero h1 .hero-line + .hero-line {
+            margin-top: 0.2rem;
         }
         .hero h1 .accent { color: #f6c9b9; font-style: normal; font-weight: 600; }
         .hero h1 .price-accent {
             color: #f6c9b9;
             font-style: normal;
             font-weight: 600;
-            font-size: clamp(3.4rem, 9vw, 6.5rem);
-            line-height: 1;
-            display: inline-block;
+            font-size: inherit;
+            line-height: inherit;
+            display: inline;
             vertical-align: baseline;
         }
         .price-was {
@@ -692,8 +688,10 @@
                 <strong>5.0 on Google</strong>
                 <span>(14)</span>
             </a>
-            <p class="hero-kicker">Lose up to 2 lbs per week with only 2 sessions of 40 min</p>
-            <h1 class="serif">Try The 40-Min <span class="accent">Red Light Body Reset</span> For <span class="price-accent">$49</span> Today</h1>
+            <h1 class="serif">
+                <span class="hero-line">Lose up to 2 lbs per week with only 2 sessions of 40 min</span>
+                <span class="hero-line">Try The 40-Min <span class="accent">Red Light Body Reset</span> For <span class="price-accent">$49</span> Today</span>
+            </h1>
             <p class="hero-claim-note">Results may vary.</p>
             <ul class="checklist">
                 <li>Sit, pedal slow, watch Netflix — 40 minutes</li>
