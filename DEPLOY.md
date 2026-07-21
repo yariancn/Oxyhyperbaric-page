@@ -74,12 +74,15 @@ Al enviar el formulario en `/hyperbaric/`, recibes un SMS con nombre, teléfono,
 
 **Emails al visitante (automáticos):**
 
-| Momento | Qué recibe |
-|---------|------------|
-| Al dar nombre / teléfono / email | Email de gracias + botón **Pick your time** (desde `inf@oxyhyperbaric.com` vía oxy-agenda / Resend) |
-| Si sale sin agendar (beacon) o ~20 min después (cron) | Email nudge **Finish booking** + SMS al staff |
+| Momento | Qué recibe | Cómo sabemos que no agendó |
+|---------|------------|----------------------------|
+| Al dar nombre / teléfono / email | Gracias + **Pick your time** | — |
+| Si sale sin agendar (~20 min / beacon) | Nudge **Finish booking** + SMS al staff | `booked_at` vacío en Predictacore |
+| ~24 horas después | Invitación **Book your session** | `booked_at` vacío **y** sin cita activa en agenda Shenandoah (email/teléfono, 7 días) |
 
-No hace falta `RESEND_API_KEY` en el Worker para el correo al visitante: usa el Resend ya configurado en **oxy-agenda** (`FUNNEL_LEAD_SECRET` + endpoint `/api/public/funnel-visitor-email`).
+Si el cron de 24 h encuentra una cita en `appointments`, marca el lead como agendado y **no** manda el correo.
+
+Remitente: `inf@oxyhyperbaric.com` vía Resend en oxy-agenda (`FUNNEL_LEAD_SECRET` + `/api/public/funnel-visitor-email` / cron follow-up).
 
 `RESEND_API_KEY` en el Worker sigue siendo opcional solo para **alertas por email al equipo** (`LEAD_NOTIFY_TO`).
 

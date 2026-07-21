@@ -87,7 +87,7 @@ export default {
   },
 
   /**
-   * Every 10 minutes: ask oxy-agenda to SMS staff about leads that never booked.
+   * Every 10 minutes: short follow-up (~20m SMS/nudge) + ~24h invitation emails.
    */
   async scheduled(event, env, ctx) {
     ctx.waitUntil(runFunnelFollowupCron(env));
