@@ -18,7 +18,10 @@
  *   FUNNEL_LEAD_SECRET       — shared bearer token with oxy-agenda + Predictacore Ads
  *   OXY_LEADS_SECRET         — optional alias for Predictacore Ads persistence (falls back to FUNNEL_LEAD_SECRET)
  *   PREDICTACORE_OXY_LEADS_URL — optional; default https://predictacore.ai/ads/api/oxy/funnel-leads
+ *   REFERRAL_PANEL_TOKEN     — private token for /internal/referral-control panel
  */
+
+import { handleReferralControl, isReferralControlPath } from "./referral-control/api.js";
 
 const WELLNESS_PREFIX = "/your-wellness";
 const LEAD_API = "/api/funnel-lead";
@@ -39,6 +42,10 @@ const DEFAULT_OXY_AGENDA_FOLLOWUP_CRON_URL =
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (isReferralControlPath(url.pathname)) {
+      return handleReferralControl(request, env);
+    }
 
     if (url.pathname === LEAD_API) {
       if (request.method === "OPTIONS") {
@@ -83,7 +90,8 @@ export default {
       return fetch(proxyRequest);
     }
 
-    return env.ASSETS.fetch(request);
+    const assetResponse = await env.ASSETS.fetch(request);
+    return withCrawlFriendlyHeaders(request, assetResponse);
   },
 
   /**
@@ -108,6 +116,39 @@ function corsPreflight(request) {
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Max-Age": "86400",
     },
+  });
+}
+
+/** Keep HTML/sitemap/llms fresh for Google/Bing/AI crawlers (avoid stale edge HTML). */
+function withCrawlFriendlyHeaders(request, response) {
+  const url = new URL(request.url);
+  const path = url.pathname;
+  const ctype = (response.headers.get("Content-Type") || "").toLowerCase();
+  const isHtml =
+    ctype.includes("text/html") ||
+    path === "/" ||
+    path.endsWith("/") ||
+    path.endsWith(".html");
+  const isDiscovery =
+    path === "/robots.txt" ||
+    path === "/sitemap.xml" ||
+    path === "/llms.txt" ||
+    path === "/llms-full.txt" ||
+    path.endsWith(".xml") ||
+    path.endsWith(".txt");
+
+  if (!isHtml && !isDiscovery) {
+    return response;
+  }
+
+  const headers = new Headers(response.headers);
+  headers.set("Cache-Control", "public, max-age=0, must-revalidate");
+  headers.set("CDN-Cache-Control", "no-store");
+  headers.set("Cloudflare-CDN-Cache-Control", "no-store");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
   });
 }
 
@@ -233,6 +274,21 @@ async function handleFunnelLead(request, env) {
   const headers = { "Content-Type": "application/json" };
   if (allowedOrigin) {
     headers["Access-Control-Allow-Origin"] = origin;
+  }
+
+  // If Predictacore persistence is configured, it is the source of truth for the ads inbox.
+  // Never tell the visitor "ok" while the lead was dropped from the panel.
+  const persistConfigured = Boolean(getOxyLeadsSecret(env));
+  const persistFailed = errors.some((e) => String(e).startsWith("predictacore:"));
+  if (persistConfigured && persistFailed) {
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: "Could not save your details. Please try again or call (713) 591-3379.",
+        warnings: errors,
+      }),
+      { status: 502, headers },
+    );
   }
 
   const notified = tasks.length > 0 && errors.length < tasks.length;
@@ -575,6 +631,7 @@ async function persistViaPredictacoreAds(env, lead) {
     },
     body: JSON.stringify({
       event: "funnel_lead",
+      clientSlug: "oxy",
       ...lead,
     }),
   });
