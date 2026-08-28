@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1b4332">
+  <meta name="description" content="VerdiScan — Escanea productos alimenticios y descubre si son ultraprocesados, contienen aceites de semillas, edulcorantes artificiales y aditivos nocivos. México y USA.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>VerdiScan — Escáner de Alimentos Saludables</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-top">
+        <div class="logo-row">
+          <div class="logo-icon" aria-hidden="true">🌿</div>
+          <div>
+            <h1 id="app-name">VerdiScan</h1>
+          </div>
+        </div>
+        <button id="lang-toggle" class="lang-btn" type="button" aria-label="Switch language">EN</button>
+      </div>
+      <p id="tagline">Escanea. Comprende. Elige mejor.</p>
+    </header>
+
+    <main class="app-main">
+      <!-- Home -->
+      <div id="home-view">
+        <button id="scan-btn" class="btn btn-primary" type="button">
+          <span aria-hidden="true">📷</span>
+          <span id="scan-btn-label">Escanear código</span>
+        </button>
+
+        <button id="manual-toggle" class="btn btn-secondary" type="button">
+          <span id="manual-toggle-label">Ingresar código manualmente</span>
+        </button>
+
+        <div id="manual-panel" hidden>
+          <form id="search-form">
+            <input id="barcode-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ej: 7501000650320">
+            <button id="search-btn" type="submit">Buscar</button>
+          </form>
+        </div>
+
+        <div id="loading" hidden>
+          <div class="spinner" aria-hidden="true"></div>
+          <span id="loading-text">Consultando base de datos…</span>
+        </div>
+
+        <div id="error-banner" hidden role="alert">
+          <div class="error-msg"></div>
+          <div class="error-hint"></div>
+        </div>
+
+        <section class="history-section">
+          <h2 id="history-title">Historial</h2>
+          <ul id="history-list"></ul>
+          <button id="clear-history" class="btn btn-ghost" type="button">Limpiar historial</button>
+        </section>
+      </div>
+
+      <!-- Scanner -->
+      <div id="scanner-panel" hidden>
+        <div id="scanner-viewport"></div>
+        <p id="scanner-status">Apunta al código de barras…</p>
+        <button id="stop-scan-btn" class="btn btn-danger" type="button">Detener cámara</button>
+      </div>
+
+      <!-- Result -->
+      <div id="result-view" hidden>
+        <div class="product-card">
+          <img id="product-image" alt="" hidden>
+          <h2 id="product-name"></h2>
+          <p id="product-brand"></p>
+          <p id="product-barcode"></p>
+
+          <div class="score-section">
+            <div id="score-ring" class="score-ring">
+              <span id="score-value">—</span>
+              <span id="score-grade"></span>
+            </div>
+            <p id="score-summary"></p>
+            <span id="nova-badge" class="nova-badge" hidden></span>
+          </div>
+        </div>
+
+        <section id="alerts-section" class="detail-section" hidden>
+          <h3 id="alerts-title">Alertas detectadas</h3>
+          <ul id="alerts-list" class="alert-list"></ul>
+        </section>
+
+        <section id="positives-section" class="detail-section" hidden>
+          <h3 id="positives-title">Aspectos positivos</h3>
+          <ul id="positives-list" class="positive-list"></ul>
+        </section>
+
+        <section class="detail-section">
+          <h3 id="ingredients-title">Ingredientes</h3>
+          <p id="ingredients-text"></p>
+        </section>
+
+        <p id="market-note"></p>
+        <button id="scan-again-btn" class="btn btn-primary" type="button">Escanear otro</button>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <div class="disclaimer-box">
+        <h4 id="disclaimer-title">Aviso informativo</h4>
+        <p id="disclaimer-text"></p>
+        <p id="sources-text"></p>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
