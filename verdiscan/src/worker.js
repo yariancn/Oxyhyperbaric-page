@@ -686,7 +686,7 @@ export default {
         ok: true,
         ai: Boolean(env.AI),
         kv: Boolean(env.USERS),
-        version: '2.5.6',
+        version: '2.5.7',
         freeScans: FREE_SCANS,
         priceUsd: 5,
       });

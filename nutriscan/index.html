@@ -67,7 +67,12 @@
           <span id="scan-btn-label">Escanear código</span>
         </button>
 
-        <button id="manual-toggle" class="btn btn-secondary" type="button">
+        <button id="photo-label-btn" class="btn btn-secondary" type="button">
+          <span aria-hidden="true">🏷️</span>
+          <span id="photo-label-btn-label">Fotografiar etiqueta</span>
+        </button>
+
+        <button id="manual-toggle" class="btn btn-ghost" type="button">
           <span id="manual-toggle-label">Ingresar código manualmente</span>
         </button>
 
@@ -145,6 +150,9 @@
       <div id="scanner-panel" hidden>
         <div id="scanner-viewport"></div>
         <p id="scanner-status">Apunta al código de barras…</p>
+        <button id="photo-label-from-scan-btn" class="btn btn-secondary" type="button">
+          <span id="photo-label-from-scan-label">No lee el código · Fotografiar etiqueta</span>
+        </button>
         <button id="stop-scan-btn" class="btn btn-danger" type="button">Detener cámara</button>
       </div>
 

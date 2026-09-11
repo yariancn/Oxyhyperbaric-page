@@ -51,6 +51,10 @@ function applyStaticText() {
   $('#app-name').textContent = t(lang, 'appName');
   $('#tagline').textContent = t(lang, 'tagline');
   $('#scan-btn-label').textContent = t(lang, 'scanBtn');
+  const photoLabelBtn = $('#photo-label-btn-label');
+  if (photoLabelBtn) photoLabelBtn.textContent = t(lang, 'photoLabelBtn');
+  const photoFromScan = $('#photo-label-from-scan-label');
+  if (photoFromScan) photoFromScan.textContent = t(lang, 'photoLabelFromScan');
   $('#manual-toggle-label').textContent = t(lang, 'manualBtn');
   $('#history-title').textContent = t(lang, 'history');
   $('#barcode-input').placeholder = t(lang, 'placeholder');
@@ -347,8 +351,13 @@ function showIngredientsEntry({ barcode, product, reason }) {
   const panel = $('#ingredients-entry');
   panel.hidden = false;
   $('#ingredients-entry-title').textContent = t(lang, 'ingredientsEntryTitle');
-  $('#ingredients-entry-hint').textContent =
-    reason === 'not_found' ? t(lang, 'notFoundHint') : t(lang, 'needsIngredientsHint');
+  if (reason === 'not_found') {
+    $('#ingredients-entry-hint').textContent = t(lang, 'notFoundHint');
+  } else if (reason === 'label_photo') {
+    $('#ingredients-entry-hint').textContent = t(lang, 'photoLabelHint');
+  } else {
+    $('#ingredients-entry-hint').textContent = t(lang, 'needsIngredientsHint');
+  }
   const bc = $('#ingredients-entry-barcode');
   if (pendingBarcode) {
     bc.hidden = false;
@@ -809,6 +818,20 @@ async function stopScannerActive() {
   }
 }
 
+async function openLabelPhotoFlow({ openCamera = true } = {}) {
+  if (!ensureCanScan()) return;
+  hideError();
+  await stopScannerActive();
+  showView('home');
+  showIngredientsEntry({ barcode: '', product: null, reason: 'label_photo' });
+  $('#ingredients-entry')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (openCamera) {
+    setTimeout(() => {
+      $('#ingredients-camera-input')?.click();
+    }, 150);
+  }
+}
+
 async function toggleScanner() {
   if (!ensureCanScan()) return;
   hideError();
@@ -949,6 +972,10 @@ async function init() {
   });
 
   $('#scan-btn').addEventListener('click', toggleScanner);
+  $('#photo-label-btn')?.addEventListener('click', () => openLabelPhotoFlow({ openCamera: true }));
+  $('#photo-label-from-scan-btn')?.addEventListener('click', () =>
+    openLabelPhotoFlow({ openCamera: true })
+  );
   $('#stop-scan-btn').addEventListener('click', stopScannerActive);
 
   $('#manual-toggle').addEventListener('click', () => {

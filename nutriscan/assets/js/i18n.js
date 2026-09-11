@@ -3,6 +3,10 @@ export const STRINGS = {
     appName: 'VerdiScan',
     tagline: 'Escanea. Comprende. Elige mejor.',
     scanBtn: 'Escanear código',
+    photoLabelBtn: 'Fotografiar etiqueta',
+    photoLabelFromScan: 'No lee el código · Fotografiar etiqueta',
+    photoLabelHint:
+      'Fotografía el panel «Ingredientes» (reverso/lado, letra pequeña). No hace falta código de barras.',
     manualBtn: 'Ingresar código manualmente',
     history: 'Historial',
     placeholder: 'Ej: 7501000650320',
@@ -109,6 +113,10 @@ export const STRINGS = {
     appName: 'VerdiScan',
     tagline: 'Scan. Understand. Choose better.',
     scanBtn: 'Scan barcode',
+    photoLabelBtn: 'Photograph label',
+    photoLabelFromScan: 'Can’t read barcode · Photograph label',
+    photoLabelHint:
+      'Photograph the Ingredients panel (back/side, small print). No barcode needed.',
     manualBtn: 'Enter barcode manually',
     history: 'History',
     placeholder: 'e.g. 012000161032',
