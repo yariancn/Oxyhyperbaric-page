@@ -105,26 +105,34 @@ export async function startCheckout() {
   return { ok: true };
 }
 
+export function hydrateUserFromCache() {
+  const cached = localStorage.getItem(USER_KEY);
+  if (!cached) return null;
+  try {
+    currentUser = JSON.parse(cached);
+    return currentUser;
+  } catch {
+    return null;
+  }
+}
+
 export function canScanLocally(user = currentUser) {
-  if (!user) return false;
+  if (!user) user = hydrateUserFromCache();
+  if (!user) {
+    // Logged in but profile not loaded yet — don't block the camera
+    return Boolean(getToken());
+  }
   if (user.paid || user.unlimited) return true;
   return (user.scansRemaining ?? 0) > 0;
 }
 
 export function updateUserFromAccount(account) {
   if (!account) return;
-  currentUser = { ...currentUser, ...account };
+  currentUser = { ...(currentUser || {}), ...account };
   localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
 }
 
 export async function initSession() {
-  const cached = localStorage.getItem(USER_KEY);
-  if (cached) {
-    try {
-      currentUser = JSON.parse(cached);
-    } catch {
-      currentUser = null;
-    }
-  }
+  hydrateUserFromCache();
   return refreshMe();
 }

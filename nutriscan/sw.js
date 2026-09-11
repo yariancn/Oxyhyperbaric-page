@@ -1,4 +1,4 @@
-const CACHE = 'verdiscan-v2.5.5';
+const CACHE = 'verdiscan-v2.5.6';
 const ASSETS = [
   './',
   './index.html',

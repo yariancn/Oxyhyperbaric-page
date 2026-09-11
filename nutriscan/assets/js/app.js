@@ -1,6 +1,6 @@
 import { fetchProduct } from './off-api.js';
 import { analyzeProduct } from './scoring.js';
-import { startScanner, stopScanner, isCameraSupported } from './scanner.js';
+import { startScanner, stopScanner, isCameraSupported, openCameraStream } from './scanner.js';
 import { ocrIngredientsImage, isIncompleteIngredientList, countIngredientItems } from './ocr.js';
 import { t, novaLabel } from './i18n.js';
 import {
@@ -14,6 +14,8 @@ import {
   updateUserFromAccount,
   canScanLocally,
   refreshMe,
+  hydrateUserFromCache,
+  getToken,
 } from './session.js';
 import { initInstallGuide } from './install.js';
 import {
@@ -262,13 +264,13 @@ function handleScanLimit(err) {
 }
 
 async function enterApp() {
+  hydrateUserFromCache();
   const token = getToken();
   if (!token) {
     showAuth(true);
     return;
   }
 
-  // Entrar de inmediato con sesión cacheada; validar en segundo plano
   showAuth(false);
   renderAccountBar();
   handleCheckoutReturn();
@@ -303,7 +305,14 @@ async function refreshMeAndBar() {
 }
 
 function ensureCanScan() {
-  if (!canScanLocally()) {
+  hydrateUserFromCache();
+  if (!getToken()) {
+    showAuth(true);
+    return false;
+  }
+  const user = getUser();
+  // Only show paywall when we KNOW free scans are exhausted
+  if (user && !user.paid && !user.unlimited && (user.scansRemaining ?? 0) <= 0) {
     showPaywall();
     return false;
   }
@@ -811,44 +820,70 @@ async function toggleScanner() {
   }
 
   if (!isCameraSupported()) {
-    showError(lang === 'es' ? 'Cámara no disponible' : 'Camera not available');
+    showError(
+      lang === 'es' ? 'Cámara no disponible' : 'Camera not available',
+      lang === 'es'
+        ? 'Usa HTTPS y permite el acceso a la cámara, o ingresa el código manualmente.'
+        : 'Use HTTPS and allow camera access, or enter the barcode manually.'
+    );
     $('#manual-panel').hidden = false;
     return;
   }
 
+  // CRITICAL for Safari/iPhone: open camera in the same click turn (user gesture)
+  $('#scanner-status').textContent =
+    lang === 'es' ? 'Abriendo cámara…' : 'Opening camera…';
   showView('scan');
   scanning = true;
-  $('#scanner-status').textContent = t(lang, 'scanning');
   $('#stop-scan-btn').textContent = t(lang, 'stopScan');
 
+  let stream = null;
   try {
-    await startScanner('scanner-viewport', (barcode) => {
-      stopScannerActive().then(() => lookupBarcode(barcode));
-    });
+    stream = await openCameraStream();
   } catch (err) {
     scanning = false;
     showView('home');
+    const name = err?.name || '';
+    const detail =
+      name === 'NotAllowedError' || name === 'PermissionDeniedError'
+        ? lang === 'es'
+          ? 'Permiso denegado. En iPhone: Ajustes → Safari → Cámara. En Mac: Ajustes del sistema → Privacidad → Cámara.'
+          : 'Permission denied. Enable Camera for Safari/Chrome in system settings.'
+        : lang === 'es'
+          ? `No se pudo abrir la cámara (${name || err?.message || 'error'}). Prueba recargar o ingresa el código manualmente.`
+          : `Could not open camera (${name || err?.message || 'error'}). Reload or enter the code manually.`;
+    showError(lang === 'es' ? 'No se pudo acceder a la cámara' : 'Could not access camera', detail);
+    $('#manual-panel').hidden = false;
+    return;
+  }
+
+  $('#scanner-status').textContent = t(lang, 'scanning');
+
+  try {
+    await startScanner(
+      'scanner-viewport',
+      (barcode) => {
+        stopScannerActive().then(() => lookupBarcode(barcode));
+      },
+      stream
+    );
+  } catch (err) {
+    scanning = false;
+    showView('home');
+    console.error('VerdiScan camera error', err);
     let detail;
     if (err?.message === 'SCANNER_LIB_MISSING') {
       detail =
         lang === 'es'
-          ? 'Recarga la página e inténtalo de nuevo.'
-          : 'Reload the page and try again.';
-    } else if (/Mac|Win|Linux/i.test(navigator.platform || '') || !/Mobile/i.test(navigator.userAgent)) {
-      detail =
-        lang === 'es'
-          ? 'En Mac: permite la cámara cuando el navegador lo pida. Si la bloqueaste: Ajustes del sistema → Privacidad y seguridad → Cámara → activa Chrome/Safari. También puedes ingresar el código manualmente.'
-          : 'On Mac: allow the camera when prompted. If blocked: System Settings → Privacy & Security → Camera → enable Chrome/Safari. Or enter the barcode manually.';
+          ? 'No cargó el lector de códigos. Recarga la página con buena conexión.'
+          : 'Barcode library failed to load. Reload with a good connection.';
     } else {
       detail =
         lang === 'es'
-          ? 'Si denegaste el permiso, ve a Ajustes → Safari → Cámara (o Ajustes → VerdiScan) y actívala.'
-          : 'If you denied permission, enable Camera in Settings → Safari (or the app).';
+          ? `Error al iniciar el escáner: ${err?.message || err?.name || 'desconocido'}. Puedes ingresar el código a mano.`
+          : `Scanner failed: ${err?.message || err?.name || 'unknown'}. You can enter the code manually.`;
     }
-    showError(
-      lang === 'es' ? 'No se pudo acceder a la cámara' : 'Could not access camera',
-      detail
-    );
+    showError(lang === 'es' ? 'No se pudo acceder a la cámara' : 'Could not access camera', detail);
     $('#manual-panel').hidden = false;
   }
 }

@@ -1,6 +1,6 @@
 /**
  * Fast barcode capture for VerdiScan — iOS + desktop Mac friendly.
- * Prefers native BarcodeDetector when reliable; always releases the camera on failure.
+ * Acquires the camera ASAP (user-gesture safe) and prefers close-up rear lenses on phones.
  */
 
 let activeMode = null; // 'native' | 'html5'
@@ -28,20 +28,19 @@ function isIOS() {
   );
 }
 
-/** Laptop / desktop — usually only a front webcam (no rear "environment" cam) */
 function isDesktop() {
   if (isIOS()) return false;
   if (/Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return false;
   return !/Mobile/i.test(navigator.userAgent);
 }
 
-function nativeFormats() {
+function nativeFormatsSync() {
   try {
     if (typeof BarcodeDetector.getSupportedFormats === 'function') {
       const supported = BarcodeDetector.getSupportedFormats();
       if (Array.isArray(supported)) {
         const list = WANTED_FORMATS.filter((f) => supported.includes(f));
-        return list.length ? list : undefined;
+        return list.length ? list : WANTED_FORMATS;
       }
     }
   } catch (_) {
@@ -90,39 +89,16 @@ async function releaseNativeCamera() {
   }
 }
 
-async function listVideoDevices() {
-  try {
-    if (!navigator.mediaDevices?.enumerateDevices) return [];
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    return devices.filter((d) => d.kind === 'videoinput' && d.deviceId);
-  } catch {
-    return [];
-  }
-}
-
-/**
- * Score cameras for close-up label / barcode reading.
- * Prefer rear + macro / ultra-wide (better near focus); avoid telephoto & selfie.
- */
 function scoreCameraForCloseUp(device) {
   const label = `${device.label || ''}`.toLowerCase();
   let score = 0;
-
-  // Rear / world-facing
   if (/back|rear|environment|trasera|posterior|world/i.test(label)) score += 40;
   if (/front|user|selfie|frontal|face/i.test(label)) score -= 50;
-
-  // Close-range friendly optics
   if (/macro/i.test(label)) score += 50;
   if (/ultra[\s-]?wide|ultrawide|0\.5|uw\b/i.test(label)) score += 35;
   if (/wide|principal|main|camera 0|camera2 0/i.test(label)) score += 20;
-
-  // Bad for near objects
   if (/tele|telephoto|periscope|zoom|3x|5x|10x/i.test(label)) score -= 40;
-
-  // Dual/triple often = main module
   if (/dual|triple|quad/i.test(label) && !/front|selfie/i.test(label)) score += 10;
-
   return score;
 }
 
@@ -130,11 +106,9 @@ function sortDevicesForCloseUp(devices) {
   return [...devices].sort((a, b) => scoreCameraForCloseUp(b) - scoreCameraForCloseUp(a));
 }
 
-/** Tune track for sharp close labels when the browser allows it */
 async function applyCloseUpFocus(stream) {
   const track = stream?.getVideoTracks?.()?.[0];
   if (!track?.getCapabilities) return;
-
   let caps;
   try {
     caps = track.getCapabilities() || {};
@@ -142,141 +116,56 @@ async function applyCloseUpFocus(stream) {
     return;
   }
 
-  const advanced = [];
   const basic = {};
+  if (caps.focusMode?.includes?.('continuous')) basic.focusMode = 'continuous';
+  else if (caps.focusMode?.includes?.('single-shot')) basic.focusMode = 'single-shot';
 
-  if (caps.focusMode?.includes?.('continuous')) {
-    basic.focusMode = 'continuous';
-  } else if (caps.focusMode?.includes?.('single-shot')) {
-    basic.focusMode = 'single-shot';
-  } else if (Array.isArray(caps.focusMode) && caps.focusMode.length) {
-    basic.focusMode = caps.focusMode[0];
-  }
-
-  // Prefer nearer focus distance when supported (meters)
   if (caps.focusDistance && typeof caps.focusDistance.min === 'number') {
     const min = caps.focusDistance.min;
     const max = caps.focusDistance.max ?? min + 1;
-    // ~12–20 cm if in that range; else bias toward minimum (closest)
-    const near = Math.min(max, Math.max(min, 0.15));
-    advanced.push({ focusDistance: near });
+    basic.focusDistance = Math.min(max, Math.max(min, 0.15));
   }
 
   if (caps.zoom && typeof caps.zoom.min === 'number') {
-    // Slight zoom helps barcodes; avoid telephoto-level zoom
     const zMin = caps.zoom.min;
     const zMax = caps.zoom.max ?? zMin;
-    const idealZoom = Math.min(zMax, Math.max(zMin, zMin + (zMax - zMin) * 0.08));
-    basic.zoom = idealZoom;
+    basic.zoom = Math.min(zMax, Math.max(zMin, zMin + (zMax - zMin) * 0.08));
   }
 
+  if (!Object.keys(basic).length) return;
   try {
-    if (Object.keys(basic).length) {
-      await track.applyConstraints({ advanced: Object.keys(basic).length ? [basic] : undefined, ...basic });
-    }
+    await track.applyConstraints(basic);
   } catch {
     try {
-      if (Object.keys(basic).length) await track.applyConstraints({ advanced: [basic] });
-    } catch {
-      /* ignore */
-    }
-  }
-
-  if (advanced.length) {
-    try {
-      await track.applyConstraints({ advanced });
+      await track.applyConstraints({ advanced: [basic] });
     } catch {
       /* ignore */
     }
   }
 }
 
-function phoneCloseUpConstraints(deviceId) {
-  const video = {
-    facingMode: { ideal: 'environment' },
-    width: { ideal: 1920 },
-    height: { ideal: 1080 },
-    frameRate: { ideal: 30 },
-    // Hint continuous AF for near subjects (ignored if unsupported)
-    focusMode: { ideal: 'continuous' },
-  };
-  if (deviceId) video.deviceId = { exact: deviceId };
-  return { audio: false, video };
-}
+/** Immediate camera open — call first in click handler (Safari gesture) */
+export async function openCameraStream() {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    throw new Error('CAMERA_UNSUPPORTED');
+  }
 
-async function getCameraStream() {
+  const attempts = isDesktop()
+    ? [
+        { audio: false, video: { facingMode: 'user' } },
+        { audio: false, video: true },
+      ]
+    : [
+        { audio: false, video: { facingMode: { ideal: 'environment' } } },
+        { audio: false, video: { facingMode: 'environment' } },
+        { audio: false, video: true },
+        { audio: false, video: { facingMode: 'user' } },
+      ];
+
   let lastErr;
-
-  if (isDesktop()) {
-    const attempts = [
-      { audio: false, video: { facingMode: 'user' } },
-      { audio: false, video: { facingMode: { ideal: 'user' } } },
-      { audio: false, video: true },
-      { audio: false, video: { facingMode: { ideal: 'environment' } } },
-    ];
-    for (const constraints of attempts) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        await applyCloseUpFocus(stream);
-        return stream;
-      } catch (err) {
-        lastErr = err;
-      }
-    }
-  } else {
-    // Phones: warm up permission so labels appear in enumerateDevices
+  for (const constraints of attempts) {
     try {
-      const warm = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: { facingMode: { ideal: 'environment' } },
-      });
-      warm.getTracks().forEach((t) => t.stop());
-    } catch (err) {
-      lastErr = err;
-    }
-
-    const devices = sortDevicesForCloseUp(await listVideoDevices());
-    const rearish = devices.filter((d) => scoreCameraForCloseUp(d) > 0);
-    const ordered = rearish.length ? rearish : devices;
-
-    for (const device of ordered) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia(
-          phoneCloseUpConstraints(device.deviceId)
-        );
-        await applyCloseUpFocus(stream);
-        return stream;
-      } catch (err) {
-        lastErr = err;
-      }
-    }
-
-    // Fallback without picking a specific lens
-    const fallbacks = [
-      phoneCloseUpConstraints(null),
-      { audio: false, video: { facingMode: 'environment' } },
-      { audio: false, video: true },
-      { audio: false, video: { facingMode: 'user' } },
-    ];
-    for (const constraints of fallbacks) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        await applyCloseUpFocus(stream);
-        return stream;
-      } catch (err) {
-        lastErr = err;
-      }
-    }
-  }
-
-  // Last resort: any remaining device
-  const leftover = await listVideoDevices();
-  for (const device of leftover) {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: { deviceId: { exact: device.deviceId } },
-      });
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       await applyCloseUpFocus(stream);
       return stream;
     } catch (err) {
@@ -284,10 +173,76 @@ async function getCameraStream() {
     }
   }
 
+  // Prefer close-up rear lenses when labels are available
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cams = sortDevicesForCloseUp(
+      devices.filter((d) => d.kind === 'videoinput' && d.deviceId)
+    );
+    for (const cam of cams) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: {
+            deviceId: { exact: cam.deviceId },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
+        });
+        await applyCloseUpFocus(stream);
+        return stream;
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+  } catch (err) {
+    lastErr = err;
+  }
+
   throw lastErr || new Error('CAMERA_DENIED');
 }
 
-async function startNativeScanner(container) {
+function stopStreamTracks(stream) {
+  if (!stream) return;
+  for (const track of stream.getTracks()) {
+    try {
+      track.stop();
+    } catch (_) {
+      /* ignore */
+    }
+  }
+}
+
+async function loadHtml5QrcodeLib() {
+  if (window.Html5Qrcode) return;
+  const urls = [
+    'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js',
+    'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
+  ];
+  for (const src of urls) {
+    try {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('SCRIPT_FAIL'));
+        document.head.appendChild(s);
+      });
+      if (window.Html5Qrcode) return;
+    } catch {
+      /* try next */
+    }
+  }
+  // Wait briefly if page already included a deferred script
+  const start = Date.now();
+  while (!window.Html5Qrcode && Date.now() - start < 4000) {
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  if (!window.Html5Qrcode) throw new Error('SCANNER_LIB_MISSING');
+}
+
+async function startNativeWithStream(container, stream) {
   container.innerHTML = '';
   container.classList.add('scanner-active');
 
@@ -314,19 +269,10 @@ async function startNativeScanner(container) {
     </div>
   `;
 
-  const torchBtn = document.createElement('button');
-  torchBtn.type = 'button';
-  torchBtn.className = 'scanner-torch-btn';
-  torchBtn.hidden = true;
-  torchBtn.textContent = '🔦';
-  torchBtn.setAttribute('aria-label', 'Flash');
-
   wrap.appendChild(video);
   wrap.appendChild(overlay);
-  wrap.appendChild(torchBtn);
   container.appendChild(wrap);
 
-  const stream = await getCameraStream();
   nativeStream = stream;
   nativeVideo = video;
   video.srcObject = stream;
@@ -338,32 +284,12 @@ async function startNativeScanner(container) {
     throw err;
   }
 
-  const track = stream.getVideoTracks()[0];
-  try {
-    const caps = track?.getCapabilities?.() || {};
-    if (caps.torch) {
-      let torchOn = false;
-      torchBtn.hidden = false;
-      torchBtn.addEventListener('click', async () => {
-        torchOn = !torchOn;
-        try {
-          await track.applyConstraints({ advanced: [{ torch: torchOn }] });
-          torchBtn.classList.toggle('is-on', torchOn);
-        } catch (_) {
-          /* ignore */
-        }
-      });
-    }
-  } catch (_) {
-    /* capabilities optional */
-  }
-
-  let formats = nativeFormats();
+  let formats = nativeFormatsSync();
   if (formats && typeof formats.then === 'function') {
     try {
       const supported = await formats;
       formats = WANTED_FORMATS.filter((f) => supported.includes(f));
-      if (!formats.length) formats = undefined;
+      if (!formats.length) formats = WANTED_FORMATS;
     } catch {
       formats = WANTED_FORMATS;
     }
@@ -371,27 +297,26 @@ async function startNativeScanner(container) {
 
   let detector;
   try {
-    detector = formats ? new BarcodeDetector({ formats }) : new BarcodeDetector();
+    detector = new BarcodeDetector({ formats });
   } catch {
-    await releaseNativeCamera();
-    throw new Error('BARCODE_DETECTOR_INIT');
+    try {
+      detector = new BarcodeDetector();
+    } catch {
+      await releaseNativeCamera();
+      throw new Error('BARCODE_DETECTOR_INIT');
+    }
   }
 
   let lastTs = 0;
-  const intervalMs = 100;
-
   const tick = async (ts) => {
     if (!nativeVideo || detectedLock) return;
     nativeRaf = requestAnimationFrame(tick);
-    if (ts - lastTs < intervalMs) return;
+    if (ts - lastTs < 100) return;
     lastTs = ts;
     if (video.readyState < 2) return;
-
     try {
       const codes = await detector.detect(video);
-      if (codes?.length && codes[0].rawValue) {
-        emitBarcode(codes[0].rawValue);
-      }
+      if (codes?.length && codes[0].rawValue) emitBarcode(codes[0].rawValue);
     } catch (_) {
       /* transient */
     }
@@ -401,10 +326,11 @@ async function startNativeScanner(container) {
   activeMode = 'native';
 }
 
-async function startHtml5Scanner(containerId, container) {
-  if (!window.Html5Qrcode) {
-    throw new Error('SCANNER_LIB_MISSING');
-  }
+async function startHtml5Scanner(containerId, container, preStream) {
+  await loadHtml5QrcodeLib();
+
+  // html5-qrcode opens its own stream — release ours first
+  stopStreamTracks(preStream);
 
   container.innerHTML = '';
   container.classList.remove('scanner-active');
@@ -417,65 +343,29 @@ async function startHtml5Scanner(containerId, container) {
       Html5QrcodeSupportedFormats.UPC_E,
       Html5QrcodeSupportedFormats.CODE_128,
     ],
-    experimentalFeatures: {
-      useBarCodeDetectorIfSupported: true,
-    },
+    experimentalFeatures: { useBarCodeDetectorIfSupported: true },
     verbose: false,
   });
 
   const config = {
-    fps: isIOS() ? 15 : 20,
+    fps: isIOS() ? 12 : 20,
     qrbox: (w, h) => ({
-      width: Math.floor(Math.min(w * 0.9, isDesktop() ? 480 : 400)),
-      height: Math.floor(Math.min(h * (isDesktop() ? 0.4 : 0.28), isDesktop() ? 200 : 130)),
+      width: Math.floor(Math.min(w * 0.92, isDesktop() ? 480 : 420)),
+      height: Math.floor(Math.min(h * (isDesktop() ? 0.42 : 0.3), isDesktop() ? 220 : 140)),
     }),
     disableFlip: false,
+    aspectRatio: 1.777,
   };
-
-  // Exact same camera config that worked on iPhone before — but prefer
-  // close-up capable rear lenses when we can enumerate them.
-  if (!isDesktop() && !isIOS()) {
-    // Android: pick best close-up lens first via device list
-    try {
-      const cameras = await Html5Qrcode.getCameras();
-      const ranked = sortDevicesForCloseUp(
-        (cameras || []).map((c) => ({ deviceId: c.id, label: c.label || '', kind: 'videoinput' }))
-      ).filter((c) => scoreCameraForCloseUp(c) > 0);
-      for (const cam of ranked) {
-        try {
-          await html5Instance.start(cam.deviceId, config, (decodedText) => emitBarcode(decodedText), () => {});
-          activeMode = 'html5';
-          try {
-            const videoEl = document.querySelector(`#${containerId} video`);
-            if (videoEl?.srcObject) await applyCloseUpFocus(videoEl.srcObject);
-          } catch (_) {
-            /* ignore */
-          }
-          return;
-        } catch (_) {
-          try {
-            await html5Instance.stop();
-          } catch (_) {
-            /* ignore */
-          }
-        }
-      }
-    } catch (_) {
-      /* fall through */
-    }
-  }
-
 
   const cameraAttempts = isDesktop()
     ? [{ facingMode: 'user' }, { facingMode: 'environment' }]
-    : [{ facingMode: 'environment' }, { facingMode: 'user' }];
+    : [{ facingMode: 'environment' }, { facingMode: { exact: 'environment' } }, { facingMode: 'user' }];
 
   let lastErr;
   for (const cameraConfig of cameraAttempts) {
     try {
       await html5Instance.start(cameraConfig, config, (decodedText) => emitBarcode(decodedText), () => {});
       activeMode = 'html5';
-      // Best-effort close-up focus on the live track
       try {
         const videoEl = document.querySelector(`#${containerId} video`);
         if (videoEl?.srcObject) await applyCloseUpFocus(videoEl.srcObject);
@@ -493,7 +383,6 @@ async function startHtml5Scanner(containerId, container) {
     }
   }
 
-  // Prefer macro / ultra-wide / rear by label score
   try {
     const cameras = await Html5Qrcode.getCameras();
     const ranked = sortDevicesForCloseUp(
@@ -526,36 +415,43 @@ async function startHtml5Scanner(containerId, container) {
   throw lastErr || new Error('CAMERA_DENIED');
 }
 
-export async function startScanner(containerId, onDetected) {
+/**
+ * @param {string} containerId
+ * @param {(code: string) => void} onDetected
+ * @param {MediaStream} [preStream] stream already opened in the click gesture
+ */
+export async function startScanner(containerId, onDetected, preStream = null) {
   detectedLock = false;
 
   const container = document.getElementById(containerId);
-  if (!container) return;
+  if (!container) throw new Error('SCANNER_CONTAINER_MISSING');
 
-  if (!navigator.mediaDevices?.getUserMedia) {
-    throw new Error('CAMERA_UNSUPPORTED');
-  }
-
-  // Release any previous session BEFORE wiring the new callback
   await stopScanner();
   onDetectedCallback = onDetected;
   container.innerHTML = '';
 
-  // iPhone: html5-qrcode with simple facingMode (proven). Native path often
-  // grabs the camera then fails and blocks the fallback — skip it on iOS.
+  let stream = preStream;
+  if (!stream) {
+    stream = await openCameraStream();
+  }
+
+  // Prefer native detector on Android/desktop when available; iOS → html5 (more reliable)
   if (supportsNativeBarcode() && !isIOS()) {
     try {
-      await startNativeScanner(container);
+      await startNativeWithStream(container, stream);
       return;
     } catch (_) {
+      stopStreamTracks(stream);
+      stream = null;
       await releaseNativeCamera();
       container.innerHTML = '';
     }
   }
 
   try {
-    await startHtml5Scanner(containerId, container);
+    await startHtml5Scanner(containerId, container, stream);
   } catch (err) {
+    stopStreamTracks(stream);
     await stopScanner();
     throw err;
   }
@@ -569,25 +465,18 @@ export async function stopScanner() {
 
   if (html5Instance) {
     try {
-      const state = html5Instance.getState?.();
-      if (
-        typeof Html5QrcodeScannerState !== 'undefined' &&
-        (state === Html5QrcodeScannerState.SCANNING ||
-          state === Html5QrcodeScannerState.PAUSED)
-      ) {
+      try {
         await html5Instance.stop();
-      } else if (state === 2 || state === 3) {
-        await html5Instance.stop();
-      } else {
-        try {
-          await html5Instance.stop();
-        } catch (_) {
-          /* already stopped */
-        }
+      } catch (_) {
+        /* already stopped */
       }
-      html5Instance.clear();
+      try {
+        html5Instance.clear();
+      } catch (_) {
+        /* ignore */
+      }
     } catch (_) {
-      /* ignore stop errors */
+      /* ignore */
     }
     html5Instance = null;
   }
@@ -602,7 +491,11 @@ export async function stopScanner() {
 }
 
 export function isCameraSupported() {
-  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  return !!(
+    (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ||
+    navigator.getUserMedia ||
+    navigator.webkitGetUserMedia
+  );
 }
 
 export function getScannerMode() {
