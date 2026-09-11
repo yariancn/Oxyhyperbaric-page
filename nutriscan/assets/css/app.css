@@ -1029,8 +1029,51 @@ body {
 }
 
 .criteria-labels strong {
-  display: block;
   font-size: 0.9rem;
+}
+
+.criteria-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.criteria-info-btn {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--green-mid);
+  background: white;
+  color: var(--green-mid);
+  font-size: 0.7rem;
+  font-weight: 800;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.criteria-info-btn.is-open,
+.criteria-info-btn:hover {
+  background: var(--green-mid);
+  color: white;
+}
+
+.criteria-why {
+  margin: 0.35rem 0 0.55rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--green-mist);
+  border-left: 3px solid var(--green-mid);
+  border-radius: 0 10px 10px 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text);
 }
 
 .criteria-factor-hint {

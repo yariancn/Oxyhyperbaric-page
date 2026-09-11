@@ -112,13 +112,31 @@ function renderCriteriaPanel() {
         ? `<span class="criteria-kind-badge">${lang === 'es' ? 'Bono +' : 'Bonus +'}</span>`
         : '';
 
+    const why = factor.why?.[lang] || factor.why?.en || '';
+    const infoAria = lang === 'es' ? `Por qué: ${label}` : `Why: ${label}`;
+
     row.innerHTML = `
       <div class="criteria-row-top">
         <div class="criteria-labels">
-          <strong>${label} ${kindBadge}</strong>
-          <span class="criteria-factor-hint">${factorHint}</span>
+          <div class="criteria-title-row">
+            <strong>${escapeHtml(label)}</strong>
+            ${kindBadge}
+            <button
+              type="button"
+              class="criteria-info-btn"
+              data-info-for="${factor.id}"
+              aria-expanded="false"
+              aria-controls="criteria-why-${factor.id}"
+              aria-label="${escapeHtml(infoAria)}"
+              title="${lang === 'es' ? '¿Por qué se considera?' : 'Why does this matter?'}"
+            >i</button>
+          </div>
+          <span class="criteria-factor-hint">${escapeHtml(factorHint)}</span>
         </div>
         <span class="criteria-level" data-level-for="${factor.id}">${levelText}</span>
+      </div>
+      <div id="criteria-why-${factor.id}" class="criteria-why" hidden>
+        ${escapeHtml(why)}
       </div>
       <input
         type="range"
@@ -128,7 +146,7 @@ function renderCriteriaPanel() {
         step="1"
         value="${WEIGHT_LEVELS.findIndex((l) => l.value === value)}"
         data-factor="${factor.id}"
-        aria-label="${label}"
+        aria-label="${escapeHtml(label)}"
       />
       <div class="criteria-ticks" aria-hidden="true">
         ${WEIGHT_LEVELS.map((lv) => `<span>${t(lang, lv.key)}</span>`).join('')}
@@ -139,6 +157,30 @@ function renderCriteriaPanel() {
 
   list.querySelectorAll('.criteria-slider').forEach((slider) => {
     slider.addEventListener('input', onCriteriaSlider);
+  });
+
+  list.querySelectorAll('.criteria-info-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = btn.dataset.infoFor;
+      const panel = document.getElementById(`criteria-why-${id}`);
+      if (!panel) return;
+      const open = panel.hidden;
+      // Close other open why panels in the list
+      list.querySelectorAll('.criteria-why').forEach((p) => {
+        p.hidden = true;
+      });
+      list.querySelectorAll('.criteria-info-btn').forEach((b) => {
+        b.classList.remove('is-open');
+        b.setAttribute('aria-expanded', 'false');
+      });
+      if (open) {
+        panel.hidden = false;
+        btn.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
   });
 }
 

@@ -103,7 +103,7 @@ export const STRINGS = {
     criteriaTitle: 'Criterios de puntuación',
     criteriaHint: 'Personaliza · toca para abrir',
     criteriaIntro:
-      'Elige cuánto pesa cada factor. Medio = default. Apagado = ignora. Proteína y fibra son bonos (+ puntos). El resto resta.',
+      'Elige cuánto pesa cada factor. Toca ℹ para ver por qué resta o suma. Medio = default. Proteína y fibra son bonos.',
     criteriaReset: 'Restablecer a valores medios',
     weightOff: 'Apagado',
     weightLow: 'Bajo',
@@ -215,7 +215,7 @@ export const STRINGS = {
     criteriaTitle: 'Scoring criteria',
     criteriaHint: 'Customize · tap to expand',
     criteriaIntro:
-      'Choose how much each factor matters. Medium = default. Off = ignore. Protein and fiber are bonuses (+ points). The rest subtract.',
+      'Choose how much each factor matters. Tap ℹ to see why it subtracts or adds. Medium = default. Protein and fiber are bonuses.',
     criteriaReset: 'Reset to medium defaults',
     weightOff: 'Off',
     weightLow: 'Low',

@@ -358,14 +358,30 @@ export function analyzeProduct(product, lang = 'es', userWeights = null) {
     let w = markerWeight;
     if (marker.id === 'hfcs') w = SCORE_WEIGHTS.hfcs;
     if (marker.id === 'hydrogenated_oil') w = SCORE_WEIGHTS.hydrogenated;
+    if (
+      marker.id === 'milk_protein_isolate' ||
+      marker.id === 'wheat_protein_isolate' ||
+      marker.id === 'soy_protein_isolate' ||
+      marker.id === 'whey_or_gluten'
+    ) {
+      w = SCORE_WEIGHTS.nova4ProteinIsolate;
+    }
     const cat = marker.id === 'hfcs' ? 'added_sugar' : 'nova_marker';
+    const reasonEs =
+      w === SCORE_WEIGHTS.nova4ProteinIsolate
+        ? 'Aislado industrial (ligero): la proteína no es mala, pero indica reformulación.'
+        : 'Ingrediente poco usado en cocina casera.';
+    const reasonEn =
+      w === SCORE_WEIGHTS.nova4ProteinIsolate
+        ? 'Industrial isolate (light): protein isn’t bad, but it signals reformulation.'
+        : 'Ingredient rarely used in home cooking.';
     penalize(
       `marker-${marker.id}`,
       marker.label.es,
       marker.label.en,
       scaled(w, cat),
-      'Ingrediente poco usado en cocina casera.',
-      'Ingredient rarely used in home cooking.',
+      reasonEs,
+      reasonEn,
       marker.id === 'hydrogenated_oil' ? SEVERITY.CRITICAL : SEVERITY.HIGH,
       cat === 'added_sugar' ? 'added_sugar' : 'nova_marker',
       {

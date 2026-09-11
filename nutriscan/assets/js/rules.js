@@ -24,7 +24,7 @@ export const NOVA4_MARKERS = [
   { id: 'milk_protein_isolate', patterns: [/milk\s+protein\s+isolate/i, /prote[ií]na\s+aislad[ao]\s+de\s+leche/i], label: { en: 'Milk protein isolate', es: 'Proteína aislada de leche' } },
   { id: 'wheat_protein_isolate', patterns: [/wheat\s+protein\s+isolate/i, /prote[ií]na\s+aislad[ao]\s+de\s+trigo/i], label: { en: 'Wheat protein isolate', es: 'Proteína aislada de trigo' } },
   { id: 'soy_protein_isolate', patterns: [/soy\s+protein\s+isolate/i, /isolated?\s+soy\s+protein/i, /prote[ií]na\s+aislad[ao]\s+de\s+soya/i], label: { en: 'Soy protein isolate', es: 'Proteína aislada de soya' } },
-  { id: 'whey_or_gluten', patterns: [/whey\s+protein/i, /(?<!free\s+)wheat\s+gluten/i, /gluten(?!\s+free)/i], label: { en: 'Whey / gluten isolate', es: 'Suero / gluten aislado' } },
+  { id: 'whey_or_gluten', patterns: [/whey\s+protein/i, /wheat\s+gluten/i, /vital\s+wheat\s+gluten/i, /gluten\s+de\s+trigo/i, /prote[ií]na\s+de\s+suero/i], label: { en: 'Whey / gluten isolate', es: 'Suero / gluten aislado' } },
   { id: 'invert_sugar', patterns: [/invert\s+sugar/i, /az[uú]car\s+invertid/i], label: { en: 'Invert sugar', es: 'Azúcar invertido' } },
   { id: 'mechanically_separated', patterns: [/mechanically\s+separated/i, /carne\s+mec[aá]nicamente\s+separad/i], label: { en: 'Mechanically separated meat', es: 'Carne mecánicamente separada' } },
   { id: 'fruit_concentrate', patterns: [/fruit\s+juice\s+concentrate/i, /concentrado\s+de\s+jugo\s+de\s+frut/i], label: { en: 'Fruit juice concentrate (as sweetener)', es: 'Concentrado de jugo (como edulcorante)' } },
@@ -321,8 +321,10 @@ export const SCORE_WEIGHTS = {
   nova4CleanLabel: 10,
   nova4Standard: 14,
   nova4Classic: 22,
-  nova4MarkerClassic: 6,
+  nova4MarkerClassic: 4,
   nova4MarkerClean: 2,
+  /** Protein isolates / whey — lighter than generic industrial markers */
+  nova4ProteinIsolate: 3,
   seedOil: 14,
   sweetenerHigh: 18,
   additiveHigh: 10,
@@ -368,8 +370,8 @@ export const SCORE_WEIGHTS = {
   /** Sin lista de ingredientes no se puntúa (se pide al usuario) */
   missingIngredientsBlock: true,
   /** Huevos / carne / lácteos sin etiqueta libre de antibióticos u orgánica */
-  conventionalAnimal: 26,
-  unknownHusbandry: 10,
+  conventionalAnimal: 16,
+  unknownHusbandry: 5,
 };
 
 /** Claims that indicate better animal husbandry / no routine antibiotics */
