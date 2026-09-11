@@ -9,7 +9,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>VerdiScan — Escáner de Alimentos Saludables</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="assets/css/app.css">
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
 </head>
@@ -26,9 +27,38 @@
         <button id="lang-toggle" class="lang-btn" type="button" aria-label="Switch language">EN</button>
       </div>
       <p id="tagline">Escanea. Comprende. Elige mejor.</p>
+      <div id="account-bar" class="account-bar" hidden>
+        <span id="account-email"></span>
+        <span id="account-scans"></span>
+        <button id="logout-btn" class="btn btn-ghost btn-sm" type="button">Salir</button>
+      </div>
     </header>
 
-    <main class="app-main">
+    <!-- Auth gate -->
+    <div id="auth-view" class="auth-view" hidden>
+      <div class="auth-card">
+        <h2 id="auth-title">Accede a VerdiScan</h2>
+        <p id="auth-subtitle" class="auth-subtitle"></p>
+        <div class="auth-tabs">
+          <button id="auth-tab-login" class="auth-tab is-active" type="button">Entrar</button>
+          <button id="auth-tab-register" class="auth-tab" type="button">Registrarme</button>
+        </div>
+        <form id="auth-form">
+          <label id="auth-email-label" for="auth-email">Correo</label>
+          <input id="auth-email" type="email" autocomplete="username" required>
+          <label id="auth-password-label" for="auth-password">Contraseña</label>
+          <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required>
+          <div id="signup-code-wrap" hidden>
+            <label id="auth-code-label" for="auth-signup-code">Código de acceso</label>
+            <input id="auth-signup-code" type="text" autocomplete="off">
+          </div>
+          <p id="auth-error" class="auth-error" hidden role="alert"></p>
+          <button id="auth-submit" class="btn btn-primary" type="submit">Entrar</button>
+        </form>
+      </div>
+    </div>
+
+    <main class="app-main" id="app-main">
       <!-- Home -->
       <div id="home-view">
         <button id="scan-btn" class="btn btn-primary" type="button">
@@ -39,6 +69,18 @@
         <button id="manual-toggle" class="btn btn-secondary" type="button">
           <span id="manual-toggle-label">Ingresar código manualmente</span>
         </button>
+
+        <details id="criteria-panel" class="criteria-panel">
+          <summary class="criteria-summary">
+            <span id="criteria-summary-title">Criterios de puntuación</span>
+            <span id="criteria-summary-hint" class="criteria-summary-hint">Personaliza · toca para abrir</span>
+          </summary>
+          <div class="criteria-body">
+            <p id="criteria-intro" class="criteria-intro"></p>
+            <div id="criteria-list" class="criteria-list"></div>
+            <button id="criteria-reset-btn" class="btn btn-ghost" type="button">Restablecer valores</button>
+          </div>
+        </details>
 
         <div id="manual-panel" hidden>
           <form id="search-form">
@@ -56,6 +98,40 @@
           <div class="error-msg"></div>
           <div class="error-hint"></div>
         </div>
+
+        <section id="ingredients-entry" class="ingredients-entry" hidden>
+          <h2 id="ingredients-entry-title">Lista de ingredientes</h2>
+          <p id="ingredients-entry-hint" class="ingredients-entry-hint"></p>
+          <p id="ingredients-entry-barcode" class="ingredients-entry-barcode" hidden></p>
+
+          <div class="ingredients-photo-actions">
+            <button id="photo-ingredients-btn" class="btn btn-primary" type="button">
+              <span aria-hidden="true">📷</span>
+              <span id="photo-ingredients-label">Fotografiar ingredientes</span>
+            </button>
+            <button id="gallery-ingredients-btn" class="btn btn-secondary" type="button">
+              <span id="gallery-ingredients-label">Elegir foto</span>
+            </button>
+            <input id="ingredients-camera-input" type="file" accept="image/*" capture="environment" hidden>
+            <input id="ingredients-gallery-input" type="file" accept="image/*" hidden>
+          </div>
+
+          <div id="ocr-preview-wrap" class="ocr-preview-wrap" hidden>
+            <img id="ocr-preview" alt="Foto de ingredientes" class="ocr-preview">
+            <p id="ocr-status" class="ocr-status"></p>
+          </div>
+
+          <label id="ingredients-review-label" class="ingredients-review-label" for="ingredients-input">
+            Revisa el texto leído (corrige si hace falta):
+          </label>
+          <textarea
+            id="ingredients-input"
+            rows="5"
+            placeholder="La foto se convertirá en texto aquí…"
+          ></textarea>
+          <input id="manual-product-name" type="text" placeholder="Nombre del producto (opcional)" autocomplete="off">
+          <button id="analyze-ingredients-btn" class="btn btn-primary" type="button">Analizar ingredientes</button>
+        </section>
 
         <section class="history-section">
           <h2 id="history-title">Historial</h2>
@@ -89,6 +165,35 @@
           </div>
         </div>
 
+        <section id="verdict-section" class="detail-section" hidden>
+          <div class="verdict-grid">
+            <div class="verdict-col verdict-good">
+              <h3 id="good-title">Lo bueno</h3>
+              <ul id="good-list" class="verdict-list"></ul>
+            </div>
+            <div class="verdict-col verdict-bad">
+              <h3 id="bad-title">Lo malo</h3>
+              <ul id="bad-list" class="verdict-list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="breakdown-section" class="detail-section" hidden>
+          <h3 id="breakdown-title">¿Por qué esta puntuación?</h3>
+          <p id="breakdown-intro" class="breakdown-intro"></p>
+          <ul id="breakdown-list" class="breakdown-list"></ul>
+        </section>
+
+        <section id="ultra-section" class="detail-section" hidden>
+          <h3 id="ultra-title">Indicadores de ultraprocesado</h3>
+          <ul id="ultra-list" class="chip-list"></ul>
+        </section>
+
+        <section id="bio-section" class="detail-section" hidden>
+          <h3 id="bio-title">Bioingeniería / OGM</h3>
+          <ul id="bio-list" class="alert-list"></ul>
+        </section>
+
         <section id="alerts-section" class="detail-section" hidden>
           <h3 id="alerts-title">Alertas detectadas</h3>
           <ul id="alerts-list" class="alert-list"></ul>
@@ -114,8 +219,39 @@
         <h4 id="disclaimer-title">Aviso informativo</h4>
         <p id="disclaimer-text"></p>
         <p id="sources-text"></p>
+        <p id="rules-version" class="rules-version"></p>
       </div>
     </footer>
+  </div>
+
+  <!-- Paywall -->
+  <div id="paywall-modal" class="modal-overlay" hidden>
+    <div class="modal-card">
+      <h2 id="paywall-title"></h2>
+      <p id="paywall-body"></p>
+      <button id="paywall-checkout-btn" class="btn btn-primary" type="button"></button>
+      <button id="paywall-dismiss-btn" class="btn btn-ghost" type="button"></button>
+    </div>
+  </div>
+
+  <!-- Install guide -->
+  <button id="install-fab" class="install-fab" type="button" hidden aria-label="Instalar app">📲</button>
+  <div id="install-panel" class="install-panel" hidden>
+    <div class="install-card">
+      <h3 id="install-title">Instala VerdiScan</h3>
+      <p id="install-subtitle"></p>
+      <button id="install-native-btn" class="btn btn-primary" type="button" hidden></button>
+      <ol id="install-ios-steps">
+        <li id="install-ios-1"></li>
+        <li id="install-ios-2"></li>
+        <li id="install-ios-3"></li>
+      </ol>
+      <ol id="install-android-steps" hidden>
+        <li id="install-android-1"></li>
+        <li id="install-android-2"></li>
+      </ol>
+      <button id="install-dismiss-btn" class="btn btn-ghost" type="button"></button>
+    </div>
   </div>
 
   <script type="module" src="assets/js/app.js"></script>

@@ -1,0 +1,24 @@
+# VerdiScan — static PWA + OCR/product API at scan.predictacore.ai
+# No Neon / no Railway
+name = "verdiscan"
+main = "src/worker.js"
+compatibility_date = "2026-08-28"
+workers_dev = true
+account_id = "a0d6591fc135a7069b2487a1f5fd5aa7"
+
+[ai]
+binding = "AI"
+
+[assets]
+directory = "../nutriscan"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[[kv_namespaces]]
+binding = "USERS"
+id = "7fc63deaba8d418696a85a6d393ac157"
+
+[[routes]]
+pattern = "scan.predictacore.ai"
+custom_domain = true
