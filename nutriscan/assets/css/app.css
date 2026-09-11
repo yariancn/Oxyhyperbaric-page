@@ -499,15 +499,90 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  align-items: center;
+  align-items: stretch;
+}
+
+.ocr-preview-frame {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0a1a12;
+  min-height: 140px;
 }
 
 .ocr-preview {
-  max-width: 100%;
-  max-height: 160px;
-  border-radius: 10px;
+  display: block;
+  width: 100%;
+  max-height: 220px;
   object-fit: contain;
-  background: #f0eee8;
+  background: #0a1a12;
+}
+
+.ocr-reading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 1rem;
+  background: rgba(10, 26, 18, 0.72);
+  backdrop-filter: blur(4px);
+  color: white;
+  text-align: center;
+}
+
+.ocr-reading-overlay[hidden] {
+  display: none !important;
+}
+
+.ocr-reading-spinner {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #95d5b2;
+  animation: ocr-spin 0.85s linear infinite;
+}
+
+@keyframes ocr-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ocr-reading-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.ocr-progress-track {
+  width: min(220px, 80%);
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.ocr-progress-bar {
+  height: 100%;
+  width: 8%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #40916c, #95d5b2);
+  transition: width 0.25s ease;
+  animation: ocr-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes ocr-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+}
+
+.ocr-reading-pct {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .ocr-status {
@@ -519,6 +594,53 @@ body {
 
 .ocr-status.is-error {
   color: var(--danger);
+}
+
+.ocr-status.is-reading {
+  color: var(--green-dark);
+  font-weight: 600;
+}
+
+#analyze-ingredients-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+#analyze-ingredients-btn.is-waiting {
+  background: var(--green-dark);
+}
+
+#analyze-ingredients-btn.is-waiting #analyze-ingredients-label::after {
+  content: '';
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-left: 0.45rem;
+  vertical-align: -0.1em;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  animation: ocr-spin 0.8s linear infinite;
+}
+
+.ingredients-entry.is-ocr-busy {
+  pointer-events: none;
+}
+
+.ingredients-entry.is-ocr-busy #photo-ingredients-btn,
+.ingredients-entry.is-ocr-busy #gallery-ingredients-btn,
+.ingredients-entry.is-ocr-busy #analyze-ingredients-btn,
+.ingredients-entry.is-ocr-busy #ingredients-input,
+.ingredients-entry.is-ocr-busy #manual-product-name {
+  opacity: 0.55;
+}
+
+.ingredients-entry.is-ocr-busy #ocr-preview-wrap,
+.ingredients-entry.is-ocr-busy #ocr-reading-overlay {
+  pointer-events: auto;
+  opacity: 1;
 }
 
 /* Result view */

@@ -36,6 +36,7 @@ let pendingBarcode = '';
 let pendingProduct = null;
 let authMode = 'login';
 let criteriaWeights = loadWeights();
+let ocrBusy = false;
 
 const $ = (sel) => document.querySelector(sel);
 const authHdr = (extra = {}) => authHeaders(extra);
@@ -69,7 +70,8 @@ function applyStaticText() {
   $('#ingredients-entry-title').textContent = t(lang, 'ingredientsEntryTitle');
   $('#ingredients-input').placeholder = t(lang, 'ingredientsPlaceholder');
   $('#manual-product-name').placeholder = t(lang, 'productNamePlaceholder');
-  $('#analyze-ingredients-btn').textContent = t(lang, 'analyzeIngredients');
+  const analyzeLabel = $('#analyze-ingredients-label');
+  if (analyzeLabel) analyzeLabel.textContent = t(lang, 'analyzeIngredients');
   $('#photo-ingredients-label').textContent = t(lang, 'photoIngredients');
   $('#gallery-ingredients-label').textContent = t(lang, 'galleryIngredients');
   const reviewLabel = $('#ingredients-review-label');
@@ -372,14 +374,73 @@ function showIngredientsEntry({ barcode, product, reason }) {
     previewWrap.hidden = true;
     $('#ocr-preview').removeAttribute('src');
     $('#ocr-status').textContent = '';
-    $('#ocr-status').classList.remove('is-error');
+    $('#ocr-status').classList.remove('is-error', 'is-reading');
   }
+  setOcrBusy(false);
+  syncAnalyzeButton();
 }
 
 function hideIngredientsEntry() {
   $('#ingredients-entry').hidden = true;
   pendingBarcode = '';
   pendingProduct = null;
+  setOcrBusy(false);
+}
+
+function setOcrBusy(busy) {
+  ocrBusy = busy;
+  const panel = $('#ingredients-entry');
+  const overlay = $('#ocr-reading-overlay');
+  const analyzeBtn = $('#analyze-ingredients-btn');
+  const photoBtn = $('#photo-ingredients-btn');
+  const galleryBtn = $('#gallery-ingredients-btn');
+  const textarea = $('#ingredients-input');
+  const nameInput = $('#manual-product-name');
+
+  if (panel) panel.classList.toggle('is-ocr-busy', busy);
+  if (overlay) overlay.hidden = !busy;
+  if (photoBtn) photoBtn.disabled = busy;
+  if (galleryBtn) galleryBtn.disabled = busy;
+  if (textarea) textarea.readOnly = busy;
+  if (nameInput) nameInput.readOnly = busy;
+
+  if (analyzeBtn) {
+    analyzeBtn.classList.toggle('is-waiting', busy);
+    if (busy) {
+      analyzeBtn.disabled = true;
+      const label = $('#analyze-ingredients-label');
+      if (label) label.textContent = t(lang, 'ocrWaitingAnalyze');
+    } else {
+      const label = $('#analyze-ingredients-label');
+      if (label) label.textContent = t(lang, 'analyzeIngredients');
+      syncAnalyzeButton();
+    }
+  }
+
+  if (busy) {
+    const title = $('#ocr-reading-title');
+    if (title) title.textContent = t(lang, 'ocrReadingTitle');
+    setOcrProgress(5);
+  }
+}
+
+function setOcrProgress(pct) {
+  const bar = $('#ocr-progress-bar');
+  const pctEl = $('#ocr-reading-pct');
+  const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+  if (bar) bar.style.width = `${Math.max(8, clamped)}%`;
+  if (pctEl) pctEl.textContent = `${clamped}%`;
+}
+
+function syncAnalyzeButton() {
+  const analyzeBtn = $('#analyze-ingredients-btn');
+  if (!analyzeBtn) return;
+  if (ocrBusy) {
+    analyzeBtn.disabled = true;
+    return;
+  }
+  const text = ($('#ingredients-input')?.value || '').trim();
+  analyzeBtn.disabled = text.length < 3;
 }
 
 function saveHistory(entry) {
@@ -623,6 +684,7 @@ function renderResult(product, analysis) {
 }
 
 function analyzeManualIngredients() {
+  if (ocrBusy) return;
   const text = $('#ingredients-input').value.trim();
   if (text.length < 3) {
     showError(
@@ -671,22 +733,19 @@ function analyzeManualIngredients() {
 
 async function processIngredientsPhoto(file) {
   if (!file || !file.type.startsWith('image/')) return;
+  if (ocrBusy) return;
 
   hideError();
   const previewWrap = $('#ocr-preview-wrap');
   const preview = $('#ocr-preview');
   const status = $('#ocr-status');
-  const analyzeBtn = $('#analyze-ingredients-btn');
-  const photoBtn = $('#photo-ingredients-btn');
-  const galleryBtn = $('#gallery-ingredients-btn');
 
   previewWrap.hidden = false;
   preview.src = URL.createObjectURL(file);
   status.classList.remove('is-error');
+  status.classList.add('is-reading');
   status.textContent = t(lang, 'ocrLoading');
-  analyzeBtn.disabled = true;
-  photoBtn.disabled = true;
-  galleryBtn.disabled = true;
+  setOcrBusy(true);
 
   const nameHint =
     $('#manual-product-name').value.trim() ||
@@ -695,8 +754,11 @@ async function processIngredientsPhoto(file) {
 
   try {
     const result = await ocrIngredientsImage(file, (pct) => {
+      setOcrProgress(pct);
       status.textContent = `${t(lang, 'ocrLoading')} ${pct}%`;
     }, nameHint, authHdr);
+
+    setOcrProgress(100);
 
     if (result.account) {
       updateUserFromAccount(result.account);
@@ -713,15 +775,14 @@ async function processIngredientsPhoto(file) {
     // Found full ingredients in a database via product name
     if (result.fromDatabase && result.product && result.ingredients) {
       $('#ingredients-input').value = result.ingredients;
+      status.classList.remove('is-reading');
       status.textContent = t(lang, 'ocrFromDb');
       pendingProduct = { ...(pendingProduct || {}), ...result.product };
-      analyzeBtn.disabled = false;
-      photoBtn.disabled = false;
-      galleryBtn.disabled = false;
       return;
     }
 
     if (!result.ingredients || result.ingredients.length < 3 || result.empty) {
+      status.classList.remove('is-reading');
       status.classList.add('is-error');
       status.textContent = t(lang, 'ocrEmpty');
       return;
@@ -730,20 +791,24 @@ async function processIngredientsPhoto(file) {
     $('#ingredients-input').value = result.ingredients;
 
     if (result.incomplete || result.frontOnly) {
+      status.classList.remove('is-reading');
       status.classList.add('is-error');
       status.textContent = t(lang, 'ocrIncompleteHint').replace(
         '{n}',
         String(result.itemCount || countIngredientItems(result.ingredients))
       );
-      showError(t(lang, 'ocrIncompleteTitle'), t(lang, 'ocrIncompleteHint').replace('{n}', String(result.itemCount || 0)));
+      showError(
+        t(lang, 'ocrIncompleteTitle'),
+        t(lang, 'ocrIncompleteHint').replace('{n}', String(result.itemCount || 0))
+      );
       return;
     }
 
+    status.classList.remove('is-reading');
     status.textContent = t(lang, 'ocrDone');
     $('#ingredients-input').focus();
   } catch (err) {
     if (err.message === 'UNAUTHORIZED') {
-      // Revalidar: si el token sigue vivo, no echar al login
       const still = await refreshMe();
       if (!still) showAuth(true);
       else showError(t(lang, 'errorNetwork'));
@@ -753,12 +818,11 @@ async function processIngredientsPhoto(file) {
       handleScanLimit(err);
       return;
     }
+    status.classList.remove('is-reading');
     status.classList.add('is-error');
     status.textContent = t(lang, 'ocrError');
   } finally {
-    analyzeBtn.disabled = false;
-    photoBtn.disabled = false;
-    galleryBtn.disabled = false;
+    setOcrBusy(false);
   }
 }
 
@@ -989,11 +1053,14 @@ async function init() {
   });
 
   $('#analyze-ingredients-btn').addEventListener('click', analyzeManualIngredients);
+  $('#ingredients-input')?.addEventListener('input', syncAnalyzeButton);
 
   $('#photo-ingredients-btn').addEventListener('click', () => {
+    if (ocrBusy) return;
     $('#ingredients-camera-input').click();
   });
   $('#gallery-ingredients-btn').addEventListener('click', () => {
+    if (ocrBusy) return;
     $('#ingredients-gallery-input').click();
   });
   $('#ingredients-camera-input').addEventListener('change', onPhotoInputChange);
