@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1b4332">
+  <meta name="description" content="VerdiScan — Escanea productos alimenticios y descubre si son ultraprocesados, contienen aceites de semillas, edulcorantes artificiales y aditivos nocivos. México y USA.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>VerdiScan — Escáner de Alimentos Saludables</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-top">
+        <div class="logo-row">
+          <div class="logo-icon" aria-hidden="true">🌿</div>
+          <div>
+            <h1 id="app-name">VerdiScan</h1>
+          </div>
+        </div>
+        <button id="lang-toggle" class="lang-btn" type="button" aria-label="Switch language">EN</button>
+      </div>
+      <p id="tagline">Escanea. Comprende. Elige mejor.</p>
+      <div id="account-bar" class="account-bar" hidden>
+        <span id="account-email"></span>
+        <span id="account-scans"></span>
+        <button id="logout-btn" class="btn btn-ghost btn-sm" type="button">Salir</button>
+      </div>
+    </header>
+
+    <!-- Auth gate -->
+    <div id="auth-view" class="auth-view" hidden>
+      <div class="auth-card">
+        <h2 id="auth-title">Accede a VerdiScan</h2>
+        <p id="auth-subtitle" class="auth-subtitle"></p>
+        <div class="auth-tabs">
+          <button id="auth-tab-login" class="auth-tab is-active" type="button">Entrar</button>
+          <button id="auth-tab-register" class="auth-tab" type="button">Registrarme</button>
+        </div>
+        <form id="auth-form">
+          <label id="auth-email-label" for="auth-email">Correo</label>
+          <input id="auth-email" type="email" autocomplete="username" required>
+          <label id="auth-password-label" for="auth-password">Contraseña</label>
+          <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required>
+          <div id="signup-code-wrap" hidden>
+            <label id="auth-code-label" for="auth-signup-code">Código de acceso</label>
+            <input id="auth-signup-code" type="text" autocomplete="off">
+          </div>
+          <p id="auth-error" class="auth-error" hidden role="alert"></p>
+          <button id="auth-submit" class="btn btn-primary" type="submit">Entrar</button>
+        </form>
+      </div>
+    </div>
+
+    <main class="app-main" id="app-main">
+      <!-- Home -->
+      <div id="home-view">
+        <button id="scan-btn" class="btn btn-primary" type="button">
+          <span aria-hidden="true">📷</span>
+          <span id="scan-btn-label">Escanear código</span>
+        </button>
+
+        <button id="photo-label-btn" class="btn btn-secondary" type="button">
+          <span aria-hidden="true">🏷️</span>
+          <span id="photo-label-btn-label">Fotografiar etiqueta</span>
+        </button>
+
+        <button id="manual-toggle" class="btn btn-ghost" type="button">
+          <span id="manual-toggle-label">Ingresar código manualmente</span>
+        </button>
+
+        <details id="criteria-panel" class="criteria-panel">
+          <summary class="criteria-summary">
+            <span id="criteria-summary-title">Criterios de puntuación</span>
+            <span id="criteria-summary-hint" class="criteria-summary-hint">Personaliza · toca para abrir</span>
+          </summary>
+          <div class="criteria-body">
+            <p id="criteria-intro" class="criteria-intro"></p>
+            <div id="criteria-list" class="criteria-list"></div>
+            <button id="criteria-reset-btn" class="btn btn-ghost" type="button">Restablecer valores</button>
+          </div>
+        </details>
+
+        <details id="allergies-panel" class="criteria-panel allergies-panel">
+          <summary class="criteria-summary">
+            <span id="allergies-summary-title">Alergias / evitar</span>
+            <span id="allergies-summary-hint" class="criteria-summary-hint">Si coincide → nota 0</span>
+          </summary>
+          <div class="criteria-body">
+            <p id="allergies-intro" class="criteria-intro"></p>
+            <div id="allergies-preset-list" class="allergies-preset-list"></div>
+            <label id="allergies-custom-label" class="allergies-custom-label" for="allergies-custom-input">
+              Agregar otro (palabra a evitar)
+            </label>
+            <div class="allergies-custom-row">
+              <input id="allergies-custom-input" type="text" autocomplete="off" placeholder="Ej: stevia, MSG, coco…">
+              <button id="allergies-add-btn" class="btn btn-secondary" type="button">Agregar</button>
+            </div>
+            <ul id="allergies-custom-list" class="allergies-custom-list"></ul>
+          </div>
+        </details>
+
+        <div id="manual-panel" hidden>
+          <form id="search-form">
+            <input id="barcode-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ej: 7501000650320">
+            <button id="search-btn" type="submit">Buscar</button>
+          </form>
+        </div>
+
+        <div id="loading" hidden>
+          <div class="spinner" aria-hidden="true"></div>
+          <span id="loading-text">Consultando base de datos…</span>
+        </div>
+
+        <div id="error-banner" hidden role="alert">
+          <div class="error-msg"></div>
+          <div class="error-hint"></div>
+        </div>
+
+        <section id="ingredients-entry" class="ingredients-entry" hidden>
+          <h2 id="ingredients-entry-title">Lista de ingredientes</h2>
+          <p id="ingredients-entry-hint" class="ingredients-entry-hint"></p>
+          <p id="ingredients-entry-barcode" class="ingredients-entry-barcode" hidden></p>
+
+          <div class="ingredients-photo-actions">
+            <button id="photo-ingredients-btn" class="btn btn-primary" type="button">
+              <span aria-hidden="true">📷</span>
+              <span id="photo-ingredients-label">Fotografiar ingredientes</span>
+            </button>
+            <button id="gallery-ingredients-btn" class="btn btn-secondary" type="button">
+              <span id="gallery-ingredients-label">Elegir foto</span>
+            </button>
+            <input id="ingredients-camera-input" type="file" accept="image/*" capture="environment" hidden>
+            <input id="ingredients-gallery-input" type="file" accept="image/*" hidden>
+          </div>
+
+          <div id="ocr-preview-wrap" class="ocr-preview-wrap" hidden>
+            <div class="ocr-preview-frame">
+              <img id="ocr-preview" alt="Foto de ingredientes" class="ocr-preview">
+              <div id="ocr-reading-overlay" class="ocr-reading-overlay" hidden>
+                <div class="ocr-reading-spinner" aria-hidden="true"></div>
+                <p id="ocr-reading-title" class="ocr-reading-title">Leyendo etiqueta…</p>
+                <div class="ocr-progress-track" aria-hidden="true">
+                  <div id="ocr-progress-bar" class="ocr-progress-bar"></div>
+                </div>
+                <p id="ocr-reading-pct" class="ocr-reading-pct">0%</p>
+              </div>
+            </div>
+            <p id="ocr-status" class="ocr-status"></p>
+          </div>
+
+          <label id="ingredients-review-label" class="ingredients-review-label" for="ingredients-input">
+            Revisa el texto leído (corrige si hace falta):
+          </label>
+          <textarea
+            id="ingredients-input"
+            rows="5"
+            placeholder="La foto se convertirá en texto aquí…"
+          ></textarea>
+          <input id="manual-product-name" type="text" placeholder="Nombre del producto (opcional)" autocomplete="off">
+          <button id="analyze-ingredients-btn" class="btn btn-primary" type="button" disabled>
+            <span id="analyze-ingredients-label">Analizar ingredientes</span>
+          </button>
+        </section>
+
+        <section class="history-section">
+          <h2 id="history-title">Historial</h2>
+          <ul id="history-list"></ul>
+          <button id="clear-history" class="btn btn-ghost" type="button">Limpiar historial</button>
+        </section>
+      </div>
+
+      <!-- Scanner -->
+      <div id="scanner-panel" hidden>
+        <div id="scanner-viewport"></div>
+        <p id="scanner-status">Apunta al código de barras…</p>
+        <button id="photo-label-from-scan-btn" class="btn btn-secondary" type="button">
+          <span id="photo-label-from-scan-label">No lee el código · Fotografiar etiqueta</span>
+        </button>
+        <button id="stop-scan-btn" class="btn btn-danger" type="button">Detener cámara</button>
+      </div>
+
+      <!-- Result -->
+      <div id="result-view" hidden>
+        <div class="product-card">
+          <img id="product-image" alt="" hidden>
+          <h2 id="product-name"></h2>
+          <p id="product-brand"></p>
+          <p id="product-barcode"></p>
+
+          <div class="score-section">
+            <div id="score-ring" class="score-ring">
+              <span id="score-value">—</span>
+              <span id="score-grade"></span>
+            </div>
+            <p id="score-summary"></p>
+            <div id="allergy-banner" class="allergy-banner" hidden role="alert">
+              <strong id="allergy-banner-title"></strong>
+              <p id="allergy-banner-body"></p>
+            </div>
+            <span id="nova-badge" class="nova-badge" hidden></span>
+          </div>
+        </div>
+
+        <section id="verdict-section" class="detail-section" hidden>
+          <div class="verdict-grid">
+            <div class="verdict-col verdict-good">
+              <h3 id="good-title">Lo bueno</h3>
+              <ul id="good-list" class="verdict-list"></ul>
+            </div>
+            <div class="verdict-col verdict-bad">
+              <h3 id="bad-title">Lo malo</h3>
+              <ul id="bad-list" class="verdict-list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="breakdown-section" class="detail-section" hidden>
+          <h3 id="breakdown-title">¿Por qué esta puntuación?</h3>
+          <p id="breakdown-intro" class="breakdown-intro"></p>
+          <ul id="breakdown-list" class="breakdown-list"></ul>
+        </section>
+
+        <section id="ultra-section" class="detail-section" hidden>
+          <h3 id="ultra-title">Indicadores de ultraprocesado</h3>
+          <ul id="ultra-list" class="chip-list"></ul>
+        </section>
+
+        <section id="bio-section" class="detail-section" hidden>
+          <h3 id="bio-title">Bioingeniería / OGM</h3>
+          <ul id="bio-list" class="alert-list"></ul>
+        </section>
+
+        <section id="alerts-section" class="detail-section" hidden>
+          <h3 id="alerts-title">Alertas detectadas</h3>
+          <ul id="alerts-list" class="alert-list"></ul>
+        </section>
+
+        <section id="positives-section" class="detail-section" hidden>
+          <h3 id="positives-title">Aspectos positivos</h3>
+          <ul id="positives-list" class="positive-list"></ul>
+        </section>
+
+        <section class="detail-section">
+          <h3 id="ingredients-title">Ingredientes</h3>
+          <p id="ingredients-text"></p>
+        </section>
+
+        <p id="market-note"></p>
+        <button id="scan-again-btn" class="btn btn-primary" type="button">Escanear otro</button>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <div class="disclaimer-box">
+        <h4 id="disclaimer-title">Aviso informativo</h4>
+        <p id="disclaimer-text"></p>
+        <p id="sources-text"></p>
+        <p id="rules-version" class="rules-version"></p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Paywall -->
+  <div id="paywall-modal" class="modal-overlay" hidden>
+    <div class="modal-card">
+      <h2 id="paywall-title"></h2>
+      <p id="paywall-body"></p>
+      <button id="paywall-checkout-btn" class="btn btn-primary" type="button"></button>
+      <button id="paywall-dismiss-btn" class="btn btn-ghost" type="button"></button>
+    </div>
+  </div>
+
+  <!-- Install guide -->
+  <button id="install-fab" class="install-fab" type="button" hidden aria-label="Instalar app">📲</button>
+  <div id="install-panel" class="install-panel" hidden>
+    <div class="install-card">
+      <h3 id="install-title">Instala VerdiScan</h3>
+      <p id="install-subtitle"></p>
+      <button id="install-native-btn" class="btn btn-primary" type="button" hidden></button>
+      <ol id="install-ios-steps">
+        <li id="install-ios-1"></li>
+        <li id="install-ios-2"></li>
+        <li id="install-ios-3"></li>
+      </ol>
+      <ol id="install-android-steps" hidden>
+        <li id="install-android-1"></li>
+        <li id="install-android-2"></li>
+      </ol>
+      <button id="install-dismiss-btn" class="btn btn-ghost" type="button"></button>
+    </div>
+  </div>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
