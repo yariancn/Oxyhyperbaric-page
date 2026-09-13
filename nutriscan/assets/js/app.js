@@ -26,6 +26,12 @@ import {
   defaultWeights,
   levelLabelKey,
 } from './weights.js';
+import {
+  ALLERGEN_PRESETS,
+  loadAllergyPrefs,
+  saveAllergyPrefs,
+  activeAllergyCount,
+} from './allergies.js';
 
 const HISTORY_KEY = 'verdiscan_history';
 const LANG_KEY = 'verdiscan_lang';
@@ -36,6 +42,7 @@ let pendingBarcode = '';
 let pendingProduct = null;
 let authMode = 'login';
 let criteriaWeights = loadWeights();
+let allergyPrefs = loadAllergyPrefs();
 let ocrBusy = false;
 
 const $ = (sel) => document.querySelector(sel);
@@ -82,6 +89,7 @@ function applyStaticText() {
   applyInstallText();
   applyPaywallText();
   renderCriteriaPanel();
+  renderAllergiesPanel();
 }
 
 function renderCriteriaPanel() {
@@ -205,6 +213,112 @@ function initCriteriaPanel() {
     });
   }
   renderCriteriaPanel();
+}
+
+function renderAllergiesPanel() {
+  const title = $('#allergies-summary-title');
+  const hint = $('#allergies-summary-hint');
+  const intro = $('#allergies-intro');
+  const customLabel = $('#allergies-custom-label');
+  const addBtn = $('#allergies-add-btn');
+  const input = $('#allergies-custom-input');
+  const presetList = $('#allergies-preset-list');
+  const customList = $('#allergies-custom-list');
+  if (!presetList) return;
+
+  const n = activeAllergyCount(allergyPrefs);
+  if (title) title.textContent = t(lang, 'allergiesTitle');
+  if (hint) {
+    hint.textContent =
+      n > 0
+        ? `${t(lang, 'allergiesHint')} · ${n}`
+        : t(lang, 'allergiesHint');
+  }
+  if (intro) intro.textContent = t(lang, 'allergiesIntro');
+  if (customLabel) customLabel.textContent = t(lang, 'allergiesCustomLabel');
+  if (addBtn) addBtn.textContent = t(lang, 'allergiesAdd');
+  if (input) input.placeholder = t(lang, 'allergiesCustomPlaceholder');
+
+  presetList.innerHTML = '';
+  for (const preset of ALLERGEN_PRESETS) {
+    const id = `allergy-preset-${preset.id}`;
+    const checked = Boolean(allergyPrefs.presets?.[preset.id]);
+    const label = preset.label[lang] || preset.label.en;
+    const row = document.createElement('label');
+    row.className = 'allergy-preset-item';
+    row.setAttribute('for', id);
+    row.innerHTML = `
+      <input type="checkbox" id="${id}" data-allergy-id="${preset.id}" ${checked ? 'checked' : ''}>
+      <span>${escapeHtml(label)}</span>
+    `;
+    presetList.appendChild(row);
+  }
+
+  presetList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      allergyPrefs = {
+        ...allergyPrefs,
+        presets: {
+          ...allergyPrefs.presets,
+          [cb.dataset.allergyId]: cb.checked,
+        },
+      };
+      saveAllergyPrefs(allergyPrefs);
+      renderAllergiesPanel();
+    });
+  });
+
+  if (customList) {
+    customList.innerHTML = '';
+    (allergyPrefs.custom || []).forEach((term, idx) => {
+      const li = document.createElement('li');
+      li.className = 'allergy-custom-item';
+      const span = document.createElement('span');
+      span.textContent = term;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'allergy-remove-btn';
+      btn.textContent = t(lang, 'allergiesRemove');
+      btn.addEventListener('click', () => {
+        allergyPrefs = {
+          ...allergyPrefs,
+          custom: (allergyPrefs.custom || []).filter((_, i) => i !== idx),
+        };
+        saveAllergyPrefs(allergyPrefs);
+        renderAllergiesPanel();
+      });
+      li.appendChild(span);
+      li.appendChild(btn);
+      customList.appendChild(li);
+    });
+  }
+}
+
+function initAllergiesPanel() {
+  const addBtn = $('#allergies-add-btn');
+  const input = $('#allergies-custom-input');
+  const addCustom = () => {
+    const term = (input?.value || '').trim();
+    if (term.length < 2) return;
+    const exists = (allergyPrefs.custom || []).some((t) => t.toLowerCase() === term.toLowerCase());
+    if (!exists) {
+      allergyPrefs = {
+        ...allergyPrefs,
+        custom: [...(allergyPrefs.custom || []), term].slice(0, 40),
+      };
+      saveAllergyPrefs(allergyPrefs);
+    }
+    if (input) input.value = '';
+    renderAllergiesPanel();
+  };
+  addBtn?.addEventListener('click', addCustom);
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addCustom();
+    }
+  });
+  renderAllergiesPanel();
 }
 
 function applyAuthText() {
@@ -562,6 +676,20 @@ function renderResult(product, analysis) {
   $('#score-grade').textContent = analysis.grade;
   $('#score-summary').textContent = analysis.summary;
 
+  const allergyBanner = $('#allergy-banner');
+  if (allergyBanner) {
+    if (analysis.allergyRisk && analysis.allergyHits?.length) {
+      allergyBanner.hidden = false;
+      $('#allergy-banner-title').textContent = t(lang, 'allergyBannerTitle');
+      $('#allergy-banner-body').textContent = t(lang, 'allergyBannerBody').replace(
+        '{list}',
+        analysis.allergyHits.map((h) => h.label).join(', ')
+      );
+    } else {
+      allergyBanner.hidden = true;
+    }
+  }
+
   const novaEl = $('#nova-badge');
   if (analysis.novaGroup) {
     novaEl.hidden = false;
@@ -769,7 +897,7 @@ function analyzeManualIngredients() {
     _verdiscan_from_ocr: true,
   };
 
-  const analysis = analyzeProduct(product, lang, criteriaWeights);
+  const analysis = analyzeProduct(product, lang, criteriaWeights, allergyPrefs);
   renderResult(product, analysis);
 }
 
@@ -887,7 +1015,7 @@ async function lookupBarcode(barcode) {
       updateUserFromAccount(product._verdiscan_account);
       renderAccountBar();
     }
-    const analysis = analyzeProduct(product, lang, criteriaWeights);
+    const analysis = analyzeProduct(product, lang, criteriaWeights, allergyPrefs);
     if (analysis.needsIngredients) {
       showView('home');
       showError(t(lang, 'needsIngredients'), t(lang, 'needsIngredientsHint'));
@@ -1070,6 +1198,7 @@ async function init() {
   applyStaticText();
   initAuthUi();
   initCriteriaPanel();
+  initAllergiesPanel();
   initInstallGuide(lang, t);
   await enterApp();
 

@@ -110,6 +110,16 @@ export const STRINGS = {
     weightMid: 'Medio',
     weightHigh: 'Alto',
     weightMax: 'Máximo',
+    allergiesTitle: 'Alergias / evitar',
+    allergiesHint: 'Si coincide → nota 0',
+    allergiesIntro:
+      'Marca lo que no puedes o no quieres consumir. Si el producto lo contiene (o puede contenerlo), la nota pasa a 0 y se marca riesgo.',
+    allergiesCustomLabel: 'Agregar otro (palabra a evitar)',
+    allergiesAdd: 'Agregar',
+    allergiesCustomPlaceholder: 'Ej: stevia, MSG, coco…',
+    allergyBannerTitle: 'Riesgo de alergia / evitar',
+    allergyBannerBody: 'Coincide con tu lista: {list}. Nota automática = 0. Verifica siempre la etiqueta física.',
+    allergiesRemove: 'Quitar',
   },
   en: {
     appName: 'VerdiScan',
@@ -222,6 +232,16 @@ export const STRINGS = {
     weightMid: 'Medium',
     weightHigh: 'High',
     weightMax: 'Max',
+    allergiesTitle: 'Allergies / avoid',
+    allergiesHint: 'If it matches → score 0',
+    allergiesIntro:
+      'Mark what you cannot or do not want to eat. If the product contains it (or may contain it), the score becomes 0 and risk is flagged.',
+    allergiesCustomLabel: 'Add another (word to avoid)',
+    allergiesAdd: 'Add',
+    allergiesCustomPlaceholder: 'e.g. stevia, MSG, coconut…',
+    allergyBannerTitle: 'Allergy / avoid risk',
+    allergyBannerBody: 'Matches your list: {list}. Score forced to 0. Always verify the physical label.',
+    allergiesRemove: 'Remove',
   },
 };
 

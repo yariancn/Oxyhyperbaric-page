@@ -88,6 +88,25 @@
           </div>
         </details>
 
+        <details id="allergies-panel" class="criteria-panel allergies-panel">
+          <summary class="criteria-summary">
+            <span id="allergies-summary-title">Alergias / evitar</span>
+            <span id="allergies-summary-hint" class="criteria-summary-hint">Si coincide → nota 0</span>
+          </summary>
+          <div class="criteria-body">
+            <p id="allergies-intro" class="criteria-intro"></p>
+            <div id="allergies-preset-list" class="allergies-preset-list"></div>
+            <label id="allergies-custom-label" class="allergies-custom-label" for="allergies-custom-input">
+              Agregar otro (palabra a evitar)
+            </label>
+            <div class="allergies-custom-row">
+              <input id="allergies-custom-input" type="text" autocomplete="off" placeholder="Ej: stevia, MSG, coco…">
+              <button id="allergies-add-btn" class="btn btn-secondary" type="button">Agregar</button>
+            </div>
+            <ul id="allergies-custom-list" class="allergies-custom-list"></ul>
+          </div>
+        </details>
+
         <div id="manual-panel" hidden>
           <form id="search-form">
             <input id="barcode-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ej: 7501000650320">
@@ -182,6 +201,10 @@
               <span id="score-grade"></span>
             </div>
             <p id="score-summary"></p>
+            <div id="allergy-banner" class="allergy-banner" hidden role="alert">
+              <strong id="allergy-banner-title"></strong>
+              <p id="allergy-banner-body"></p>
+            </div>
             <span id="nova-badge" class="nova-badge" hidden></span>
           </div>
         </div>

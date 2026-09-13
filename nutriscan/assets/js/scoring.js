@@ -25,6 +25,7 @@ import {
   hasAntibioticFreeClaim,
 } from './rules.js';
 import { categoryMultiplier, defaultWeights } from './weights.js';
+import { matchAllergies, defaultAllergyPrefs } from './allergies.js';
 
 const MAX_SCORE = 100;
 
@@ -145,8 +146,9 @@ function buildVerdict(lang, ctx) {
   };
 }
 
-export function analyzeProduct(product, lang = 'es', userWeights = null) {
+export function analyzeProduct(product, lang = 'es', userWeights = null, allergyPrefs = null) {
   const weights = userWeights || defaultWeights();
+  const allergies = allergyPrefs || defaultAllergyPrefs();
   const ingredientsText =
     product.ingredients_text_es ||
     product.ingredients_text_en ||
@@ -187,7 +189,9 @@ export function analyzeProduct(product, lang = 'es', userWeights = null) {
         'Sin calificación: necesitamos la lista de ingredientes del empaque.',
         'No score: we need the ingredient list from the package.'
       ),
-      rulesVersion: '2.5.0',
+      rulesVersion: '2.6.0',
+      allergyRisk: false,
+      allergyHits: [],
     };
   }
 
@@ -820,7 +824,49 @@ export function analyzeProduct(product, lang = 'es', userWeights = null) {
 
   ({ score, breakdown } = ledger.finalize());
 
-  const { grade, gradeColor } = computeGrade(score, lang);
+  const allergyMatch = matchAllergies(product, ingredientsText, allergies, lang);
+  let allergyRisk = allergyMatch.allergyRisk;
+  let allergyHits = allergyMatch.hits;
+
+  if (allergyRisk) {
+    const names = allergyHits.map((h) => h.label).join(', ');
+    const delta = score; // bring score to 0
+    if (delta > 0) {
+      ledger.lines.push({
+        id: 'allergy_risk',
+        label: L(lang, 'Riesgo de alergia / evitar', 'Allergy / avoid risk'),
+        delta: -delta,
+        reason: L(
+          lang,
+          `Coincide con tu lista: ${names}. Nota automática = 0.`,
+          `Matches your list: ${names}. Score forced to 0.`
+        ),
+      });
+      ledger.total = 0;
+    }
+    score = 0;
+    breakdown = ledger.lines;
+    alerts.unshift(
+      buildAlert(
+        'allergy',
+        SEVERITY.CRITICAL,
+        L(lang, `ALERGIA / EVITAR: ${names}`, `ALLERGY / AVOID: ${names}`),
+        {
+          es: 'Marcado por tu lista personal. No consumas si es una alergia confirmada; verifica siempre la etiqueta.',
+          en: 'Flagged by your personal list. Do not consume if this is a confirmed allergy; always verify the label.',
+        },
+        lang
+      )
+    );
+  }
+
+  const { grade, gradeColor } = allergyRisk
+    ? {
+        grade: lang === 'es' ? 'Riesgo alergia' : 'Allergy risk',
+        gradeColor: 'avoid',
+      }
+    : computeGrade(score, lang);
+
   const verdict = buildVerdict(lang, {
     isCleanProfile,
     isProcessedMeat,
@@ -831,6 +877,13 @@ export function analyzeProduct(product, lang = 'es', userWeights = null) {
     positives,
     ultraProcessedItems,
   });
+
+  if (allergyRisk) {
+    const names = allergyHits.map((h) => h.label).join(', ');
+    verdict.bad.unshift(
+      L(lang, `Contiene / puede contener: ${names}`, `Contains / may contain: ${names}`)
+    );
+  }
 
   const severityOrder = { critical: 0, high: 1, moderate: 2, low: 3, info: 4 };
   alerts.sort((a, b) => (severityOrder[a.severity] ?? 5) - (severityOrder[b.severity] ?? 5));
@@ -851,9 +904,17 @@ export function analyzeProduct(product, lang = 'es', userWeights = null) {
     scoreBreakdown: breakdown,
     alerts: uniqueById(alerts.map((a, i) => ({ ...a, id: `${a.category}-${i}` }))),
     positives,
-    summary: buildSummary(score, novaGroup, isProcessedMeat, isCleanProfile, verdict, lang),
-    rulesVersion: '2.5.2',
+    summary: allergyRisk
+      ? L(
+          lang,
+          `0/100 — riesgo por tu lista de alergias/evitar (${allergyHits.map((h) => h.label).join(', ')}).`,
+          `0/100 — risk from your allergy/avoid list (${allergyHits.map((h) => h.label).join(', ')}).`
+        )
+      : buildSummary(score, novaGroup, isProcessedMeat, isCleanProfile, verdict, lang),
+    rulesVersion: '2.6.0',
     needsIngredients: false,
+    allergyRisk,
+    allergyHits,
   };
 }
 

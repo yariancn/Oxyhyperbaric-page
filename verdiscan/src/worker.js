@@ -25,6 +25,7 @@ const OFF_FIELDS = [
   'nova_group', 'nova_groups', 'additives_tags', 'additives_n',
   'nutriments', 'nutriscore_grade', 'countries_tags',
   'categories_tags', 'labels_tags',
+  'allergens', 'allergens_tags', 'allergens_from_ingredients', 'traces_tags',
 ].join(',');
 
 function json(data, status = 200) {
@@ -524,6 +525,10 @@ function enrichForClient(p) {
     additives_tags: p.additives_tags,
     labels_tags: p.labels_tags,
     categories_tags: p.categories_tags,
+    allergens: p.allergens,
+    allergens_tags: p.allergens_tags,
+    allergens_from_ingredients: p.allergens_from_ingredients,
+    traces_tags: p.traces_tags,
     nutriments: p.nutriments,
     image_front_url: p.image_front_url,
     image_url: p.image_url,
@@ -686,7 +691,7 @@ export default {
         ok: true,
         ai: Boolean(env.AI),
         kv: Boolean(env.USERS),
-        version: '2.5.9',
+        version: '2.6.0',
         freeScans: FREE_SCANS,
         priceUsd: 5,
       });

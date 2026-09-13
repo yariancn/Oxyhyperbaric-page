@@ -7,6 +7,7 @@ const FIELDS = [
   'nova_group', 'nova_groups', 'additives_tags', 'additives_n',
   'nutriments', 'nutriscore_grade', 'countries_tags',
   'categories_tags', 'labels_tags',
+  'allergens', 'allergens_tags', 'allergens_from_ingredients', 'traces_tags',
 ].join(',');
 
 const OFF_ENDPOINTS = [

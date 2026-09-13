@@ -1,4 +1,4 @@
-const CACHE = 'verdiscan-v2.5.9';
+const CACHE = 'verdiscan-v2.6.0';
 const ASSETS = [
   './',
   './index.html',
@@ -17,6 +17,7 @@ const ASSETS = [
   './assets/js/session.js',
   './assets/js/install.js',
   './assets/js/weights.js',
+  './assets/js/allergies.js',
 ];
 
 self.addEventListener('install', (e) => {
