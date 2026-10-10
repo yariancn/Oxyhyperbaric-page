@@ -11,6 +11,15 @@ QUERIES = [
     "casa renta Ajijic fraccionamiento privado",
     'casa renta Ajijic "Villa Nova" OR "La Floresta" OR "Rancho del Oro" OR "Lago Encantado"',
     "casa en renta Ajijic 18000 OR 22000 OR 25000",
+    "site:inmuebles24.com casa renta Ajijic",
+    "site:propiedades.com casa renta Ajijic",
+    "site:vivanuncios.com.mx casa renta Ajijic",
+    "site:lamudi.com.mx casa renta Ajijic",
+    "site:icasas.mx OR site:easybroker.com casa renta Ajijic",
+    "site:doorvel.com casa renta Ajijic",
+    "site:fazwaz.com.mx casa renta Ajijic",
+    "site:mercadolibre.com.mx casa renta Ajijic",
+    "site:casasyterrenos.com casa renta Ajijic",
 ]
 
 PORTAL_HINTS = (
@@ -27,6 +36,7 @@ PORTAL_HINTS = (
     "ajijictrinity.com",
     "easybroker.com",
     "mercadolibre.com.mx",
+    "casasyterrenos.com",
 )
 
 

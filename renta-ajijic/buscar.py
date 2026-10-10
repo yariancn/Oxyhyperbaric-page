@@ -17,8 +17,8 @@ from renta_ajijic.summarize import format_report, summarize_all
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description=(
-            "Busca casas en renta en Ajijic, Jalisco cerca de $20,000 MXN. "
-            "Prioriza zona media-alta y fraccionamientos privados."
+            "Busca casas en renta en Ajijic, Jalisco cerca de $20,000 MXN "
+            "en múltiples portales. Prioriza zona media-alta y fraccionamientos privados."
         )
     )
     p.add_argument("--objetivo", type=int, default=20_000, help="Precio objetivo en MXN (default: 20000)")

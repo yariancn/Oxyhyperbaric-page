@@ -4,7 +4,10 @@ Programa en Python que busca casas en renta en **Ajijic, Jalisco** cerca de **$2
 
 ## Qué hace
 
-1. Recolecta anuncios locales (Ajijic Trinity) y resultados web de portales inmobiliarios.
+1. Recolecta anuncios de **varias plataformas** (no solo una):
+   - Scrapers directos: Ajijic Trinity, Casas y Terrenos
+   - Búsqueda web multi-portal: Inmuebles24, Propiedades.com, Vivanuncios, Lamudi, Mercado Libre, Trovit, Mitula, Nestoria, Doorvel, FazWaz, EasyBroker/iCasas
+   - Al final del reporte imprime enlaces de búsqueda en cada portal (varios bloquean scrapers)
 2. Filtra por presupuesto (default $15,000–$25,000 MXN).
 3. Puntúa zona media-alta (`La Floresta`, `Villa Nova`, `Rancho del Oro`, `Lago Encantado`, etc.) y señales de coto/privada/seguridad.
 4. Resume cada opción en español: precio, recámaras, zona, si parece fraccionamiento privado y puntos clave.

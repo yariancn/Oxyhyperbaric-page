@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 
 from .models import Listing
+from .portales import portal_search_links
 from .scoring import normalize
 
 
@@ -142,23 +143,27 @@ def format_report(listings: list[Listing], *, target_price: int, min_price: int,
     if not listings:
         lines.append("No se encontraron anuncios que cumplan el rango y filtros actuales.")
         lines.append("Prueba ampliar el presupuesto (--min / --max) o quitar --solo-casas.")
-        return "\n".join(lines)
+    else:
+        lines.append(f"Resultados ordenados por afinidad ({len(listings)}):")
+        lines.append("")
+        for i, listing in enumerate(listings, 1):
+            private = "sí" if listing.private_hits else "no confirmado"
+            zone = ", ".join(h.title() for h in listing.neighborhood_hits) or "Ajijic / ribera"
+            lines.extend(
+                [
+                    f"{i}. {listing.title}",
+                    f"   Precio: {_mxn(listing.price_mxn)} | Score: {listing.score}",
+                    f"   Zona: {zone} | Fracc./privado: {private}",
+                    f"   Tipo: {listing.property_type or 'N/D'} | {_rooms(listing)}",
+                    f"   Resumen: {listing.summary}",
+                    f"   Fuente: {listing.source}",
+                    f"   Link: {listing.url}",
+                    "",
+                ]
+            )
 
-    lines.append(f"Resultados ordenados por afinidad ({len(listings)}):")
+    lines.append("Portales para revisar manualmente (cobertura multiplataforma):")
+    for name, url in portal_search_links(min_price=min_price, max_price=max_price):
+        lines.append(f"- {name}: {url}")
     lines.append("")
-    for i, listing in enumerate(listings, 1):
-        private = "sí" if listing.private_hits else "no confirmado"
-        zone = ", ".join(h.title() for h in listing.neighborhood_hits) or "Ajijic / ribera"
-        lines.extend(
-            [
-                f"{i}. {listing.title}",
-                f"   Precio: {_mxn(listing.price_mxn)} | Score: {listing.score}",
-                f"   Zona: {zone} | Fracc./privado: {private}",
-                f"   Tipo: {listing.property_type or 'N/D'} | {_rooms(listing)}",
-                f"   Resumen: {listing.summary}",
-                f"   Fuente: {listing.source}",
-                f"   Link: {listing.url}",
-                "",
-            ]
-        )
     return "\n".join(lines)

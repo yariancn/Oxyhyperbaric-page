@@ -71,7 +71,8 @@ def _parse_card(item, *, usd_mxn: float) -> Optional[Listing]:
     bedrooms = _first_int(r"Beds?:\s*(\d+)", meta_text)
     bathrooms = _first_float(r"Baths?:\s*([\d.]+)", meta_text)
     property_type = ""
-    for label in ("House", "Apartment", "Villa", "Studio", "Room", "Home"):
+    # Preferir tipos más específicos primero (Apartment antes que House).
+    for label in ("Apartment", "Studio", "Room", "Villa", "House", "Home"):
         if re.search(rf"\b{label}\b", meta_text):
             property_type = label
             break
