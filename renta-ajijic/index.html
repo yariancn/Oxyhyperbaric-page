@@ -108,6 +108,7 @@
       font-size: 1.35rem; margin: 0; line-height: 1.15;
     }
     .price { white-space: nowrap; font-weight: 700; color: var(--accent); font-size: 1.05rem; }
+    .price.unknown { color: var(--muted); font-size: 0.92rem; font-weight: 600; }
     .meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.7rem 0 0.75rem; }
     .chip {
       font-size: 0.76rem; font-weight: 700; padding: 0.35rem 0.6rem;
@@ -160,7 +161,7 @@
           <input id="min" type="number" inputmode="numeric" value="15000" step="1000" />
         </label>
         <label>Máximo
-          <input id="max" type="number" inputmode="numeric" value="28000" step="1000" />
+          <input id="max" type="number" inputmode="numeric" value="35000" step="1000" />
         </label>
       </div>
       <div class="row-actions">
@@ -192,7 +193,7 @@
     const btn = $("buscar");
 
     function money(n) {
-      if (n == null) return "N/D";
+      if (n == null) return "Ver precio";
       return "$" + Number(n).toLocaleString("es-MX") + " MXN";
     }
     function escapeHtml(s) {
@@ -238,7 +239,7 @@
               <div class="body">
                 <div class="top">
                   <h2 class="title">${i + 1}. ${escapeHtml(item.title)}</h2>
-                  <div class="price">${money(item.priceMxn)}</div>
+                  <div class="price ${item.priceMxn == null ? "unknown" : ""}">${money(item.priceMxn)}</div>
                 </div>
                 <div class="meta">
                   <span class="chip">${escapeHtml(zone)}</span>
@@ -263,10 +264,16 @@
           `<a href="${escapeAttr(p.url)}" target="_blank" rel="noopener">${escapeHtml(p.name)}</a>`
         ).join("");
       }
-      const src = data.sources
+      const shown = data.sourcesInResults
+        ? Object.entries(data.sourcesInResults).map(([k, v]) => `${k}: ${v}`).join(" · ")
+        : "";
+      const raw = data.sources
         ? Object.entries(data.sources).map(([k, v]) => `${k}: ${v}`).join(" · ")
         : "";
-      statusEl.textContent = `${items.length} resultados` + (src ? ` · Fuentes: ${src}` : "");
+      statusEl.textContent =
+        `${items.length} resultados` +
+        (shown ? ` · En lista: ${shown}` : "") +
+        (raw ? ` · Escaneados: ${raw}` : "");
     }
 
     async function buscar() {
@@ -278,7 +285,7 @@
         min: $("min").value || "15000",
         max: $("max").value || "28000",
         soloCasas: $("soloCasas").checked ? "1" : "0",
-        limite: "12",
+        limite: "40",
       });
       try {
         const res = await fetch("/api/renta-ajijic?" + params.toString(), {

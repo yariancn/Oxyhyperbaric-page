@@ -75,18 +75,29 @@ export async function handleRentaAjijicApi(request) {
   const url = new URL(request.url);
   const target = num(url.searchParams.get("objetivo"), 20000);
   const minPrice = num(url.searchParams.get("min"), 15000);
-  const maxPrice = num(url.searchParams.get("max"), 28000);
+  const maxPrice = num(url.searchParams.get("max"), 35000);
   const housesOnly = url.searchParams.get("soloCasas") !== "0";
-  const limit = Math.min(num(url.searchParams.get("limite"), 20), 40);
+  const limit = Math.min(num(url.searchParams.get("limite"), 40), 60);
 
-  const [trinity, cyt, web] = await Promise.all([
+  const [trinity, cyt, ml, arm, web] = await Promise.all([
     safe(() => fetchTrinity()),
     safe(() => fetchCasasYTerrenos()),
+    safe(() => fetchMercadoLibre()),
+    safe(() => fetchAjijicRentalsMgmt()),
     safe(() => fetchWebListings()),
   ]);
 
-  const raw = dedupe([...(trinity || []), ...(cyt || []), ...(web || [])]);
-  const ranked = rank(raw, { target, minPrice, maxPrice, housesOnly }).slice(0, limit);
+  const raw = dedupe([
+    ...(trinity || []),
+    ...(cyt || []),
+    ...(ml || []),
+    ...(arm || []),
+    ...(web || []),
+  ]);
+  const ranked = diversifyBySource(
+    rank(raw, { target, minPrice, maxPrice, housesOnly }),
+    limit,
+  );
 
   return json(
     {
@@ -95,6 +106,7 @@ export async function handleRentaAjijicApi(request) {
       filters: { objetivo: target, min: minPrice, max: maxPrice, soloCasas: housesOnly },
       count: ranked.length,
       sources: countBy(raw, (x) => x.source),
+      sourcesInResults: countBy(ranked, (x) => x.source),
       results: ranked,
       portals: PORTAL_LINKS.map(([name, href]) => ({ name, url: href })),
     },
@@ -232,27 +244,152 @@ async function fetchCasasYTerrenos() {
   return out;
 }
 
-async function fetchWebListings() {
-  const queries = [
-    "casa en renta Ajijic Jalisco 20000 pesos",
-    'casa renta Ajijic "Villa Nova" OR "La Floresta" fraccionamiento',
-    "site:propiedades.com casa renta Ajijic",
-    "site:inmuebles24.com casa renta Ajijic",
-    "site:vivanuncios.com.mx casa renta Ajijic",
+async function fetchMercadoLibre() {
+  const urls = [
+    "https://inmuebles.mercadolibre.com.mx/jalisco/chapala/casas/renta/",
+    "https://inmuebles.mercadolibre.com.mx/jalisco/casas/renta/_PriceRange_15000MXN-35000MXN_ITEM*LOCATION_1009791*",
   ];
   const out = [];
-  for (const q of queries) {
+  const seen = new Set();
+  for (const pageUrl of urls) {
     try {
-      const res = await fetch("https://html.duckduckgo.com/html/", {
-        method: "POST",
+      const res = await fetch(pageUrl, {
         headers: {
-          "User-Agent": UA,
-          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
           "Accept-Language": "es-MX,es;q=0.9",
         },
-        body: `q=${encodeURIComponent(q)}&kl=mx-es`,
       });
       if (!res.ok) continue;
+      const html = await res.text();
+      const priceById = {};
+      for (const m of html.matchAll(/"(MLM\d+)"[\s\S]{0,400}?"price"\s*:\s*(\d+)/g)) {
+        priceById[m[1]] = Number(m[2]);
+      }
+      for (const m of html.matchAll(
+        /href="(https:\/\/casa\.mercadolibre\.com\.mx\/(MLM-\d+)-([^"_#]+))/g,
+      )) {
+        const url = m[1].split("#")[0];
+        const idDash = m[2];
+        const id = idDash.replace("-", "");
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const slug = m[3].replace(/-_JM.*/, "").replace(/-/g, " ").trim();
+        const priceMxn =
+          priceById[id] ||
+          priceById[idDash] ||
+          parsePrice(slug).mxn ||
+          null;
+        const img =
+          (html.slice(Math.max(0, m.index - 2000), m.index + 200).match(
+            /https:\/\/http2\.mlstatic\.com\/D_NQ_NP_[^"'\s]+/,
+          ) || [])[0] || "";
+        const blob = `${slug} ${url}`;
+        // Chapala listing page mezcla GDL; exigir zona ribera.
+        if (/san juan de dios/i.test(blob)) continue;
+        const areaOk =
+          /ajijic|chapala|riberas(?:\s|_|-)?del(?:\s|_|-)?pilar|floresta|lago encantado|san antonio|tlayacapan|jocotepec|cosal[aá]|san juan cosal/i.test(
+            blob,
+          );
+        if (!areaOk) continue;
+        out.push({
+          title: titleCase(slug).slice(0, 120) || `Casa ML ${idDash}`,
+          url,
+          priceMxn,
+          currency: "MXN",
+          source: "Mercado Libre",
+          address: /ajijic/i.test(slug) ? "Ajijic, Jalisco" : "Chapala / Ajijic, Jalisco",
+          propertyType: "House",
+          bedrooms: intFrom(slug, /(\d+)\s*(?:rec|recamaras|ambientes)/i),
+          bathrooms: null,
+          description: slug,
+          features: [],
+          images: img ? [img.replace(/-T\.webp/i, "-O.webp")] : [],
+        });
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return out;
+}
+
+async function fetchAjijicRentalsMgmt() {
+  const res = await fetch("https://www.ajijicrentalsandmanagement.com/", {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+      "Accept-Language": "es-MX,es;q=0.9",
+    },
+  });
+  if (!res.ok) return [];
+  const html = await res.text();
+  const out = [];
+  const seen = new Set();
+  for (const m of html.matchAll(/href=["'](https?:\/\/[^"']*\/properties\/[^"']+)["']/gi)) {
+    const url = m[1].replace(/&amp;/g, "&");
+    if (seen.has(url)) continue;
+    seen.add(url);
+    const idx = m.index;
+    const chunk = html.slice(idx, idx + 1800);
+    const text = chunk.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    const title =
+      (chunk.match(/title=["']([^"']+)["']/i) || [])[1] ||
+      slugTitle(url);
+    let price = parsePrice(text);
+    if (price.mxn == null) {
+      // USD tipo $1.800 /month
+      const usd = text.match(/\$\s*([\d]+)[.,]([\d]{3})\s*\/?\s*month/i);
+      if (usd) price = { mxn: Math.round(Number(usd[1] + usd[2]) * USD_MXN), currency: "USD" };
+    }
+    if (price.mxn == null) price = parsePrice(url.replace(/-/g, " "));
+    const images = extractImages(chunk, 2);
+    out.push({
+      title: decode(title).replace(/\$[\d.,\s]+/g, "").trim() || slugTitle(url),
+      url,
+      priceMxn: price.mxn,
+      currency: price.currency || "MXN",
+      source: "Ajijic Rentals Mgmt",
+      address: "Ajijic, Jalisco",
+      propertyType: /condo|casita|apartment/i.test(url) ? "Apartment" : "House",
+      bedrooms: null,
+      bathrooms: null,
+      description: text.slice(0, 240),
+      features: [],
+      images,
+    });
+  }
+  return out;
+}
+
+async function fetchWebListings() {
+  const queries = [
+    "casa en renta Ajijic Jalisco 20000 OR 22000 OR 25000 MXN",
+    'casa renta Ajijic "Villa Nova" OR "La Floresta" OR "Lago Encantado"',
+    "site:propiedades.com/inmuebles casa renta Ajijic",
+    "site:inmuebles24.com/propiedades casa renta Ajijic",
+    "site:vivanuncios.com.mx casa renta Ajijic amueblada OR fraccionamiento",
+    "site:lamudi.com.mx casa renta Ajijic",
+    "site:icasas.mx casa renta Ajijic",
+    "site:doorvel.com casa renta Ajijic",
+  ];
+  const out = [];
+  const seen = new Set();
+  for (const q of queries) {
+    try {
+      let res = null;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        res = await fetch("https://html.duckduckgo.com/html/", {
+          method: "POST",
+          headers: {
+            "User-Agent": UA,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept-Language": "es-MX,es;q=0.9",
+          },
+          body: `q=${encodeURIComponent(q)}&kl=mx-es`,
+        });
+        if (res.ok) break;
+      }
+      if (!res || !res.ok) continue;
       const html = await res.text();
       for (const m of html.matchAll(
         /class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?class="result__snippet"[^>]*>([\s\S]*?)<\//gi,
@@ -263,23 +400,33 @@ async function fetchWebListings() {
         const title = decode(m[2].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
         const body = decode(m[3].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
         if (!href || !title) continue;
-        if (!/ajijic|chapala/i.test(`${title} ${body} ${href}`)) continue;
-        if (!/renta|rent|alquiler/i.test(`${title} ${body}`)) continue;
+        if (!/ajijic|chapala|riberas|floresta|villa nova/i.test(`${title} ${body} ${href}`)) continue;
+        if (!/renta|rent|alquiler/i.test(`${title} ${body} ${href}`)) continue;
         if (/ajijictrinity\.com\/rent\/?$/i.test(href)) continue;
+        const key = href.replace(/\/$/, "").toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
         const price = parsePrice(`${title} ${body}`);
+        const detail = isDetailListingUrl(href);
+        // Sin precio solo conservamos fichas individuales (no índices de portal).
+        if (price.mxn == null && !detail) continue;
         out.push({
           title: title.slice(0, 120),
           url: href,
           priceMxn: price.mxn,
           currency: price.currency,
           source: hostOf(href),
-          address: (title + " " + body).match(/Ajijic[^.]{0,40}|Villa Nova|La Floresta|Chapala/i)?.[0] || "Ajijic, Jalisco",
+          address:
+            (title + " " + body).match(
+              /Ajijic[^.]{0,40}|Villa Nova|La Floresta|Lago Encantado|Chapala/i,
+            )?.[0] || "Ajijic, Jalisco",
           propertyType: /\bcasa\b/i.test(`${title} ${body}`) ? "House" : "",
           bedrooms: intFrom(`${title} ${body}`, /(\d+)\s*(?:rec[aá]maras?|habitaciones?|beds?)/i),
           bathrooms: floatFrom(`${title} ${body}`, /(\d+(?:\.\d+)?)\s*(?:baños?|baths?)/i),
           description: body,
           features: [],
           images: [],
+          priceUnknown: price.mxn == null,
         });
       }
     } catch {
@@ -292,19 +439,24 @@ async function fetchWebListings() {
 function rank(listings, { target, minPrice, maxPrice, housesOnly }) {
   const ranked = [];
   for (const item of listings) {
-    if (item.priceMxn == null || item.priceMxn < minPrice || item.priceMxn > maxPrice) continue;
+    const hasPrice = item.priceMxn != null;
+    if (hasPrice && (item.priceMxn < minPrice || item.priceMxn > maxPrice)) continue;
+    // Sin precio: solo fichas individuales de portales (para no perder Inmuebles24/Propiedades).
+    if (!hasPrice && !isDetailListingUrl(item.url)) continue;
     const ptype = norm(item.propertyType);
     const titleN = norm(item.title);
     if (/(commercial|restaurant|local|room|studio)/.test(ptype) || /restaurant|comercial/.test(titleN)) {
       continue;
     }
-    if (housesOnly && /(apartment|departamento|room)/.test(ptype)) continue;
+    if (housesOnly && /(apartment|departamento|condo|casita|room)/.test(ptype + " " + titleN + " " + (item.url || ""))) {
+      continue;
+    }
     if (looksLikeIndex(item)) continue;
 
     const blob = [item.title, item.address, item.propertyType, item.description, ...(item.features || [])].join(" ");
     const neighborhoods = neighborhoodHits(blob);
     const privateHits = PRIVATE_RE.filter(([re]) => re.test(norm(blob))).map(([re]) => String(re));
-    let score = priceScore(item.priceMxn, target, minPrice, maxPrice);
+    let score = hasPrice ? priceScore(item.priceMxn, target, minPrice, maxPrice) : 8;
     for (const n of neighborhoods) score += PREFERRED[n] || 0;
     let priv = 0;
     for (const [re, pts] of PRIVATE_RE) if (re.test(norm(blob))) priv += pts;
@@ -317,6 +469,8 @@ function rank(listings, { target, minPrice, maxPrice, housesOnly }) {
     if (loc.includes("ajijic")) score += 15;
     else if (loc.includes("riberas")) score += 6;
     else if (/san juan cosala|jocotepec|chapala/.test(loc)) score += 2;
+    // Empujar diversidad: no dejar que una sola fuente monopolice.
+    if (!/ajijic trinity/i.test(item.source || "")) score += 10;
 
     const summary = summarize(item, neighborhoods, privateHits.length > 0);
     ranked.push({
@@ -328,8 +482,40 @@ function rank(listings, { target, minPrice, maxPrice, housesOnly }) {
       summary,
     });
   }
-  ranked.sort((a, b) => b.score - a.score || Math.abs(a.priceMxn - target) - Math.abs(b.priceMxn - target));
+  ranked.sort(
+    (a, b) =>
+      b.score - a.score ||
+      (a.priceMxn == null) - (b.priceMxn == null) ||
+      Math.abs((a.priceMxn ?? target) - target) - Math.abs((b.priceMxn ?? target) - target),
+  );
   return ranked;
+}
+
+/** Round-robin por fuente para que se vean varios portales, no solo Trinity. */
+function diversifyBySource(ranked, limit) {
+  const buckets = new Map();
+  for (const item of ranked) {
+    const key = item.source || "otro";
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(item);
+  }
+  const keys = [...buckets.keys()];
+  const out = [];
+  let i = 0;
+  while (out.length < limit) {
+    let added = false;
+    for (const key of keys) {
+      const bucket = buckets.get(key);
+      if (i < bucket.length) {
+        out.push(bucket[i]);
+        added = true;
+        if (out.length >= limit) break;
+      }
+    }
+    if (!added) break;
+    i += 1;
+  }
+  return out;
 }
 
 function summarize(item, neighborhoods, isPrivate) {
@@ -347,9 +533,13 @@ function summarize(item, neighborhoods, isPrivate) {
   const priv = isPrivate
     ? "parece estar en fraccionamiento/coto o con acceso controlado"
     : "no se confirma fraccionamiento privado en el anuncio";
-  return `${item.title}: ${tipo} en renta por ${mxn(item.priceMxn)} mensuales, con ${
+  const priceBit =
+    item.priceMxn == null
+      ? "precio a confirmar en el anuncio"
+      : `${mxn(item.priceMxn)} mensuales`;
+  return `${item.title}: ${tipo} en renta por ${priceBit}, con ${
     rooms.join(", ") || "distribución no especificada"
-  }. ${capitalize(zone)}; ${priv}.`;
+  }. ${capitalize(zone)}; ${priv}. Fuente: ${item.source}.`;
 }
 
 async function fetchListingImages(url, limit = 2) {
@@ -401,15 +591,41 @@ function uniqueUrls(urls) {
 }
 
 function parsePrice(text) {
-  const m = String(text || "").match(/\$?\s*([\d]{1,3}(?:,\d{3})+|\d+)\s*\/?\s*(MXN|USD|pesos?)?/i);
-  if (!m) return { mxn: null, currency: "" };
-  let amount = Number(m[1].replace(/,/g, ""));
-  let currency = (m[2] || "MXN").toUpperCase();
-  if (currency.startsWith("US")) {
-    return { mxn: Math.round(amount * USD_MXN), currency: "USD" };
+  const s = String(text || "");
+  // Preferir montos con $ / MXN / pesos y separador de miles (evita "11 casas" o C.P. 45920).
+  const patterns = [
+    /\$\s*([\d]{1,3}(?:,\d{3})+)(?:\.\d{2})?\s*(?:\/?\s*(MXN|USD|pesos?))?/i,
+    /([\d]{1,3}(?:,\d{3})+)\s*(?:MXN|pesos?)/i,
+    /\$\s*([\d]{4,6})\s*(?:MXN|USD|pesos?)?/i,
+  ];
+  for (const re of patterns) {
+    const m = s.match(re);
+    if (!m) continue;
+    let amount = Number(String(m[1]).replace(/,/g, ""));
+    let currency = ((m[2] || "MXN") + "").toUpperCase();
+    if (currency.startsWith("US")) {
+      // Si es USD pequeño tipo 1800, convertir; si ya parece MXN (>8000) dejar.
+      if (amount < 8000) amount = Math.round(amount * USD_MXN);
+      return { mxn: amount, currency: "USD" };
+    }
+    // Renta mensual razonable
+    if (amount < 8000 || amount > 120000) continue;
+    return { mxn: amount, currency: "MXN" };
   }
-  if (currency.includes("PESO")) currency = "MXN";
-  return { mxn: amount, currency: "MXN" };
+  return { mxn: null, currency: "" };
+}
+
+function isDetailListingUrl(url) {
+  const u = String(url || "").toLowerCase();
+  if (!u) return false;
+  if (/propiedades\.com\/inmuebles\//.test(u)) return true;
+  if (/inmuebles24\.com\/propiedades\//.test(u)) return true;
+  if (/casa\.mercadolibre\.com\.mx\/mlm-/.test(u)) return true;
+  if (/\/properties\//.test(u)) return true;
+  if (/icasas\.mx\/propiedad|doorvel\.com\/home\/propiedades|fazwaz\.com/.test(u)) return true;
+  if (/vivanuncios\.com\.mx\/a-/.test(u)) return true;
+  if (/lamudi\.com\.mx\/detalle|lamudi\.com\.mx\/property/.test(u)) return true;
+  return false;
 }
 
 function priceScore(price, target, min, max) {
@@ -430,10 +646,13 @@ function neighborhoodHits(text) {
 function looksLikeIndex(item) {
   const t = norm(item.title);
   const u = (item.url || "").toLowerCase();
-  if (/^\d+\s+casas?\b/.test(t)) return true;
+  if (/^\d+\s+(casas?|propiedades|inmuebles)\b/.test(t)) return true;
   if (t.includes("alrededor de") && t.includes("renta")) return true;
   if (/(trovit|mitula|nestoria)/.test(u) && !/\/propiedad|\/property/.test(u)) return true;
   if (u.includes("propiedades.com") && !u.includes("/inmuebles/")) return true;
+  if (/inmuebles24\.com\/.+-en-renta-en-/.test(u) && !u.includes("/propiedades/")) return true;
+  if (/vivanuncios\.com\.mx\/s-/.test(u)) return true;
+  if (/lamudi\.com\.mx\/.+\/for-rent\/?$/.test(u)) return true;
   return false;
 }
 
