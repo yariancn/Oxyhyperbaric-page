@@ -1,5 +1,18 @@
 # Buscador de rentas en Ajijic
 
+## URL web (iPad / celular / cualquier navegador)
+
+Después del deploy a Cloudflare:
+
+- **Producción:** https://oxyhyperbaric.com/renta-ajijic/
+- **Staging Worker:** https://oxyhyperbaric-page.yarianc.workers.dev/renta-ajijic/
+
+Abre el enlace, toca **Buscar rentas** (o espera: carga sola) y verás resultados con resumen y link al anuncio. No necesitas instalar nada en el iPad.
+
+También hay un CLI en Python (abajo) para uso local.
+
+---
+
 Programa en Python que busca casas en renta en **Ajijic, Jalisco** cerca de **$20,000 MXN**, las ordena por afinidad con zona **media-alta** y **fraccionamiento privado**, y genera un **resumen** de cada anuncio.
 
 ## Qué hace

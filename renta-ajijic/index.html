@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#1f4d57" />
+  <title>Rentas Ajijic · ~$20,000 MXN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #17343b;
+      --muted: #4d6670;
+      --lake: #1f4d57;
+      --lake-2: #2f7a86;
+      --sand: #f3efe6;
+      --sand-2: #e7dfd0;
+      --card: rgba(255, 255, 255, 0.82);
+      --line: rgba(23, 52, 59, 0.12);
+      --ok: #1f7a4c;
+      --warn: #8a5a18;
+      --radius: 18px;
+      --shadow: 0 18px 50px rgba(23, 52, 59, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Manrope", system-ui, sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #7eb8c0 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #f0d9b0 0%, transparent 45%),
+        linear-gradient(180deg, #d7e8ea 0%, var(--sand) 42%, #f7f4ee 100%);
+    }
+
+    .wrap {
+      width: min(920px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1.25rem 0 3rem;
+    }
+
+    header {
+      padding: 1.25rem 0 1rem;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--lake);
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      line-height: 1.1;
+      margin: 0 0 0.55rem;
+      max-width: 14ch;
+    }
+
+    .lede {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+      max-width: 38ch;
+      line-height: 1.45;
+    }
+
+    .panel {
+      margin-top: 1.25rem;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    input[type="number"] {
+      appearance: textfield;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.85rem 0.9rem;
+      font: inherit;
+      font-size: 1rem;
+      color: var(--ink);
+      background: #fff;
+      min-height: 48px;
+    }
+
+    .row-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 0.9rem;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .check input {
+      width: 1.15rem;
+      height: 1.15rem;
+      accent-color: var(--lake);
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--lake), var(--lake-2));
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 0.95rem 1.4rem;
+      min-height: 52px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(31, 77, 87, 0.28);
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .status {
+      margin-top: 0.9rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      min-height: 1.4em;
+    }
+
+    .results {
+      display: grid;
+      gap: 0.9rem;
+      margin-top: 1.1rem;
+    }
+
+    article {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.05rem 1.1rem;
+      box-shadow: 0 10px 30px rgba(23, 52, 59, 0.06);
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .title {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.25rem;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .price {
+      white-space: nowrap;
+      font-weight: 800;
+      color: var(--lake);
+      font-size: 1.05rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.7rem 0 0.75rem;
+    }
+
+    .chip {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      background: var(--sand-2);
+      color: var(--ink);
+    }
+
+    .chip.ok { background: rgba(31, 122, 76, 0.12); color: var(--ok); }
+    .chip.warn { background: rgba(138, 90, 24, 0.12); color: var(--warn); }
+
+    .summary {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.98rem;
+    }
+
+    .actions {
+      margin-top: 0.9rem;
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0.7rem 1rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .actions a.primary {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .actions a.ghost {
+      background: transparent;
+      color: var(--lake);
+      border: 1px solid rgba(31, 77, 87, 0.25);
+    }
+
+    .portals {
+      margin-top: 1.5rem;
+      padding-top: 0.5rem;
+    }
+
+    .portals h2 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.2rem;
+      margin: 0 0 0.6rem;
+    }
+
+    .portal-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.55rem;
+    }
+
+    .portal-list a {
+      display: block;
+      text-decoration: none;
+      color: var(--ink);
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.75rem 0.85rem;
+      font-weight: 700;
+      font-size: 0.92rem;
+      min-height: 44px;
+    }
+
+    .empty {
+      padding: 1.2rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 700px) {
+      .controls { grid-template-columns: 1fr; }
+      .wrap { width: min(920px, calc(100% - 1.25rem)); }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">Ajijic · Jalisco</div>
+      <h1>Casas en renta cerca de $20,000</h1>
+      <p class="lede">Busca en varias plataformas, prioriza zona media-alta y fraccionamientos privados. Abre desde tu iPad sin instalar nada.</p>
+    </header>
+
+    <section class="panel">
+      <div class="controls">
+        <label>Objetivo (MXN)
+          <input id="objetivo" type="number" inputmode="numeric" value="20000" step="1000" />
+        </label>
+        <label>Mínimo
+          <input id="min" type="number" inputmode="numeric" value="15000" step="1000" />
+        </label>
+        <label>Máximo
+          <input id="max" type="number" inputmode="numeric" value="28000" step="1000" />
+        </label>
+      </div>
+      <div class="row-actions">
+        <label class="check">
+          <input id="soloCasas" type="checkbox" checked />
+          Solo casas
+        </label>
+        <button id="buscar" type="button">Buscar rentas</button>
+      </div>
+      <div class="status" id="status">Cargando resultados…</div>
+    </section>
+
+    <section class="results" id="results" aria-live="polite"></section>
+
+    <section class="portals" id="portals" hidden>
+      <h2>Ver también en otros portales</h2>
+      <div class="portal-list" id="portalList"></div>
+    </section>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const resultsEl = $("results");
+    const statusEl = $("status");
+    const portalsEl = $("portals");
+    const portalListEl = $("portalList");
+    const btn = $("buscar");
+
+    function money(n) {
+      if (n == null) return "N/D";
+      return "$" + Number(n).toLocaleString("es-MX") + " MXN";
+    }
+
+    function render(data) {
+      const items = data.results || [];
+      if (!items.length) {
+        resultsEl.innerHTML = '<div class="empty">No hubo casas en ese rango. Sube el máximo o quita “Solo casas”.</div>';
+      } else {
+        resultsEl.innerHTML = items.map((item, i) => {
+          const zone = (item.neighborhoods && item.neighborhoods.length)
+            ? item.neighborhoods.map((z) => z.replace(/\b\w/g, (c) => c.toUpperCase())).join(", ")
+            : "Ajijic / ribera";
+          const priv = item.privateCommunity
+            ? '<span class="chip ok">Fracc. / privado</span>'
+            : '<span class="chip warn">Privado no confirmado</span>';
+          const rooms = [
+            item.bedrooms != null ? item.bedrooms + " rec." : null,
+            item.bathrooms != null ? item.bathrooms + " baños" : null,
+          ].filter(Boolean).join(" · ");
+          return `
+            <article>
+              <div class="top">
+                <h2 class="title">${i + 1}. ${escapeHtml(item.title)}</h2>
+                <div class="price">${money(item.priceMxn)}</div>
+              </div>
+              <div class="meta">
+                <span class="chip">${escapeHtml(zone)}</span>
+                ${priv}
+                <span class="chip">${escapeHtml(item.source || "")}</span>
+                ${rooms ? `<span class="chip">${escapeHtml(rooms)}</span>` : ""}
+              </div>
+              <p class="summary">${escapeHtml(item.summary || "")}</p>
+              <div class="actions">
+                <a class="primary" href="${escapeAttr(item.url)}" target="_blank" rel="noopener">Ver anuncio</a>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      const portals = data.portals || [];
+      if (portals.length) {
+        portalsEl.hidden = false;
+        portalListEl.innerHTML = portals.map((p) =>
+          `<a href="${escapeAttr(p.url)}" target="_blank" rel="noopener">${escapeHtml(p.name)}</a>`
+        ).join("");
+      }
+
+      const src = data.sources
+        ? Object.entries(data.sources).map(([k, v]) => `${k}: ${v}`).join(" · ")
+        : "";
+      statusEl.textContent = `${items.length} resultados` + (src ? ` · Fuentes: ${src}` : "");
+    }
+
+    function escapeHtml(s) {
+      return String(s || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+    function escapeAttr(s) {
+      return escapeHtml(s).replace(/'/g, "&#39;");
+    }
+
+    async function buscar() {
+      btn.disabled = true;
+      statusEl.textContent = "Buscando en varias plataformas…";
+      resultsEl.innerHTML = "";
+      const params = new URLSearchParams({
+        objetivo: $("objetivo").value || "20000",
+        min: $("min").value || "15000",
+        max: $("max").value || "28000",
+        soloCasas: $("soloCasas").checked ? "1" : "0",
+        limite: "20",
+      });
+      try {
+        const res = await fetch("/api/renta-ajijic?" + params.toString(), {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        render(data);
+      } catch (err) {
+        statusEl.textContent = "No se pudo cargar la búsqueda. Revisa la conexión e intenta de nuevo.";
+        resultsEl.innerHTML = `<div class="empty">${escapeHtml(err.message || "Error")}</div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener("click", buscar);
+    buscar();
+  </script>
+</body>
+</html>
