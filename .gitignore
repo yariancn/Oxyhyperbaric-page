@@ -5,3 +5,6 @@
 .wrangler/
 .tmp-ffmpeg/
 assets/videos/*.mov
+__pycache__/
+*.py[cod]
+.pytest_cache/
