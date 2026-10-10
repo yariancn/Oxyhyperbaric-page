@@ -138,6 +138,7 @@ def format_report(listings: list[Listing], *, target_price: int, min_price: int,
             f"(rango {_mxn(min_price)} – {_mxn(max_price)})"
         ),
         "Prioridad: zona media-alta y, de preferencia, fraccionamiento privado.",
+        "Cobertura: múltiples portales (no solo Mercado Libre).",
         "",
     ]
     if not listings:

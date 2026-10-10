@@ -4,6 +4,23 @@ from .casasyterrenos import fetch_casasyterrenos_listings
 from .duckduckgo import search_web_listings
 from .trinity import fetch_trinity_listings
 
+# Portales que el programa intenta cubrir (scrapers + búsqueda web + links).
+PLATAFORMAS = [
+    "Ajijic Trinity",
+    "Casas y Terrenos",
+    "Inmuebles24",
+    "Propiedades.com",
+    "Vivanuncios",
+    "Lamudi",
+    "Mercado Libre Inmuebles",
+    "Trovit",
+    "Mitula",
+    "Nestoria",
+    "Doorvel",
+    "FazWaz",
+    "EasyBroker / iCasas",
+]
+
 
 def collect_listings(*, usd_mxn: float = 18.0, enrich: bool = True):
     listings = []

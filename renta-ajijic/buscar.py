@@ -8,9 +8,11 @@ import json
 import sys
 from pathlib import Path
 
+from collections import Counter
+
 from renta_ajijic.prices import DEFAULT_USD_MXN
 from renta_ajijic.scoring import filter_and_rank
-from renta_ajijic.sources import collect_listings
+from renta_ajijic.sources import PLATAFORMAS, collect_listings
 from renta_ajijic.summarize import format_report, summarize_all
 
 
@@ -72,12 +74,18 @@ def main(argv: list[str] | None = None) -> int:
         print("Error: --min no puede ser mayor que --max", file=sys.stderr)
         return 2
 
-    print("Buscando anuncios en Ajijic…", file=sys.stderr)
+    print("Buscando anuncios en Ajijic en múltiples plataformas…", file=sys.stderr)
+    print("Plataformas: " + ", ".join(PLATAFORMAS), file=sys.stderr)
     try:
         raw = collect_listings(usd_mxn=args.usd_mxn, enrich=not args.sin_enriquecer)
     except Exception as exc:
         print(f"Error al recolectar anuncios: {exc}", file=sys.stderr)
         return 1
+
+    por_fuente = Counter(item.source for item in raw)
+    if por_fuente:
+        detalle = ", ".join(f"{src} ({n})" for src, n in por_fuente.most_common())
+        print(f"Anuncios crudos por fuente: {detalle}", file=sys.stderr)
 
     ranked = filter_and_rank(
         raw,
