@@ -20,12 +20,9 @@
  *   PREDICTACORE_OXY_LEADS_URL — optional; default https://predictacore.ai/ads/api/oxy/funnel-leads
  */
 
-import { handleRentaAjijicApi } from "./renta-ajijic/worker-search.js";
-
 const WELLNESS_PREFIX = "/your-wellness";
 const LEAD_API = "/api/funnel-lead";
 const LEAD_ABANDON_API = "/api/funnel-lead-abandon";
-const RENTA_AJIJIC_API = "/api/renta-ajijic";
 const DEFAULT_NOTIFY_TO = "hello@oxyhyperbaric.com";
 const DEFAULT_NOTIFY_SMS_TO = "+17135913379";
 const DEFAULT_OXY_AGENDA_FUNNEL_URL =
@@ -42,10 +39,6 @@ const DEFAULT_OXY_AGENDA_FOLLOWUP_CRON_URL =
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-
-    if (url.pathname === RENTA_AJIJIC_API || url.pathname === `${RENTA_AJIJIC_API}/`) {
-      return handleRentaAjijicApi(request);
-    }
 
     if (url.pathname === LEAD_API) {
       if (request.method === "OPTIONS") {

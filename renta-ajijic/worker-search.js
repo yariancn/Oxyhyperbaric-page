@@ -155,6 +155,7 @@ async function fetchTrinity() {
         break;
       }
     }
+    const images = extractImages(chunk, 2);
     out.push({
       title,
       url,
@@ -167,8 +168,21 @@ async function fetchTrinity() {
       bathrooms: baths,
       description: "",
       features: [],
+      images,
     });
   }
+  // Completar 2 fotos desde ficha (solo las primeras para no alentar la API).
+  const needMore = out.filter((x) => (x.images || []).length < 2).slice(0, 10);
+  await Promise.all(
+    needMore.map(async (item) => {
+      try {
+        const extra = await fetchListingImages(item.url, 2);
+        item.images = uniqueUrls([...(item.images || []), ...extra]).slice(0, 2);
+      } catch {
+        /* keep card image */
+      }
+    }),
+  );
   return out;
 }
 
@@ -188,6 +202,7 @@ async function fetchCasasYTerrenos() {
     if (/local/i.test(text) && !/casa/i.test(text)) continue;
     seen.add(url);
     const price = parsePrice(text);
+    const images = extractImages(m[2], 2);
     out.push({
       title: cleanCytTitle(text),
       url,
@@ -200,8 +215,20 @@ async function fetchCasasYTerrenos() {
       bathrooms: floatFrom(text, /(\d+(?:\.\d+)?)\s*Baños?/i),
       description: text,
       features: [],
+      images,
     });
   }
+  const needMore = out.filter((x) => (x.images || []).length < 2).slice(0, 6);
+  await Promise.all(
+    needMore.map(async (item) => {
+      try {
+        const extra = await fetchListingImages(item.url, 2);
+        item.images = uniqueUrls([...(item.images || []), ...extra]).slice(0, 2);
+      } catch {
+        /* ignore */
+      }
+    }),
+  );
   return out;
 }
 
@@ -252,6 +279,7 @@ async function fetchWebListings() {
           bathrooms: floatFrom(`${title} ${body}`, /(\d+(?:\.\d+)?)\s*(?:baños?|baths?)/i),
           description: body,
           features: [],
+          images: [],
         });
       }
     } catch {
@@ -293,6 +321,7 @@ function rank(listings, { target, minPrice, maxPrice, housesOnly }) {
     const summary = summarize(item, neighborhoods, privateHits.length > 0);
     ranked.push({
       ...item,
+      images: (item.images || []).slice(0, 2),
       score: Math.round(score * 10) / 10,
       neighborhoods,
       privateCommunity: privateHits.length > 0,
@@ -321,6 +350,54 @@ function summarize(item, neighborhoods, isPrivate) {
   return `${item.title}: ${tipo} en renta por ${mxn(item.priceMxn)} mensuales, con ${
     rooms.join(", ") || "distribución no especificada"
   }. ${capitalize(zone)}; ${priv}.`;
+}
+
+async function fetchListingImages(url, limit = 2) {
+  const res = await fetch(url, {
+    headers: { "User-Agent": UA, "Accept-Language": "es-MX,es;q=0.9" },
+  });
+  if (!res.ok) return [];
+  return extractImages(await res.text(), limit);
+}
+
+function extractImages(html, limit = 2) {
+  const found = [];
+  const patterns = [
+    /data-src=["']?(https?:\/\/[^"'>\s]+\.(?:jpg|jpeg|png|webp)(?:\?[^"'>\s]*)?)/gi,
+    /src=["']?(https?:\/\/[^"'>\s]+\.(?:jpg|jpeg|png|webp)(?:\?[^"'>\s]*)?)/gi,
+    /content=["'](https?:\/\/[^"']+\.(?:jpg|jpeg|png|webp)(?:\?[^"']*)?)/gi,
+  ];
+  for (const re of patterns) {
+    for (const m of String(html || "").matchAll(re)) {
+      let src = m[1];
+      if (!isPropertyPhoto(src)) continue;
+      src = src.replace(/-\d+x\d+(\.(?:jpg|jpeg|png|webp))/i, "$1");
+      found.push(src);
+      if (found.length >= limit * 4) break;
+    }
+  }
+  return uniqueUrls(found).slice(0, limit);
+}
+
+function isPropertyPhoto(src) {
+  if (!src) return false;
+  const s = src.toLowerCase();
+  if (/svg\+|sprite|icon|logo|avatar|pixel|1x1|emoji|gravatar/.test(s)) return false;
+  // Evitar fotos de agentes / equipo
+  if (/carlos-medina|\/noe-|agent|realtor|broker|team-|headshot|profile-pic/.test(s)) return false;
+  return /\.(?:jpg|jpeg|png|webp)(?:$|\?)/i.test(s);
+}
+
+function uniqueUrls(urls) {
+  const seen = new Set();
+  const out = [];
+  for (const u of urls) {
+    const key = String(u || "").split("?")[0];
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(u);
+  }
+  return out;
 }
 
 function parsePrice(text) {

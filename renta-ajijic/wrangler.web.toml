@@ -1,4 +1,4 @@
-name = "renta-ajijic"
+name = "predictacore-renta-ajijic"
 compatibility_date = "2026-06-10"
 main = "standalone-worker.js"
 
