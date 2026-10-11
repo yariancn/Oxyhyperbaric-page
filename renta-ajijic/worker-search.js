@@ -1,7 +1,10 @@
 /**
  * Server-side rental search for Ajijic (Cloudflare Worker).
  * Scrapes readable portals + returns scored Spanish summaries.
+ * Incluye seed embebido: en Workers preview muchos portales se bloquean.
  */
+
+import seedData from "./listings-seed.js";
 
 const USD_MXN = 18;
 const PREFERRED = {
@@ -74,9 +77,9 @@ export async function handleRentaAjijicApi(request) {
 
   const url = new URL(request.url);
   const target = num(url.searchParams.get("objetivo"), 20000);
-  const minPrice = num(url.searchParams.get("min"), 15000);
-  const maxPrice = num(url.searchParams.get("max"), 35000);
-  const housesOnly = url.searchParams.get("soloCasas") !== "0";
+  let minPrice = num(url.searchParams.get("min"), 15000);
+  let maxPrice = num(url.searchParams.get("max"), 35000);
+  let housesOnly = url.searchParams.get("soloCasas") === "1"; // default: todas
   const limit = Math.min(num(url.searchParams.get("limite"), 40), 60);
 
   const [trinity, cyt, ml, arm, web] = await Promise.all([
@@ -87,23 +90,48 @@ export async function handleRentaAjijicApi(request) {
     safe(() => fetchWebListings()),
   ]);
 
-  const raw = dedupe([
+  const seed = (seedData?.listings || []).map((x) => ({ ...x, fromSeed: true }));
+  const live = dedupe([
     ...(trinity || []),
     ...(cyt || []),
     ...(ml || []),
     ...(arm || []),
     ...(web || []),
   ]);
-  const ranked = diversifyBySource(
+  // Live primero; seed rellena portales que Cloudflare bloquea.
+  const raw = dedupe([...live, ...seed]);
+
+  let ranked = diversifyBySource(
     rank(raw, { target, minPrice, maxPrice, housesOnly }),
     limit,
   );
+
+  // Si salen muy pocos, relajar filtros automáticamente.
+  let relaxed = false;
+  if (ranked.length < 12) {
+    housesOnly = false;
+    maxPrice = Math.max(maxPrice, 40000);
+    minPrice = Math.min(minPrice, 12000);
+    ranked = diversifyBySource(
+      rank(raw, { target, minPrice, maxPrice, housesOnly }),
+      limit,
+    );
+    relaxed = true;
+  }
 
   return json(
     {
       ok: true,
       generatedAt: new Date().toISOString(),
-      filters: { objetivo: target, min: minPrice, max: maxPrice, soloCasas: housesOnly },
+      filters: {
+        objetivo: target,
+        min: minPrice,
+        max: maxPrice,
+        soloCasas: housesOnly,
+        relaxed,
+        seedUsed: seed.length,
+        liveCount: live.length,
+      },
       count: ranked.length,
       sources: countBy(raw, (x) => x.source),
       sourcesInResults: countBy(ranked, (x) => x.source),

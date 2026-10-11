@@ -166,7 +166,7 @@
       </div>
       <div class="row-actions">
         <label class="check">
-          <input id="soloCasas" type="checkbox" checked />
+          <input id="soloCasas" type="checkbox" />
           Solo casas
         </label>
         <button id="buscar" type="button">Buscar rentas</button>
@@ -270,9 +270,13 @@
       const raw = data.sources
         ? Object.entries(data.sources).map(([k, v]) => `${k}: ${v}`).join(" · ")
         : "";
+      const live = data.filters?.liveCount != null ? ` · Live: ${data.filters.liveCount}` : "";
+      const seed = data.filters?.seedUsed ? ` · Cache: ${data.filters.seedUsed}` : "";
+      const relaxed = data.filters?.relaxed ? " · filtros ampliados" : "";
       statusEl.textContent =
         `${items.length} resultados` +
         (shown ? ` · En lista: ${shown}` : "") +
+        live + seed + relaxed +
         (raw ? ` · Escaneados: ${raw}` : "");
     }
 
@@ -284,7 +288,7 @@
         objetivo: $("objetivo").value || "20000",
         min: $("min").value || "15000",
         max: $("max").value || "28000",
-        soloCasas: $("soloCasas").checked ? "1" : "0",
+        soloCasas: $("soloCasas").checked ? "1" : "0", // 0 = casas + depas
         limite: "40",
       });
       try {
