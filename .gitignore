@@ -8,3 +8,4 @@ assets/videos/*.mov
 __pycache__/
 *.py[cod]
 .pytest_cache/
+renta-ajijic/web-dist/

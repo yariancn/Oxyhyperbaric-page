@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0b1f24" />
+  <title>Predictacore · Rentas Ajijic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0b1f24;
+      --ink-2: #16333a;
+      --muted: #5b7278;
+      --paper: #f6f1e8;
+      --paper-2: #efe7d8;
+      --accent: #0f8a6a;
+      --accent-2: #14a37d;
+      --line: rgba(11, 31, 36, 0.12);
+      --card: #fffdf8;
+      --radius: 20px;
+      --shadow: 0 16px 40px rgba(11, 31, 36, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Sora", system-ui, sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      background:
+        radial-gradient(900px 420px at 0% 0%, rgba(20, 163, 125, 0.18), transparent 55%),
+        radial-gradient(700px 380px at 100% 10%, rgba(214, 176, 110, 0.22), transparent 50%),
+        linear-gradient(180deg, #e8f2ef 0%, var(--paper) 40%, #f8f4ec 100%);
+    }
+    .wrap { width: min(960px, calc(100% - 1.5rem)); margin: 0 auto; padding: 1rem 0 3rem; }
+    .brand {
+      display: flex; align-items: center; gap: 0.65rem;
+      font-weight: 700; letter-spacing: 0.02em; font-size: 0.92rem;
+      color: var(--ink-2); margin: 0.4rem 0 0.9rem;
+    }
+    .brand-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(145deg, var(--accent), #0b5c4a);
+      box-shadow: 0 6px 16px rgba(15, 138, 106, 0.35);
+      position: relative;
+    }
+    .brand-mark::after {
+      content: ""; position: absolute; inset: 7px; border-radius: 3px;
+      border: 2px solid rgba(255,255,255,0.85);
+    }
+    h1 {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(2rem, 6vw, 3rem);
+      line-height: 1.05;
+      margin: 0 0 0.5rem;
+      max-width: 16ch;
+    }
+    .lede { margin: 0; color: var(--muted); font-size: 1.02rem; max-width: 40ch; line-height: 1.45; }
+    .panel {
+      margin-top: 1.2rem; background: rgba(255,253,248,0.9);
+      border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 1rem; backdrop-filter: blur(8px);
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
+    label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+    input[type="number"] {
+      border: 1px solid var(--line); border-radius: 12px; padding: 0.85rem 0.9rem;
+      font: inherit; font-size: 1rem; color: var(--ink); background: #fff; min-height: 48px;
+    }
+    .row-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-top: 0.85rem; }
+    .check { display: flex; align-items: center; gap: 0.45rem; font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+    .check input { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); }
+    button {
+      border: 0; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff; font: inherit; font-weight: 700; font-size: 1.02rem;
+      padding: 0.95rem 1.35rem; min-height: 52px; cursor: pointer;
+      box-shadow: 0 10px 24px rgba(15, 138, 106, 0.28);
+    }
+    button:disabled { opacity: 0.65; cursor: wait; }
+    .status { margin-top: 0.85rem; color: var(--muted); font-size: 0.92rem; min-height: 1.35em; }
+    .results { display: grid; gap: 1rem; margin-top: 1.1rem; }
+    article {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      overflow: hidden; box-shadow: 0 10px 28px rgba(11, 31, 36, 0.07);
+    }
+    .photos {
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 3px; background: var(--ink);
+      min-height: 180px;
+    }
+    .photos img {
+      width: 100%; height: 100%; object-fit: cover; display: block; min-height: 180px;
+      background: #d8e2e4;
+    }
+    .photos.single { grid-template-columns: 1fr; }
+    .photos .placeholder {
+      min-height: 180px; display: grid; place-items: center;
+      color: rgba(255,255,255,0.7); font-size: 0.9rem; padding: 1rem; text-align: center;
+      background: linear-gradient(135deg, #234349, #0b1f24);
+    }
+    .body { padding: 1rem 1.05rem 1.1rem; }
+    .top { display: flex; justify-content: space-between; gap: 0.75rem; align-items: flex-start; }
+    .title {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-size: 1.35rem; margin: 0; line-height: 1.15;
+    }
+    .price { white-space: nowrap; font-weight: 700; color: var(--accent); font-size: 1.05rem; }
+    .price.unknown { color: var(--muted); font-size: 0.92rem; font-weight: 600; }
+    .meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.7rem 0 0.75rem; }
+    .chip {
+      font-size: 0.76rem; font-weight: 700; padding: 0.35rem 0.6rem;
+      border-radius: 999px; background: var(--paper-2); color: var(--ink);
+    }
+    .chip.ok { background: rgba(15, 138, 106, 0.12); color: #0b6b52; }
+    .chip.warn { background: rgba(138, 90, 24, 0.12); color: #8a5a18; }
+    .summary { margin: 0; color: var(--muted); line-height: 1.45; font-size: 0.96rem; }
+    .actions { margin-top: 0.9rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .actions a {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 44px; padding: 0.7rem 1rem; border-radius: 999px;
+      text-decoration: none; font-weight: 700; font-size: 0.95rem;
+    }
+    .actions a.primary { background: var(--ink); color: #fff; }
+    .portals { margin-top: 1.5rem; }
+    .portals h2 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 1.35rem; margin: 0 0 0.6rem; }
+    .portal-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.5rem; }
+    .portal-list a {
+      display: block; text-decoration: none; color: var(--ink); background: rgba(255,253,248,0.8);
+      border: 1px solid var(--line); border-radius: 12px; padding: 0.75rem 0.85rem;
+      font-weight: 700; font-size: 0.9rem; min-height: 44px;
+    }
+    .empty { padding: 1.2rem; color: var(--muted); text-align: center; }
+    .foot { margin-top: 1.5rem; color: var(--muted); font-size: 0.82rem; }
+    .foot a { color: var(--accent); font-weight: 700; }
+    @media (max-width: 700px) {
+      .controls { grid-template-columns: 1fr; }
+      button { width: 100%; }
+      .photos { grid-template-columns: 1fr 1fr; min-height: 140px; }
+      .photos img, .photos .placeholder { min-height: 140px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Predictacore · Rentas</span>
+    </div>
+    <h1>Casas en renta en Ajijic</h1>
+    <p class="lede">Cerca de $20,000 MXN, zona media-alta y fraccionamientos privados. Fotos incluidas para que te des una idea antes de abrir el anuncio.</p>
+
+    <section class="panel">
+      <div class="controls">
+        <label>Objetivo (MXN)
+          <input id="objetivo" type="number" inputmode="numeric" value="20000" step="1000" />
+        </label>
+        <label>Mínimo
+          <input id="min" type="number" inputmode="numeric" value="15000" step="1000" />
+        </label>
+        <label>Máximo
+          <input id="max" type="number" inputmode="numeric" value="35000" step="1000" />
+        </label>
+      </div>
+      <div class="row-actions">
+        <label class="check">
+          <input id="soloCasas" type="checkbox" />
+          Solo casas
+        </label>
+        <button id="buscar" type="button">Buscar rentas</button>
+      </div>
+      <div class="status" id="status">Cargando resultados…</div>
+    </section>
+
+    <section class="results" id="results" aria-live="polite"></section>
+
+    <section class="portals" id="portals" hidden>
+      <h2>Otros portales</h2>
+      <div class="portal-list" id="portalList"></div>
+    </section>
+
+    <p class="foot">Herramienta <a href="https://predictacore.ai" target="_blank" rel="noopener">Predictacore</a> · independiente de OxyHyperbaric</p>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const resultsEl = $("results");
+    const statusEl = $("status");
+    const portalsEl = $("portals");
+    const portalListEl = $("portalList");
+    const btn = $("buscar");
+
+    function money(n) {
+      if (n == null) return "Ver precio";
+      return "$" + Number(n).toLocaleString("es-MX") + " MXN";
+    }
+    function escapeHtml(s) {
+      return String(s || "")
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+    function escapeAttr(s) { return escapeHtml(s).replace(/'/g, "&#39;"); }
+
+    function photosHtml(item) {
+      const imgs = (item.images || []).filter(Boolean).slice(0, 2);
+      if (!imgs.length) {
+        return '<div class="photos single"><div class="placeholder">Sin foto en el anuncio · abre el link para ver galería</div></div>';
+      }
+      if (imgs.length === 1) {
+        return `<div class="photos single"><img src="${escapeAttr(imgs[0])}" alt="${escapeAttr(item.title)}" loading="lazy" referrerpolicy="no-referrer" /></div>`;
+      }
+      return `<div class="photos">
+        <img src="${escapeAttr(imgs[0])}" alt="${escapeAttr(item.title)} — foto 1" loading="lazy" referrerpolicy="no-referrer" />
+        <img src="${escapeAttr(imgs[1])}" alt="${escapeAttr(item.title)} — foto 2" loading="lazy" referrerpolicy="no-referrer" />
+      </div>`;
+    }
+
+    function render(data) {
+      const items = data.results || [];
+      if (!items.length) {
+        resultsEl.innerHTML = '<div class="empty">No hubo casas en ese rango. Sube el máximo o quita “Solo casas”.</div>';
+      } else {
+        resultsEl.innerHTML = items.map((item, i) => {
+          const zone = (item.neighborhoods && item.neighborhoods.length)
+            ? item.neighborhoods.map((z) => z.replace(/\b\w/g, (c) => c.toUpperCase())).join(", ")
+            : "Ajijic / ribera";
+          const priv = item.privateCommunity
+            ? '<span class="chip ok">Fracc. / privado</span>'
+            : '<span class="chip warn">Privado no confirmado</span>';
+          const rooms = [
+            item.bedrooms != null ? item.bedrooms + " rec." : null,
+            item.bathrooms != null ? item.bathrooms + " baños" : null,
+          ].filter(Boolean).join(" · ");
+          return `
+            <article>
+              ${photosHtml(item)}
+              <div class="body">
+                <div class="top">
+                  <h2 class="title">${i + 1}. ${escapeHtml(item.title)}</h2>
+                  <div class="price ${item.priceMxn == null ? "unknown" : ""}">${money(item.priceMxn)}</div>
+                </div>
+                <div class="meta">
+                  <span class="chip">${escapeHtml(zone)}</span>
+                  ${priv}
+                  <span class="chip">${escapeHtml(item.source || "")}</span>
+                  ${rooms ? `<span class="chip">${escapeHtml(rooms)}</span>` : ""}
+                </div>
+                <p class="summary">${escapeHtml(item.summary || "")}</p>
+                <div class="actions">
+                  <a class="primary" href="${escapeAttr(item.url)}" target="_blank" rel="noopener">Ver anuncio</a>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      const portals = data.portals || [];
+      if (portals.length) {
+        portalsEl.hidden = false;
+        portalListEl.innerHTML = portals.map((p) =>
+          `<a href="${escapeAttr(p.url)}" target="_blank" rel="noopener">${escapeHtml(p.name)}</a>`
+        ).join("");
+      }
+      const shown = data.sourcesInResults
+        ? Object.entries(data.sourcesInResults).map(([k, v]) => `${k}: ${v}`).join(" · ")
+        : "";
+      const raw = data.sources
+        ? Object.entries(data.sources).map(([k, v]) => `${k}: ${v}`).join(" · ")
+        : "";
+      const live = data.filters?.liveCount != null ? ` · Live: ${data.filters.liveCount}` : "";
+      const seed = data.filters?.seedUsed ? ` · Cache: ${data.filters.seedUsed}` : "";
+      const relaxed = data.filters?.relaxed ? " · filtros ampliados" : "";
+      statusEl.textContent =
+        `${items.length} resultados` +
+        (shown ? ` · En lista: ${shown}` : "") +
+        live + seed + relaxed +
+        (raw ? ` · Escaneados: ${raw}` : "");
+    }
+
+    async function buscar() {
+      btn.disabled = true;
+      statusEl.textContent = "Buscando en varias plataformas…";
+      resultsEl.innerHTML = "";
+      const params = new URLSearchParams({
+        objetivo: $("objetivo").value || "20000",
+        min: $("min").value || "15000",
+        max: $("max").value || "28000",
+        soloCasas: $("soloCasas").checked ? "1" : "0", // 0 = casas + depas
+        limite: "40",
+      });
+      try {
+        const res = await fetch("/api/renta-ajijic?" + params.toString(), {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        render(await res.json());
+      } catch (err) {
+        statusEl.textContent = "No se pudo cargar la búsqueda. Intenta de nuevo.";
+        resultsEl.innerHTML = `<div class="empty">${escapeHtml(err.message || "Error")}</div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener("click", buscar);
+    buscar();
+  </script>
+</body>
+</html>

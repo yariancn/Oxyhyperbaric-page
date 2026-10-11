@@ -1,0 +1,8 @@
+name = "predictacore-renta-ajijic"
+compatibility_date = "2026-06-10"
+main = "standalone-worker.js"
+
+[assets]
+directory = "./web-dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"

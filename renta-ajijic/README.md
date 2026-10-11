@@ -1,50 +1,37 @@
-# Buscador de rentas en Ajijic
+# Predictacore · Rentas Ajijic
 
-Programa en Python que busca casas en renta en **Ajijic, Jalisco** cerca de **$20,000 MXN**, las ordena por afinidad con zona **media-alta** y **fraccionamiento privado**, y genera un **resumen** de cada anuncio.
+Buscador web de casas en renta en **Ajijic, Jalisco** (~$20,000 MXN), con resumen y fotos.  
+**Independiente de OxyHyperbaric** — branding y hosting Predictacore.
 
-## Qué hace
+## URL (iPad / Safari)
 
-1. Recolecta anuncios de **varias plataformas** (no solo una):
-   - Scrapers directos: Ajijic Trinity, Casas y Terrenos
-   - Búsqueda web multi-portal: Inmuebles24, Propiedades.com, Vivanuncios, Lamudi, Mercado Libre, Trovit, Mitula, Nestoria, Doorvel, FazWaz, EasyBroker/iCasas
-   - Al final del reporte imprime enlaces de búsqueda en cada portal (varios bloquean scrapers)
-2. Filtra por presupuesto (default $15,000–$25,000 MXN).
-3. Puntúa zona media-alta (`La Floresta`, `Villa Nova`, `Rancho del Oro`, `Lago Encantado`, etc.) y señales de coto/privada/seguridad.
-4. Resume cada opción en español: precio, recámaras, zona, si parece fraccionamiento privado y puntos clave.
+Tras el deploy del Worker standalone:
 
-## Instalación
+```text
+https://predictacore-renta-ajijic.<cuenta>.workers.dev/
+```
+
+Abre el link → ves resultados con **2 fotos**, precio, resumen y botón al anuncio. No instalas nada.
+
+## Deploy (solo este mini-sitio)
 
 ```bash
 cd renta-ajijic
+mkdir -p web-dist && cp index.html web-dist/index.html
+npx wrangler@4 deploy --config wrangler.web.toml
+```
+
+No modifica el Worker de OxyHyperbaric.
+
+## Qué busca
+
+- Scrapers: Ajijic Trinity, Casas y Terrenos (con fotos)
+- Búsqueda web: Inmuebles24, Propiedades, Vivanuncios, Lamudi, Mercado Libre, Trovit, etc.
+- Filtro ~$15k–$28k, zona media-alta / fraccionamiento privado
+
+## CLI opcional (Python)
+
+```bash
 python3 -m pip install -r requirements.txt
+python3 buscar.py --solo-casas --min 15000 --max 28000
 ```
-
-## Uso
-
-```bash
-python3 buscar.py
-```
-
-Solo casas (sin departamentos), presupuesto un poco más amplio y salida a archivos:
-
-```bash
-python3 buscar.py --solo-casas --min 15000 --max 28000 \
-  --out reporte.txt --json resultados.json
-```
-
-### Opciones útiles
-
-| Opción | Descripción |
-|---|---|
-| `--objetivo 20000` | Precio ideal en MXN |
-| `--min` / `--max` | Rango de precio |
-| `--solo-casas` | Excluye departamentos/habitaciones |
-| `--usd-mxn 18` | Conversión para anuncios en USD |
-| `--sin-enriquecer` | Más rápido; no abre fichas de detalle |
-| `--out` / `--json` | Guarda reporte o JSON |
-
-## Notas
-
-- La oferta en Ajijic cerca de $20,000 MXN varía mucho; si hay pocos resultados, amplía `--max`.
-- Varios portales grandes bloquean scrapers; el programa combina una fuente local scrapable con búsqueda web.
-- Los scores son heurísticos (texto del anuncio), no una valuación inmobiliaria formal.
